@@ -4,17 +4,17 @@
 
         <div>
             <h1 class="text-2xl font-bold">
-                Data Anggota
+                Simpanan
             </h1>
 
             <p class="text-zinc-500">
-                Daftar seluruh anggota SATYA MUDA GETAS
+                Simpanan SATYA MUDA GETAS
             </p>
         </div>
 
-        <flux:button variant="primary" icon="plus" wire:click="create">
+        {{-- <flux:button variant="primary" icon="plus" wire:click="create">
             Tambah Anggota
-        </flux:button>
+        </flux:button> --}}
 
     </div>
 
@@ -26,41 +26,30 @@
 
             <flux:table.column>No</flux:table.column>
 
-            <flux:table.column class="cursor-pointer" wire:click="sortBy('npk')">
+            <flux:table.column>Waktu</flux:table.column>
 
-                <div class="flex items-center gap-1">
-                    NPK
-                    @include('components.sort-icon', ['field' => 'npk'])
-                </div>
+            <flux:table.column>Jenis</flux:table.column>
 
-            </flux:table.column>
+            <flux:table.column>Debet</flux:table.column>
 
-            <flux:table.column>Nama</flux:table.column>
+            <flux:table.column>Kredit</flux:table.column>
 
-            <flux:table.column>Email</flux:table.column>
+            <flux:table.column>Saldo</flux:table.column>
 
-            <flux:table.column>Telepon</flux:table.column>
+            <flux:table.column>Piutang</flux:table.column>
 
+            <flux:table.column>Total</flux:table.column>
 
-            <flux:table.column class="cursor-pointer" wire:click="sortBy('date_birth')">
+            <flux:table.column>Keterangan</flux:table.column>
 
-                <div class="flex items-center gap-1">
-                    Usia
-                    @include('components.sort-icon', ['field' => 'date_birth'])
-                </div>
-
-            </flux:table.column>
-
-            <flux:table.column>Jenis Kelamin</flux:table.column>
-
-            <flux:table.column class="cursor-pointer" wire:click="sortBy('status')">
+            {{-- <flux:table.column class="cursor-pointer" wire:click="sortBy('status')">
 
                 <div class="flex items-center gap-1">
                     Status
                     @include('components.sort-icon', ['field' => 'status'])
                 </div>
 
-            </flux:table.column>
+            </flux:table.column> --}}
 
             <flux:table.column>Aksi</flux:table.column>
 
@@ -68,7 +57,7 @@
 
         <flux:table.rows>
 
-            @forelse($members as $member)
+            @forelse($savings as $saving)
                 <flux:table.row>
 
                     <flux:table.cell>
@@ -76,47 +65,53 @@
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        {{ $member->npk }}
+                        {{ $saving->tanggal }}
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        {{ $member->name }}
+                        {{ $saving->type }}
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        {{ $member->email }}
+                        {{ idr($saving->debit) }}
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        {{ $member->phone }}
+                        {{ idr($saving->credit) }}
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        {{ $member->age }}
+                        {{ idr($saving->balance) }}
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        <flux:badge color="{{ $member->gender === 'Male' ? 'blue' : 'red' }}">
-                            {{ $member->gender === 'Male' ? '♂ Laki-laki' : '♀ Perempuan' }}
+                        {{ idr($saving->receivable) }}
+                    </flux:table.cell>
+
+                    <flux:table.cell>
+                        {{ idr($saving->amount) }}
+                    </flux:table.cell>
+
+                    <flux:table.cell>
+                        {{ $saving->description }}
+                    </flux:table.cell>
+
+                    <flux:table.cell>
+                        <flux:badge color="{{ $saving->status === 'Active' ? 'green' : 'grey' }}">
+                            {{ $saving->status }}
                         </flux:badge>
                     </flux:table.cell>
 
-                    <flux:table.cell>
-                        <flux:badge color="{{ $member->status === 'Active' ? 'green' : 'grey' }}">
-                            {{ $member->status }}
-                        </flux:badge>
-                    </flux:table.cell>
-
-                    <flux:table.cell>
+                    {{-- <flux:table.cell>
                         <flux:button size="sm" variant="outline" icon="pencil-square"
-                            wire:click="edit('{{ $member->slug }}')">
+                            wire:click="edit('{{ $saving->slug }}')">
                             Edit
                         </flux:button>
                         <flux:button size="sm" variant="danger" icon="trash"
-                            wire:click="confirmDelete('{{ $member->slug }}')">
+                            wire:click="confirmDelete('{{ $saving->slug }}')">
                             Hapus
                         </flux:button>
-                    </flux:table.cell>
+                    </flux:table.cell> --}}
 
                 </flux:table.row>
 
@@ -137,9 +132,9 @@
 
     </flux:table>
 
-    {{ $members->links() }}
+    {{ $savings->links() }}
 
-    <flux:modal wire:model="showFormModal" class="md:w-3xl">
+    {{-- <flux:modal wire:model="showFormModal" class="md:w-3xl">
 
         <form wire:submit="save">
 
@@ -149,7 +144,7 @@
 
                     <flux:heading size="lg">
 
-                        {{ $isEdit ? 'Edit Member' : 'Tambah Member' }}
+                        {{ $isEdit ? 'Edit saving' : 'Tambah saving' }}
 
                     </flux:heading>
 
@@ -202,6 +197,6 @@
 
         </form>
 
-    </flux:modal>
+    </flux:modal> --}}
 
 </div>

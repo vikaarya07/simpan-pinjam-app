@@ -35,12 +35,12 @@
 
         <flux:sidebar.nav>
             <flux:sidebar.group :heading="__('Transaksi')" class="grid">
-                <flux:sidebar.item icon="wallet" :href="route('dashboard')" :current="request()->routeIs('dashboard')"
-                    wire:navigate>
+                <flux:sidebar.item icon="wallet" :href="route('saving.index')"
+                    :current="request()->routeIs('saving.index')" wire:navigate>
                     {{ __('Simpanan') }}
                 </flux:sidebar.item>
-                <flux:sidebar.item icon="banknotes" :href="route('dashboard')"
-                    :current="request()->routeIs('dashboard')" wire:navigate>
+                <flux:sidebar.item icon="banknotes" :href="route('loan.index')"
+                    :current="request()->routeIs('loan.index')" wire:navigate>
                     {{ __('Pinjaman') }}
                 </flux:sidebar.item>
                 <flux:sidebar.item icon="credit-card" :href="route('dashboard')"

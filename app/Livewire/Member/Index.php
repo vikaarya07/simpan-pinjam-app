@@ -6,12 +6,14 @@ use App\Models\Member;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\On;
+use App\Livewire\Concerns\WithSorting;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class Index extends Component
 {
     use WithPagination;
+    use WithSorting;
 
     protected string $paginationTheme = 'tailwind';
 
@@ -35,28 +37,20 @@ class Index extends Component
     protected function rules(): array
     {
         return [
-
             'npk' => [
                 'required',
                 Rule::unique('members', 'npk')->ignore($this->member?->id),
             ],
-
             'name' => 'required|min:3',
-
             'email' => [
                 'nullable',
                 'email',
                 Rule::unique('members', 'email')->ignore($this->member?->id),
             ],
-
             'phone' => 'required',
-
             'gender' => 'required|in:Male,Female',
-
             'date_birth' => 'required|date',
-
             'date_join' => 'required|date',
-
             'status' => 'required|in:Active,Inactive',
 
         ];
@@ -70,16 +64,13 @@ class Index extends Component
     public function create()
     {
         $this->resetForm();
-
         $this->npk = Member::generateNpk();
-
         $this->showFormModal = true;
     }
 
     public function edit(Member $member)
     {
         $this->member = $member;
-
         $this->isEdit = true;
 
         $this->npk = $member->npk;
@@ -99,11 +90,19 @@ class Index extends Component
     public function save()
     {
         $this->validate();
+        $baseSlug = Str::slug($this->name);
+        $slug = $baseSlug;
+        $counter = 1;
+
+        while (Member::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
 
         $data = [
             'npk' => $this->npk,
             'name' => $this->name,
-            'slug' => Str::slug($this->name . '-' . $this->npk),
+            'slug' => $slug,
             'email' => $this->email ?: null,
             'phone' => $this->phone ?: null,
             'gender' => $this->gender,
@@ -189,7 +188,7 @@ class Index extends Component
     {
         return view('livewire.member.index', [
             'members' => Member::search($this->search)
-                ->latest()
+                ->orderBy($this->sortField, $this->sortDirection)
                 ->paginate(10),
         ]);
     }

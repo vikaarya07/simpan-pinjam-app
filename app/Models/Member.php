@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasIndonesianDate;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Member extends Model
 {
     use HasFactory;
+    use HasIndonesianDate;
 
     protected $fillable = [
         'npk',
@@ -26,6 +28,11 @@ class Member extends Model
         'date_birth' => 'date',
         'date_join' => 'date',
     ];
+
+    public function loans()
+    {
+        return $this->hasMany(Loan::class);
+    }
 
     public function scopeSearch($query, $search)
     {
