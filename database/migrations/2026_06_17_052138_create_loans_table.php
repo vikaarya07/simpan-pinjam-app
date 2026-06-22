@@ -17,6 +17,10 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
             $table->string('loan_number')->unique();
+            $table->foreignId('previous_loan_number')
+                ->nullable()
+                ->constrained('loans')
+                ->nullOnDelete();
             $table->string('slug')->unique();
             $table->date('loan_date');
             $table->enum('type', [
@@ -32,6 +36,7 @@ return new class extends Migration
                 'running',
                 'finish'
             ])->default('running');
+            $table->bigInteger('disbursement')->default(0);
             $table->timestamps();
         });
     }

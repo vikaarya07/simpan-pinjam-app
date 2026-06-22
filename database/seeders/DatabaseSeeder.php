@@ -59,6 +59,6 @@ class DatabaseSeeder extends Seeder
             'description' => 'Bantuan Pemerintah',
         ]);
 
-        Loan::factory(15)->create();
+        Loan::factory()->count(5)->for(Member::factory())->create();
     }
 }

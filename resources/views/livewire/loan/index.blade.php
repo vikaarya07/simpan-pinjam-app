@@ -27,34 +27,55 @@
 
             <flux:table.column>No</flux:table.column>
 
+            <flux:table.column class="cursor-pointer" wire:click="sortBy('loan_number')">
+                <div class="flex items-center gap-1">
+                    Nomor Pinjaman
+                    @include('components.sort-icon', ['field' => 'loan_number'])
+                </div>
+            </flux:table.column>
+
             <flux:table.column>Nama</flux:table.column>
 
-            <flux:table.column>Nomor Pinjaman</flux:table.column>
+            <flux:table.column class="cursor-pointer" wire:click="sortBy('loan_date')">
+                <div class="flex items-center gap-1">
+                    Waktu
+                    @include('components.sort-icon', ['field' => 'loan_date'])
+                </div>
+            </flux:table.column>
 
-            <flux:table.column>Waktu</flux:table.column>
+            <flux:table.column class="cursor-pointer" wire:click="sortBy('type')">
+                <div class="flex items-center gap-1">
+                    Jenis
+                    @include('components.sort-icon', ['field' => 'type'])
+                </div>
+            </flux:table.column>
 
-            <flux:table.column>Jenis</flux:table.column>
-
-            <flux:table.column>Pinjaman</flux:table.column>
+            <flux:table.column class="cursor-pointer" wire:click="sortBy('principal')">
+                <div class="flex items-center gap-1">
+                    Pinjaman
+                    @include('components.sort-icon', ['field' => 'principal'])
+                </div>
+            </flux:table.column>
 
             <flux:table.column>Jasa</flux:table.column>
 
-            <flux:table.column>Nomonal Jasa</flux:table.column>
+            <flux:table.column>Nominal Jasa</flux:table.column>
 
             <flux:table.column>Total</flux:table.column>
 
-            <flux:table.column>Sisa Hutang</flux:table.column>
+            <flux:table.column class="cursor-pointer" wire:click="sortBy('remaining')">
+                <div class="flex items-center gap-1">
+                    Sisa Hutang
+                    @include('components.sort-icon', ['field' => 'remaining'])
+                </div>
+            </flux:table.column>
 
-            <flux:table.column>Status</flux:table.column>
-
-            {{-- <flux:table.column class="cursor-pointer" wire:click="sortBy('status')">
-
+            <flux:table.column class="cursor-pointer" wire:click="sortBy('status')">
                 <div class="flex items-center gap-1">
                     Status
                     @include('components.sort-icon', ['field' => 'status'])
                 </div>
-
-            </flux:table.column> --}}
+            </flux:table.column>
 
             <flux:table.column>Aksi</flux:table.column>
 
@@ -70,11 +91,11 @@
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        {{ $loan->member->name }}
+                        {{ $loan->loan_number }}
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        {{ $loan->loan_number }}
+                        {{ $loan->member->name }}
                     </flux:table.cell>
 
                     <flux:table.cell>
@@ -113,7 +134,7 @@
                         </flux:badge>
                     </flux:table.cell>
 
-                    {{-- <flux:table.cell>
+                    <flux:table.cell>
                         <flux:button size="sm" variant="outline" icon="pencil-square"
                             wire:click="edit('{{ $loan->slug }}')">
                             Edit
@@ -122,20 +143,15 @@
                             wire:click="confirmDelete('{{ $loan->slug }}')">
                             Hapus
                         </flux:button>
-                    </flux:table.cell> --}}
+                    </flux:table.cell>
 
                 </flux:table.row>
 
             @empty
-
                 <flux:table.row>
-
                     <flux:table.cell colspan="6">
-
                         Belum ada data.
-
                     </flux:table.cell>
-
                 </flux:table.row>
             @endforelse
 
@@ -145,67 +161,6 @@
 
     {{ $loans->links() }}
 
-    <flux:modal wire:model="showFormModal" class="md:w-3xl">
-
-        <form wire:submit="save">
-            <div class="space-y-6">
-                <div>
-                    <flux:heading size="lg">
-                        {{ $isEdit ? 'Edit Pinjaman' : 'Tambah Pinjaman' }}
-                    </flux:heading>
-                    <flux:text>
-                        Lengkapi data pinjaman.
-                    </flux:text>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    {{-- Member --}}
-                    <flux:select label="Anggota" wire:model.live="member_id">
-                        <option value="">Pilih Anggota</option>
-                        @foreach ($members as $member)
-                            <option value="{{ $member->id }}">
-                                {{ $member->npk }} - {{ $member->name }}
-                            </option>
-                        @endforeach
-                    </flux:select>
-                    {{-- Nomor Pinjaman --}}
-                    <flux:input label="Nomor Pinjaman" wire:model="loan_number" readonly />
-                    {{-- Jenis --}}
-                    <flux:select label="Jenis Pinjaman" wire:model="type" wire:change="onTypeChange">
-                        <option value="" selected disabled>-- Pilih --</option>
-                        <option value="loan">Pinjaman</option>
-                        <option value="loan_overdue">Telat</option>
-                    </flux:select>
-                    {{-- Tanggal --}}
-                    <flux:input type="date" label="Tanggal Pinjaman" wire:model="loan_date" />
-                    {{-- Pokok --}}
-                    <flux:input type="number" label="Pokok Pinjaman" wire:model.live="principal" />
-                    {{-- Jasa --}}
-                    <flux:input label="Jasa" value="{{ $interest_percent . '%' }}" readonly />
-                    {{-- Nominal Jasa --}}
-                    <flux:input label="Nominal Jasa" wire:model="interest_amount" readonly />
-                    {{-- Total --}}
-                    <flux:input label="Total Pinjaman" wire:model="amount" readonly />
-                    {{-- Status --}}
-                    <flux:select label="Status" wire:model="status">
-                        <option value="Running">
-                            Running
-                        </option>
-                        <option value="Finish">
-                            Finish
-                        </option>
-                    </flux:select>
-                </div>
-                <div class="flex justify-end gap-2">
-                    <flux:button variant="ghost" wire:click="closeModal">
-                        Batal
-                    </flux:button>
-                    <flux:button type="submit" variant="primary">
-                        {{ $isEdit ? 'Update' : 'Simpan' }}
-                    </flux:button>
-                </div>
-            </div>
-        </form>
-
-    </flux:modal>
+    @include('loan.create-edit')
 
 </div>

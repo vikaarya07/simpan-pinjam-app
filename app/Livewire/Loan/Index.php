@@ -5,6 +5,7 @@ namespace App\Livewire\Loan;
 use App\Livewire\Concerns\WithSorting;
 use App\Models\Loan;
 use App\Models\Member;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\On;
@@ -21,6 +22,7 @@ class Index extends Component
     public bool $showFormModal = false;
     public bool $isEdit = false;
 
+    public ?Loan $previousLoan = null;
     public ?Loan $loan = null;
     public string $search = '';
     public ?int $member_id = null;
@@ -32,19 +34,29 @@ class Index extends Component
     public float $interest_amount = 0;
     public float $amount = 0;
     public float $remaining = 0;
-    public string $status = 'Running';
+    public float $disbursement = 0;
+    public string $status = 'running';
 
     protected function rules(): array
     {
-        return [
+        $rules = [
             'member_id' => ['required', 'exists:members,id'],
             'loan_number' => ['required'],
             'loan_date' => ['required', 'date'],
             'type' => ['required'],
             'principal' => ['required', 'numeric', 'min:1'],
             'interest_percent' => ['required', 'numeric'],
-            'status' => ['required', Rule::in(['Running', 'Finish'])],
+            'status' => ['required', Rule::in(['running', 'finish'])],
         ];
+
+        if (
+            $this->type === 'loan_overdue' &&
+            $this->previousLoan
+        ) {
+            $rules['principal'][] = 'max:' . $this->previousLoan->remaining;
+        }
+
+        return $rules;
     }
 
     public function updatedSearch()
@@ -83,6 +95,7 @@ class Index extends Component
         $this->remaining = $loan->remaining;
         $this->status = $loan->status;
         $this->showFormModal = true;
+        $this->calculateLoan();
     }
 
     public function save()
@@ -90,25 +103,69 @@ class Index extends Component
         $this->validate();
 
         $data = [
-            'member_id' => $this->member_id,
-            'loan_number' => $this->loan_number,
-            'slug' => Str::slug($this->loan_number),
-            'loan_date' => $this->loan_date,
-            'type' => $this->type,
-            'principal' => $this->principal,
-            'status' => $this->status,
+            'member_id'        => $this->member_id,
+            'loan_number'      => $this->loan_number,
+            'slug'             => Str::slug($this->loan_number),
+            'loan_date'        => $this->loan_date,
+            'type'             => $this->type,
+            'principal'        => $this->principal,
+            'interest_percent' => $this->interest_percent,
+            'interest_amount'  => $this->interest_amount,
+            'amount'           => $this->amount,
+            'disbursement'     => $this->disbursement,
+            'status'           => $this->status,
         ];
 
         if ($this->isEdit) {
 
+            $paid = $this->loan->amount - $this->loan->remaining;
+
+            $data['remaining'] = max(0, $this->amount - $paid);
+
             $this->loan->update($data);
-        } else {
+        }
+
+        if ($this->previousLoan) {
+
+            if (
+                $this->type === 'loan' &&
+                $this->principal <= $this->previousLoan->remaining
+            ) {
+                $this->addError(
+                    'principal',
+                    'Pinjaman baru harus lebih besar dari sisa hutang sebelumnya.'
+                );
+
+                return;
+            }
+
+            if (
+                $this->type === 'loan_overdue' &&
+                $this->principal > $this->previousLoan->remaining
+            ) {
+                $this->addError(
+                    'principal',
+                    'Pinjaman telat tidak boleh melebihi sisa hutang sebelumnya.'
+                );
+
+                return;
+            }
+        }
+
+        DB::transaction(function () use ($data) {
+
+            if ($this->previousLoan) {
+
+                $this->previousLoan->update([
+                    'remaining' => 0,
+                    'status'    => 'finish',
+                ]);
+
+                $data['previous_loan_number'] = $this->previousLoan->number;
+            }
 
             Loan::create($data);
-
-            // Nanti kita tambahkan transaksi kas koperasi (Savings)
-            // agar otomatis mengurangi saldo kas.
-        }
+        });
 
         $this->dispatch(
             'swal',
@@ -122,49 +179,83 @@ class Index extends Component
         $this->closeModal();
     }
 
-    public function onTypeChange()
+    protected function calculateLoan()
     {
-        $this->interest_percent = $this->type === 'loan_overdue' ? 10 : 5;
-    }
+        $principal = (float) ($this->principal ?? 0);
 
-    public function updated($property)
-    {
-        if (in_array($property, ['type', 'principal'])) {
+        if ($principal <= 0 || !$this->type) {
+            $this->interest_amount = 0;
+            $this->amount = 0;
+            return;
+        }
 
-            $percent = match ($this->type) {
-                'loan_overdue' => 10,
-                default => 5,
-            };
+        $this->interest_percent = Loan::getInterestPercent($this->type);
 
-            $this->interest_percent = $percent;
+        $this->interest_amount =
+            ($this->principal * $this->interest_percent) / 100;
 
-            $this->interest_amount = ($this->principal * $percent) / 100;
-            $this->amount = $this->principal + $this->interest_amount;
+        $this->amount = $this->principal + $this->interest_amount;
+
+        $remaining = $this->previousLoan?->remaining ?? 0;
+
+        $this->disbursement = max(
+            0,
+            $this->principal - $remaining
+        );
+
+        if (!$this->isEdit) {
             $this->remaining = $this->amount;
         }
     }
 
-    public function confirmDelete(Loan $loan)
+    public function updatedPrincipal($value)
     {
-        $this->loan = $loan;
+        $this->principal = is_numeric($value) ? (float) $value : 0;
+
+        $this->calculateLoan();
+    }
+
+    public function updatedType()
+    {
+        $this->calculateLoan();
+    }
+
+    public function updatedMemberId()
+    {
+        $query = Loan::where('member_id', $this->member_id)
+            ->where('status', 'running');
+
+        if ($this->isEdit) {
+            $query->whereKeyNot($this->loan->id);
+        }
+
+        $this->previousLoan = $query->latest()->first();
+
+        $this->calculateLoan();
+    }
+
+    public function confirmDelete(string $slug): void
+    {
+        $loan = Loan::where('slug', $slug)->firstOrFail();
 
         $this->dispatch(
             'confirm-delete',
-            id: $loan->id,
-            number: $loan->loan_number
+            action: 'delete-loan',
+            slug: $loan->slug,
+            text: "{$loan->loan_number} - {$loan->member->name}",
         );
     }
 
     #[On('delete-loan')]
-    public function delete($id)
+    public function delete(string $slug)
     {
-        Loan::findOrFail($id)->delete();
+        Loan::where('slug', $slug)->delete();
 
         $this->dispatch(
             'swal',
             icon: 'success',
             title: 'Berhasil',
-            text: 'Pinjaman berhasil dihapus.'
+            text: 'Pinjaman berhasil dihapus.',
         );
     }
 
@@ -182,16 +273,20 @@ class Index extends Component
             'member_id',
             'loan_number',
             'loan_date',
-            'type',
-            'principal',
-            'interest_percent',
-            'interest_amount',
-            'amount',
-            'remaining',
+            'type'
         ]);
 
-        $this->status = 'Running';
+        // reset manual numeric fields (lebih aman di Livewire)
+        $this->principal = 0;
+        $this->interest_percent = 5;
+        $this->interest_amount = 0;
+        $this->amount = 0;
+        $this->remaining = 0;
 
+        $this->previousLoan = null;
+        $this->disbursement = 0;
+
+        $this->status = 'running';
         $this->isEdit = false;
 
         $this->resetValidation();
@@ -201,7 +296,6 @@ class Index extends Component
     {
         return view('livewire.loan.index', [
             'members' => Member::orderBy('name')->get(),
-
             'loans' => Loan::search($this->search)
                 ->orderBy($this->sortField, $this->sortDirection)
                 ->paginate(10),

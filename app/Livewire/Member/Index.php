@@ -137,9 +137,9 @@ class Index extends Component
 
         $this->dispatch(
             'confirm-delete',
+            action: 'delete-member',
             slug: $member->slug,
-            npk: $member->npk,
-            name: $member->name,
+            text: "{$member->npk} - {$member->name}",
         );
     }
 

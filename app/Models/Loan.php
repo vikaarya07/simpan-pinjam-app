@@ -20,6 +20,7 @@ class Loan extends Model
         'member_id',
         'slug',
         'loan_number',
+        'previous_loan_number',
         'loan_date',
         'type',
         'principal',
@@ -27,6 +28,7 @@ class Loan extends Model
         'interest_amount',
         'amount',
         'remaining',
+        'disbursement',
         'status'
     ];
 
@@ -63,17 +65,34 @@ class Loan extends Model
         });
     }
 
+    public static function getInterestPercent(string $type): int
+    {
+        return match ($type) {
+            'loan_overdue' => 10,
+            default => 5,
+        };
+    }
+
     protected static function booted()
     {
         static::saving(function ($loan) {
-            $loan->interest_percent = match ($loan->type) {
-                'loan_overdue' => 10,
-                default => 5,
-            };
+            $loan->interest_percent = self::getInterestPercent($loan->type);
 
             $loan->interest_amount = ($loan->principal * $loan->interest_percent) / 100;
             $loan->amount = $loan->principal + $loan->interest_amount;
             $loan->remaining = $loan->remaining ?? $loan->principal + $loan->interest_amount;
+
+            // ✅ hanya set jika create / null
+            if (is_null($loan->remaining)) {
+                $loan->remaining = $loan->amount;
+            }
+
+            // 🔥 AUTO STATUS (pakai amount logic lebih aman)
+            if ($loan->remaining <= 0) {
+                $loan->status = 'finish';
+            } else {
+                $loan->status = 'running';
+            }
         });
     }
 
@@ -94,5 +113,10 @@ class Loan extends Model
         $nextNumber = str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
 
         return "{$prefix}-{$date}-{$nextNumber}";
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
     }
 }
