@@ -109,11 +109,11 @@
 
                     <flux:table.cell>
                         <flux:button size="sm" variant="outline" icon="pencil-square"
-                            wire:click="edit('{{ $member->slug }}')">
+                            wire:click="edit('{{ $member->id }}')">
                             Edit
                         </flux:button>
                         <flux:button size="sm" variant="danger" icon="trash"
-                            wire:click="confirmDelete('{{ $member->slug }}')">
+                            wire:click="confirmDelete('{{ $member->id }}')">
                             Hapus
                         </flux:button>
                     </flux:table.cell>
@@ -134,6 +134,6 @@
 
     {{ $members->links() }}
 
-    @include('member.create-edit')
+    <livewire:member.form />
 
 </div>

@@ -22,7 +22,6 @@ document.addEventListener("livewire:init", () => {
         "confirm-delete",
         ({
             action,
-            slug,
             id,
             title = "Yakin ingin menghapus?",
             text = "",
@@ -39,8 +38,7 @@ document.addEventListener("livewire:init", () => {
             }).then((result) => {
                 if (result.isConfirmed) {
                     Livewire.dispatch(action, {
-                        slug,
-                        id,
+                        id
                     });
                 }
             });

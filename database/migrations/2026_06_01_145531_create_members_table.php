@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('npk')->unique();
             $table->string('name');
-            $table->string('slug')->unique();
             $table->string('email')->nullable()->unique();
             $table->string('phone')->nullable();
             $table->enum('gender', ['Male', 'Female'])->nullable();

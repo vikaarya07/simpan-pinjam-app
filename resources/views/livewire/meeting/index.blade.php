@@ -12,9 +12,13 @@
             </p>
         </div>
 
+        <flux:button variant="primary" icon="plus" wire:click="create">
+            Tambah Anggota
+        </flux:button>
+
     </div>
 
-    <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" placeholder="Cari NPK atau Nama ..." />
+    <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" placeholder="Cari Tempat atau Waktu ..." />
 
     <flux:table>
 
@@ -22,9 +26,14 @@
 
             <flux:table.column>No</flux:table.column>
 
-            <flux:table.column>Pertemuan</flux:table.column>
+            <flux:table.column>Tempat</flux:table.column>
 
-            <flux:table.column>Waktu</flux:table.column>
+            <flux:table.column class="cursor-pointer" wire:click="sortBy('meeting_date')">
+                <div class="flex items-center gap-1">
+                    Waktu
+                    @include('components.sort-icon', ['field' => 'meeting_date'])
+                </div>
+            </flux:table.column>
 
             <flux:table.column>Aksi</flux:table.column>
 
@@ -44,13 +53,17 @@
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        {{ $meeting->tanggal }}
+                        {{ $meeting->waktu }}
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        <flux:button size="sm" variant="outline" icon="eye"
-                            :href="route('payment.show', $meeting)" wire:navigate>
-                            Lihat
+                        <flux:button size="sm" variant="outline" icon="pencil-square"
+                            wire:click="edit('{{ $meeting->id }}')">
+                            Edit
+                        </flux:button>
+                        <flux:button size="sm" variant="danger" icon="trash"
+                            wire:click="confirmDelete('{{ $meeting->id }}')">
+                            Hapus
                         </flux:button>
                     </flux:table.cell>
 

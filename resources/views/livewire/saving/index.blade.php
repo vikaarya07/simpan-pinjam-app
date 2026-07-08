@@ -104,11 +104,11 @@
 
                     {{-- <flux:table.cell>
                         <flux:button size="sm" variant="outline" icon="pencil-square"
-                            wire:click="edit('{{ $saving->slug }}')">
+                            wire:click="edit('{{ $saving->id }}')">
                             Edit
                         </flux:button>
                         <flux:button size="sm" variant="danger" icon="trash"
-                            wire:click="confirmDelete('{{ $saving->slug }}')">
+                            wire:click="confirmDelete('{{ $saving->id }}')">
                             Hapus
                         </flux:button>
                     </flux:table.cell> --}}

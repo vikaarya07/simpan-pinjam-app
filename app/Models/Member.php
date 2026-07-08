@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Payment;
 use App\Traits\HasIndonesianDate;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,7 +16,6 @@ class Member extends Model
     protected $fillable = [
         'npk',
         'name',
-        'slug',
         'email',
         'phone',
         'gender',
@@ -32,6 +32,16 @@ class Member extends Model
     public function loans()
     {
         return $this->hasMany(Loan::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    protected function getDateColumn(): string
+    {
+        return 'date_join';
     }
 
     public function scopeSearch($query, $search)
@@ -63,10 +73,5 @@ class Member extends Model
         return $this->date_birth
             ? Carbon::parse($this->date_birth)->age
             : null;
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
     }
 }

@@ -17,11 +17,10 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
             $table->string('loan_number')->unique();
-            $table->foreignId('previous_loan_number')
+            $table->foreignId('previous_loan_id')
                 ->nullable()
                 ->constrained('loans')
                 ->nullOnDelete();
-            $table->string('slug')->unique();
             $table->date('loan_date');
             $table->enum('type', [
                 'loan',

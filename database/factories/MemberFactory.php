@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Member;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Member>
@@ -26,7 +25,6 @@ class MemberFactory extends Factory
         return [
             'npk' => 'S' . fake()->unique()->numerify('###'),
             'name' => $name,
-            'slug' => Str::slug($name),
             'email' => fake('id_ID')->unique()->safeEmail(),
             'phone' => '08' . fake()->numerify('##########'),
             'gender' => $gender,

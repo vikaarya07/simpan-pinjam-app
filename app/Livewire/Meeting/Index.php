@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Livewire\Loan;
+namespace App\Livewire\Meeting;
 
 use App\Livewire\Concerns\WithSorting;
-use App\Models\Loan;
+use App\Models\Meeting;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -12,8 +12,6 @@ class Index extends Component
 {
     use WithPagination;
     use WithSorting;
-
-    protected string $paginationTheme = 'tailwind';
 
     public string $search = '';
 
@@ -24,50 +22,51 @@ class Index extends Component
 
     public function create()
     {
-        $this->dispatch('open-loan-form-create');
+        $this->dispatch('open-meeting-form-create');
     }
 
     public function edit(Int $id)
     {
-        $this->dispatch('open-loan-form-edit', id: $id);
+        $this->dispatch('open-meeting-form-edit', id: $id);
     }
 
     public function confirmDelete(Int $id): void
     {
-        $loan = Loan::findOrFail($id);
+        $meeting = Meeting::findOrFail($id);
 
         $this->dispatch(
             'confirm-delete',
-            action: 'delete-loan',
-            id: $loan->id,
-            text: "{$loan->loan_number} - {$loan->member->name}"
+            action: 'delete-meeting',
+            id: $meeting->id,
+            text: "{$meeting->place}",
         );
     }
 
-    #[On('delete-loan')]
-    public function delete(Int $id): void
+    #[On('delete-meeting')]
+    public function delete(Int $id)
     {
-        Loan::findOrFail($id)->delete();
+        meeting::findOrFail($id)->delete();
 
         $this->dispatch(
             'swal',
             icon: 'success',
             title: 'Berhasil',
-            text: 'Pinjaman berhasil dihapus.'
+            text: 'Meeting berhasil dihapus.',
         );
     }
 
-    #[On('loan-saved')]
-    public function refreshTable(): void
+    #[On('meeting-saved')]
+    public function refreshmeetings(): void
     {
-        // Livewire akan render ulang otomatis
+        $this->resetPage();
     }
 
     public function render()
     {
-        return view('livewire.loan.index', [
-            'loans' => Loan::search($this->search)
+        return view('livewire.meeting.index', [
+            'meetings' => Meeting::search($this->search)
                 ->orderBy($this->sortField, $this->sortDirection)
+                ->orderByDesc('meeting_date')
                 ->paginate(10),
         ]);
     }

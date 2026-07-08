@@ -21,6 +21,15 @@
         </flux:sidebar.nav>
 
         <flux:sidebar.nav>
+            <flux:sidebar.group :heading="__('Meeting')" class="grid">
+                <flux:sidebar.item icon="users" :href="route('meeting.index')"
+                    :current="request()->routeIs('meeting.index')" wire:navigate>
+                    {{ __('Pertemuan') }}
+                </flux:sidebar.item>
+            </flux:sidebar.group>
+        </flux:sidebar.nav>
+
+        <flux:sidebar.nav>
             <flux:sidebar.group :heading="__('Data Master')" class="grid">
                 <flux:sidebar.item icon="users" :href="route('member.index')"
                     :current="request()->routeIs('member.index')" wire:navigate>
@@ -43,8 +52,8 @@
                     :current="request()->routeIs('loan.index')" wire:navigate>
                     {{ __('Pinjaman') }}
                 </flux:sidebar.item>
-                <flux:sidebar.item icon="credit-card" :href="route('dashboard')"
-                    :current="request()->routeIs('dashboard')" wire:navigate>
+                <flux:sidebar.item icon="credit-card" :href="route('payment.index')"
+                    :current="request()->routeIs('payment.index')" wire:navigate>
                     {{ __('Angsuran') }}
                 </flux:sidebar.item>
             </flux:sidebar.group>

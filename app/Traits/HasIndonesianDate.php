@@ -11,17 +11,37 @@ trait HasIndonesianDate
         Carbon::setLocale('id');
     }
 
+    protected function getDateColumn(): string
+    {
+        return property_exists($this, 'indonesianDateColumn')
+            ? $this->indonesianDateColumn
+            : 'created_at';
+    }
+
     public function getWaktuAttribute()
     {
-        return $this->created_at
-            ? $this->created_at->translatedFormat('d F Y H:i')
+        $column = $this->getDateColumn();
+
+        return $this->{$column}
+            ? $this->{$column}->translatedFormat('l, d F Y')
+            : null;
+    }
+
+    public function getTanggalJamAttribute()
+    {
+        $column = $this->getDateColumn();
+
+        return $this->{$column}
+            ? $this->{$column}->translatedFormat('d F Y | H:i')
             : null;
     }
 
     public function getTanggalAttribute()
     {
-        return $this->created_at
-            ? $this->created_at->translatedFormat('d F Y')
+        $column = $this->getDateColumn();
+
+        return $this->{$column}
+            ? $this->{$column}->translatedFormat('d F Y')
             : null;
     }
 }

@@ -12,7 +12,7 @@
             </div>
             <div class="grid grid-cols-2 gap-4">
 
-                <flux:select label="Anggota" wire:model.live="member_id">
+                <flux:select label="Anggota" wire:model.live="member_id" :disabled="$isEdit">
                     <option value="">Pilih Anggota</option>
                     @foreach ($members as $member)
                         <option value="{{ $member->id }}">

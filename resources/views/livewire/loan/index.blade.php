@@ -136,11 +136,11 @@
 
                     <flux:table.cell>
                         <flux:button size="sm" variant="outline" icon="pencil-square"
-                            wire:click="edit('{{ $loan->slug }}')">
+                            wire:click="edit('{{ $loan->id }}')">
                             Edit
                         </flux:button>
                         <flux:button size="sm" variant="danger" icon="trash"
-                            wire:click="confirmDelete('{{ $loan->slug }}')">
+                            wire:click="confirmDelete('{{ $loan->id }}')">
                             Hapus
                         </flux:button>
                     </flux:table.cell>
@@ -161,6 +161,6 @@
 
     {{ $loans->links() }}
 
-    @include('loan.create-edit')
+    <livewire:loan.form />
 
 </div>
