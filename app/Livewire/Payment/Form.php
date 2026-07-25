@@ -22,8 +22,9 @@ class Form extends Component
     public int $meeting_id = 1;
 
     public float $amount = 0;
+    public string $amountFormatted = '';
     public string $payment_date = '';
-    public string $method = 'cash';
+    public ?string $method = null;
     public ?string $note = null;
 
     protected function rules(): array
@@ -33,7 +34,11 @@ class Form extends Component
             'meeting_id' => ['required', 'exists:meetings,id'],
             'amount' => ['required', 'numeric', 'max:' . $this->loan->remaining,],
             'payment_date' => ['required', 'date'],
-            'method' => ['required', Rule::in(['cash', 'transfer', 'qris'])],
+            'method' => [
+                Rule::requiredIf($this->amount > 0),
+                'nullable',
+                Rule::in(['cash', 'transfer', 'qris']),
+            ],
             'note' => ['nullable', 'string'],
         ];
     }
@@ -82,6 +87,7 @@ class Form extends Component
         $this->meeting_id = $payment->meeting_id;
 
         $this->amount = $payment->amount;
+        $this->amountFormatted = number_format($payment->amount, 0, ',', '.');
         $this->payment_date = $payment->payment_date->format('Y-m-d');
         $this->method = $payment->method;
         $this->note = $payment->note;
@@ -91,6 +97,16 @@ class Form extends Component
 
     public function save(): void
     {
+        if ($this->amount > $this->loan->remaining) {
+
+            $this->addError(
+                'amountFormatted',
+                'Nominal pembayaran tidak boleh melebihi sisa hutang (' . idr($this->loan->remaining) . ').'
+            );
+
+            return;
+        }
+        
         $this->validate();
 
         $exists = Payment::query()
@@ -138,7 +154,7 @@ class Form extends Component
             'payment_count' => $paymentCount,
             'amount'        => $this->amount,
             'payment_date'  => $this->payment_date,
-            'method'        => $this->method,
+            'method'        => $this->amount > 0 ? $this->method : null,
             'note'          => $this->note,
         ];
 
@@ -168,6 +184,15 @@ class Form extends Component
         $this->resetForm();
     }
 
+    public function updatedAmountFormatted($value)
+    {
+        $number = preg_replace('/[^0-9]/', '', $value);
+
+        $this->amount = $number === '' ? 0 : (float) $number;
+
+        $this->amountFormatted = number_format($this->amount, 0, ',', '.');
+    }
+
     protected function resetForm(): void
     {
         $this->reset([
@@ -182,11 +207,12 @@ class Form extends Component
             'note',
         ]);
 
-        $this->method = 'cash';
+        $this->method = null;
 
         $this->payment_date = now()->toDateString();
 
         $this->amount = 0;
+        $this->amountFormatted = '0';
 
         $this->isEdit = false;
 

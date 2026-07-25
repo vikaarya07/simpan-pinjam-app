@@ -85,7 +85,7 @@
                                 'qris' => 'purple',
                                 default => 'gray',
                             } }}">
-                            {{ ucfirst($loan->current_payment?->method ?? 'Belum Bayar') }}
+                            {{ $loan->current_payment?->method ? ucfirst($loan->current_payment->method) : '-' }}
                         </flux:badge>
                     </flux:table.cell>
 
@@ -94,8 +94,22 @@
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        <flux:badge color="{{ $loan->status === 'running' ? 'green' : 'gray' }}">
-                            {{ ucfirst($loan->status) }}
+                        @php
+                            $payment = $loan->current_payment;
+
+                            if (!$payment) {
+                                $status = 'Unpaid';
+                                $color = 'red';
+                            } elseif ($payment->status === 'skip') {
+                                $status = 'Skip';
+                                $color = 'yellow';
+                            } else {
+                                $status = 'Clear';
+                                $color = 'green';
+                            }
+                        @endphp
+                        <flux:badge color="{{ $color }}">
+                            {{ $status }}
                         </flux:badge>
                     </flux:table.cell>
 

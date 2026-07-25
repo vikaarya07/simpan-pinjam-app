@@ -20,6 +20,7 @@ class Payment extends Model
         'payment_date',
         'payment_count',
         'method',
+        'status',
         'note',
     ];
 
@@ -52,6 +53,13 @@ class Payment extends Model
     protected function getDateColumn(): string
     {
         return 'payment_date';
+    }
+
+    public function getPaymentStatusAttribute(): string
+    {
+        return $this->payment_count
+            ? 'Clear'
+            : 'Unpaid';
     }
 
     /*
@@ -89,6 +97,18 @@ class Payment extends Model
 
         static::deleted(function ($payment) {
             $payment->loan->recalculate();
+        });
+
+        static::creating(function (Payment $payment) {
+            $payment->status = $payment->amount > 0
+                ? 'clear'
+                : 'skip';
+        });
+
+        static::updating(function (Payment $payment) {
+            $payment->status = $payment->amount > 0
+                ? 'clear'
+                : 'skip';
         });
     }
 }

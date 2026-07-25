@@ -29,9 +29,9 @@
                 {{-- Nama Nasabah --}}
                 <flux:input label="Nasabah" :value="$loan?->member?->name" readonly />
 
-                {{-- Pembayaran Ke --}} 
-                <flux:input label="Pembayaran Ke" :value="$isEdit ? $payment?->payment_count : $loan?->next_payment_count"
-                    readonly />
+                {{-- Pembayaran Ke --}}
+                <flux:input label="Pembayaran Ke"
+                    :value="$isEdit ? $payment?->payment_count : $loan?->next_payment_count" readonly />
 
                 {{-- Total Hutang --}}
                 <flux:input label="Total Hutang" :value="$loan ? idr($loan->amount) : ''" readonly />
@@ -40,18 +40,23 @@
                 <flux:input label="Sisa Hutang" :value="$loan ? idr($loan->remaining) : ''" readonly />
 
                 {{-- Jumlah Bayar --}}
-                <flux:input label="Jumlah Bayar" type="number" wire:model.live="amount" />
+                <flux:input label="Jumlah Bayar" wire:model.live="amountFormatted" />
+                @error('amount')
+                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                @enderror
+
                 {{-- Tanggal Bayar --}}
                 <flux:input label="Tanggal Pembayaran" type="date" wire:model="payment_date" />
 
                 {{-- Metode --}}
-                <flux:select label="Metode Pembayaran" wire:model="method">
-
-                    <option value="cash">Cash</option>
-                    <option value="transfer">Transfer</option>
-                    <option value="qris">QRIS</option>
-
-                </flux:select>
+                @if ($amount > 0)
+                    <flux:select label="Metode Pembayaran" wire:model="method">
+                        <option value="">- Pilih Metode -</option>
+                        <option value="cash">Cash</option>
+                        <option value="transfer">Transfer</option>
+                        <option value="qris">QRIS</option>
+                    </flux:select>
+                @endif
 
                 {{-- Catatan --}}
                 <flux:input label="Catatan" wire:model="note" placeholder="Opsional" />

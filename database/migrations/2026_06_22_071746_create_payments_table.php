@@ -23,7 +23,9 @@ return new class extends Migration
             $table->date('payment_date');
             $table->unsignedTinyInteger('payment_count');
             $table->enum('method', ['cash', 'transfer', 'qris'])
-                ->default('cash');
+                ->nullable();
+            $table->enum('status', ['clear', 'skip', 'unpaid'])
+                ->default('unpaid');
             $table->text('note')->nullable();
             $table->unique(['loan_id', 'payment_count']);
             $table->unique(['loan_id', 'meeting_id']);

@@ -13,22 +13,21 @@ class Detail extends Component
     {
         $this->payment = $payment->load([
             'loan.member',
-            'loan',
+            'loan.payments',
         ]);
     }
 
     public function getTotalPaidProperty(): float
     {
-        return $this->payment->loan
+        return (float) $this->payment->loan
             ->payments()
+            ->where('payment_count', '<=', $this->payment->payment_count)
             ->sum('amount');
     }
 
     public function getRemainingProperty(): float
     {
-        $loan = $this->payment->loan;
-
-        return max(0, $loan->amount - $this->totalPaid);
+        return (float) $this->payment->loan->remaining;
     }
 
     public function render()

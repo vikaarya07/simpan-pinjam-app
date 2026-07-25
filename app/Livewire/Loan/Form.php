@@ -24,6 +24,7 @@ class Form extends Component
     public string $type = 'loan';
 
     public float $principal = 0;
+    public string $principalFormatted = '';
     public float $interest_percent = 5;
     public float $interest_amount = 0;
     public float $amount = 0;
@@ -84,6 +85,7 @@ class Form extends Component
         $this->type = $loan->type;
 
         $this->principal = (float) $loan->principal;
+        $this->principalFormatted = number_format($loan->principal, 0, ',', '.');
         $this->interest_percent = (float) $loan->interest_percent;
         $this->interest_amount = (float) $loan->interest_amount;
         $this->amount = (float) $loan->amount;
@@ -99,6 +101,19 @@ class Form extends Component
 
     public function save(): void
     {
+        if (
+            $this->type === 'loan'
+            && $this->previousLoan
+            && $this->principal < $this->previousLoan->remaining
+        ) {
+            $this->addError(
+                'principalFormatted',
+                'Nominal pinjaman harus lebih besar dari sisa hutang (' . idr($this->previousLoan->remaining) . ').'
+            );
+
+            return;
+        }
+
         $this->validate();
 
         $data = [
@@ -236,6 +251,17 @@ class Form extends Component
         $this->resetForm();
     }
 
+    public function updatedPrincipalFormatted($value): void
+    {
+        $number = preg_replace('/[^0-9]/', '', $value);
+
+        $this->principal = (float) $number;
+
+        $this->principalFormatted = idr($this->principal, false);
+
+        $this->calculateLoan();
+    }
+
     public function resetForm(): void
     {
         $this->reset([
@@ -249,6 +275,7 @@ class Form extends Component
         $this->type = 'loan';
 
         $this->principal = 0;
+        $this->principalFormatted = '0';
         $this->interest_percent = 5;
         $this->interest_amount = 0;
         $this->amount = 0;

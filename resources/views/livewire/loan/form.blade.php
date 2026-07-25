@@ -31,14 +31,14 @@
 
                 <flux:input type="date" label="Tanggal Pinjaman" wire:model="loan_date" />
 
-                <flux:input label="Pokok Pinjaman" wire:model.live="principal" />
+                <flux:input label="Pokok Pinjaman" wire:model.live="principalFormatted" />
 
                 <flux:input label="Jasa" :value="$interest_percent.
                 '%'" readonly />
 
-                <flux:input label="Nominal Jasa" wire:model="interest_amount" readonly />
+                <flux:input label="Nominal Jasa" :value="idr($interest_amount)" readonly />
 
-                <flux:input label="Total Pinjaman" wire:model="amount" readonly />
+                <flux:input label="Total Pinjaman" :value="idr($amount)" readonly />
             </div>
             @if ($previousLoan)
                 <flux:card>

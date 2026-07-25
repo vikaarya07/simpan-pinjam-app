@@ -8,5 +8,5 @@ function idr($value, $prefix = true)
 
     $formatted = number_format((float) $value, 0, ',', '.');
 
-    return $prefix ? "Rp {$formatted}" : $formatted;
+    return $prefix ? $formatted : $formatted;
 }
