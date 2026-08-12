@@ -129,8 +129,19 @@
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        <flux:badge color="{{ $loan->status === 'finish' ? 'green' : 'blue' }}">
-                            {{ $loan->status === 'finish' ? 'Lunas' : 'Berjalan' }}
+                        <flux:badge
+                            :color="match ($loan->status) {
+                                        'finish' => 'green',
+                                        'overdue' => 'red',
+                                        'running' => 'blue',
+                                        default => 'zinc',
+                                    }">
+                            {{ match ($loan->status) {
+                                'finish' => 'Lunas',
+                                'overdue' => 'Overdue',
+                                'running' => 'Berjalan',
+                                default => ucfirst($loan->status),
+                            } }}
                         </flux:badge>
                     </flux:table.cell>
 

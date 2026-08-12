@@ -33,7 +33,8 @@ return new class extends Migration
             $table->decimal('remaining', 15, 0)->default(0);
             $table->enum('status', [
                 'running',
-                'finish'
+                'finish',
+                'overdue'
             ])->default('running');
             $table->bigInteger('disbursement')->default(0);
             $table->timestamps();

@@ -72,6 +72,14 @@ class Loan extends Model
         );
     }
 
+    public function overdueLoan()
+    {
+        return $this->hasOne(
+            self::class,
+            'previous_loan_id'
+        );
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Search Scope
@@ -164,7 +172,7 @@ class Loan extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | Model Events
+    | Model Events / Booted
     |--------------------------------------------------------------------------
     */
 
@@ -189,13 +197,78 @@ class Loan extends Model
             // Status otomatis
             $loan->status = $loan->remaining <= 0 ? 'finish' : 'running';
 
-            // Disbursement (uang yang benar-benar dicairkan)
-            if ($loan->previousLoan) {
+            /*
+             * Disbursement
+             *
+             * loan_overdue tidak mendapatkan
+             * pencairan uang baru.
+             */
+            if ($loan->type === 'loan_overdue') {
+                $loan->disbursement = 0;
+            } elseif ($loan->previousLoan) {
+                /*
+                 * Loan baru / top-up
+                 *
+                 * Principal baru
+                 * dikurangi sisa loan sebelumnya.
+                 */
                 $loan->disbursement = max(0, $loan->principal - $loan->previousLoan->remaining);
             } else {
                 $loan->disbursement = $loan->principal;
             }
         });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Create Overdue Loan
+    |--------------------------------------------------------------------------
+    */
+    public function createOverdueLoanIfNeeded(): ?Loan
+    {
+        $this->refresh();
+
+        // Hanya loan normal
+        if ($this->type !== 'loan') {
+            return null;
+        }
+
+        // Harus sudah pembayaran ke-6
+        $sixthPayment = $this->payments()
+            ->where('payment_count', 6)
+            ->where('amount', '>', 0)
+            ->first();
+
+        if (! $sixthPayment) {
+            return null;
+        }
+
+        // Sudah lunas
+        if ($this->remaining <= 0) {
+            return null;
+        }
+
+        // Jangan buat dua kali
+        if ($this->overdueLoan()->exists()) {
+            return null;
+        }
+
+        // Buat loan overdue
+        $overdueLoan = self::create([
+            'member_id' => $this->member_id,
+            'previous_loan_id' => $this->id,
+            'loan_number' => self::generateLoanNumber(),
+            'loan_date' => now(),
+            'type' => 'loan_overdue',
+            'principal' => $this->remaining,
+        ]);
+
+        // Tandai loan lama sebagai overdue
+        $this->updateQuietly([
+            'status' => 'overdue',
+        ]);
+
+        return $overdueLoan;
     }
 
     /*
@@ -334,16 +407,19 @@ class Loan extends Model
      */
     public function recalculate(): void
     {
-        $remaining = max(
+        $totalPaid = $this->payments()
+            ->where('amount', '>', 0)
+            ->sum('amount');
+
+        $this->remaining = max(
             0,
-            $this->amount - $this->payments()->sum('amount')
+            $this->amount - $totalPaid
         );
 
-        $this->update([
-            'remaining' => $remaining,
-            'status'    => $remaining <= 0
-                ? 'finish'
-                : 'running',
-        ]);
+        $this->status = $this->remaining <= 0
+            ? 'finish'
+            : 'running';
+
+        $this->saveQuietly();
     }
 }

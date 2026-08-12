@@ -87,18 +87,7 @@ class Payment extends Model
 
     protected static function booted(): void
     {
-        static::created(function ($payment) {
-            $payment->loan->recalculate();
-        });
-
-        static::updated(function ($payment) {
-            $payment->loan->recalculate();
-        });
-
-        static::deleted(function ($payment) {
-            $payment->loan->recalculate();
-        });
-
+        // Status Payment
         static::creating(function (Payment $payment) {
             $payment->status = $payment->amount > 0
                 ? 'clear'
@@ -109,6 +98,23 @@ class Payment extends Model
             $payment->status = $payment->amount > 0
                 ? 'clear'
                 : 'skip';
+        });
+
+        // Setelah Payment dibuat
+        static::created(function (Payment $payment) {
+            $payment->loan?->recalculate();
+            $payment->loan?->createOverdueLoanIfNeeded();
+        });
+
+        // Setelah Payment diubah
+        static::updated(function (Payment $payment) {
+            $payment->loan?->recalculate();
+            $payment->loan?->createOverdueLoanIfNeeded();
+        });
+
+        // Setelah Payment dihapus
+        static::deleted(function (Payment $payment) {
+            $payment->loan?->recalculate();
         });
     }
 }

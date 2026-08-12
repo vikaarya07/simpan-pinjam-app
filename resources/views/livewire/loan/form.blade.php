@@ -12,7 +12,8 @@
             </div>
             <div class="grid grid-cols-2 gap-4">
 
-                <flux:select label="Anggota" wire:model.live="member_id" :disabled="$isEdit">
+                <flux:select label="Anggota" wire:model.live="member_id"
+                    class="{{ $isEdit ? 'pointer-events-none bg-zinc-100 dark:bg-zinc-800' : '' }}">
                     <option value="">Pilih Anggota</option>
                     @foreach ($members as $member)
                         <option value="{{ $member->id }}">
@@ -24,7 +25,6 @@
                 <flux:input label="Nomor Pinjaman" wire:model="loan_number" readonly />
 
                 <flux:select label="Jenis Pinjaman" wire:model.live="type">
-                    <option value="" disabled>-- Pilih --</option>
                     <option value="loan">Pinjaman</option>
                     <option value="loan_overdue">Telat</option>
                 </flux:select>
