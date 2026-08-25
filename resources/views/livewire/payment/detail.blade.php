@@ -13,7 +13,7 @@
             </div>
 
             <div>
-                <div class="text-sm text-gray-500 font-bold">Tanggal</div>
+                <div class="text-sm text-gray-500 font-bold">Waktu</div>
                 <div>{{ $payment->waktu }}</div>
             </div>
 
@@ -30,7 +30,7 @@
             </div>
 
             <div>
-                <div class="text-sm text-gray-500 font-bold">Pokok</div>
+                <div class="text-sm text-gray-500 font-bold">Pokok Pinjaman</div>
                 <div>{{ idr($payment->loan->principal) }}</div>
             </div>
 
@@ -58,6 +58,11 @@
                 <div class="font-bold text-red-600">
                     {{ idr($this->remaining) }}
                 </div>
+            </div>
+
+            <div>
+                <div class="text-sm text-gray-500 font-bold">Catatan</div>
+                <div>{{ $payment?->note ?? '-' }}</div>
             </div>
 
         </div>

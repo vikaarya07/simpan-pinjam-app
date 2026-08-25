@@ -4,6 +4,8 @@ namespace App\Livewire\Loan;
 
 use App\Livewire\Concerns\WithSorting;
 use App\Models\Loan;
+use App\Services\SavingService;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -45,15 +47,42 @@ class Index extends Component
     }
 
     #[On('delete-loan')]
-    public function delete(Int $id): void
+    public function delete(int $id): void
     {
-        Loan::findOrFail($id)->delete();
+        DB::transaction(function () use ($id) {
+
+            $loan = Loan::with('payments')->findOrFail($id);
+
+            // Ambil tanggal Payment yang terdampak
+            $paymentDates = $loan->payments
+                ->pluck('payment_date')
+                ->map(fn($date) => $date->format('Y-m-d'))
+                ->unique();
+
+            // Hapus Payment
+            $loan->payments()->delete();
+
+            // Hapus/rebuild Saving Loan
+            app(SavingService::class)
+                ->removeLoan($loan);
+
+            // Sinkronkan Installment pada tanggal Payment
+            foreach ($paymentDates as $date) {
+                app(SavingService::class)
+                    ->syncInstallmentByDate($date);
+            }
+
+            // Hapus Loan
+            $loan->delete();
+        });
+
+        $this->dispatch('loan-saved');
 
         $this->dispatch(
             'swal',
             icon: 'success',
             title: 'Berhasil',
-            text: 'Pinjaman berhasil dihapus.'
+            text: 'Pinjaman, pembayaran, dan transaksi simpanan berhasil dihapus.'
         );
     }
 
@@ -67,6 +96,7 @@ class Index extends Component
     {
         return view('livewire.loan.index', [
             'loans' => Loan::search($this->search)
+                ->orderByDesc('loan_date')
                 ->orderBy($this->sortField, $this->sortDirection)
                 ->paginate(10),
         ]);

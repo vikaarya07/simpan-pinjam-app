@@ -4,11 +4,11 @@
 
         <div>
             <h1 class="text-2xl font-bold">
-                Data Anggota
+                Data Rapat
             </h1>
 
             <p class="text-zinc-500">
-                Daftar seluruh anggota SATYA MUDA GETAS
+                Daftar seluruh rapat SATYA MUDA GETAS
             </p>
         </div>
 
@@ -57,13 +57,11 @@
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        <flux:button size="sm" variant="outline" icon="pencil-square"
+                        <flux:button class="flex gap-0!" size="sm" variant="outline" icon="pencil-square"
                             wire:click="edit('{{ $meeting->id }}')">
-                            Edit
                         </flux:button>
-                        <flux:button size="sm" variant="danger" icon="trash"
+                        <flux:button class="flex gap-0!" size="sm" variant="danger" icon="trash"
                             wire:click="confirmDelete('{{ $meeting->id }}')">
-                            Hapus
                         </flux:button>
                     </flux:table.cell>
 

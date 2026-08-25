@@ -29,6 +29,9 @@ class Member extends Model
         'date_join' => 'date',
     ];
 
+    public const GENDERS = ['Male', 'Female'];
+
+    // Relationships
     public function loans()
     {
         return $this->hasMany(Loan::class);
@@ -44,6 +47,7 @@ class Member extends Model
         return 'date_join';
     }
 
+    // Search Scope
     public function scopeSearch($query, $search)
     {
         $query->when($search, function ($query) use ($search) {
@@ -53,6 +57,11 @@ class Member extends Model
                     ->orWhere('phone', 'like', "%{$search}%");
             });
         });
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'Active');
     }
 
     public static function generateNpk(): string
@@ -66,6 +75,44 @@ class Member extends Model
         $lastNumber = (int) substr($lastMember->npk, 1);
 
         return 'S' . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+    }
+
+    // Accessors
+
+    public function getGenderLabelAttribute(): string
+    {
+        return match ($this->gender) {
+            'Male' => '♂ Laki-laki',
+            'Female' => '♀ Perempuan',
+            default => $this->gender,
+        };
+    }
+
+    public function getGenderColorAttribute(): string
+    {
+        return match ($this->gender) {
+            'Male' => 'blue',
+            'Female' => 'red',
+            default => 'zinc',
+        };
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return match ($this->status) {
+            'Active' => 'Aktif',
+            'Inactive' => 'Tidak Aktif',
+            default => $this->status,
+        };
+    }
+
+    public function getStatusColorAttribute(): string
+    {
+        return match ($this->status) {
+            'Active' => 'green',
+            'Inactive' => 'zinc',
+            default => 'zinc',
+        };
     }
 
     public function getAgeAttribute()

@@ -4,16 +4,16 @@
 
         <div>
             <h1 class="text-2xl font-bold">
-                Simpanan
+                Pinjaman
             </h1>
 
             <p class="text-zinc-500">
-                Simpanan SATYA MUDA GETAS
+                Daftar Pinjaman SATYA MUDA GETAS
             </p>
         </div>
 
         <flux:button variant="primary" icon="plus" wire:click="create">
-            Tambah Anggota
+            Buat Pinjaman Baru
         </flux:button>
 
     </div>
@@ -99,7 +99,7 @@
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        {{ $loan->tanggal }}
+                        {{ $loan->waktu }}
                     </flux:table.cell>
 
                     <flux:table.cell>
@@ -108,7 +108,7 @@
                         </flux:badge>
                     </flux:table.cell>
 
-                    <flux:table.cell class="text-right">
+                    <flux:table.cell>
                         {{ idr($loan->principal) }}
                     </flux:table.cell>
 
@@ -116,15 +116,15 @@
                         {{ $loan->interest_percent . '%' }}
                     </flux:table.cell>
 
-                    <flux:table.cell class="text-right">
+                    <flux:table.cell>
                         {{ idr($loan->interest_amount) }}
                     </flux:table.cell>
 
-                    <flux:table.cell class="text-right">
+                    <flux:table.cell>
                         {{ idr($loan->amount) }}
                     </flux:table.cell>
 
-                    <flux:table.cell class="text-right">
+                    <flux:table.cell>
                         {{ idr($loan->remaining) }}
                     </flux:table.cell>
 
@@ -146,13 +146,11 @@
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        <flux:button size="sm" variant="outline" icon="pencil-square"
+                        <flux:button class="flex gap-0!" size="sm" variant="outline" icon="pencil-square"
                             wire:click="edit('{{ $loan->id }}')">
-                            Edit
                         </flux:button>
-                        <flux:button size="sm" variant="danger" icon="trash"
+                        <flux:button class="flex gap-0!" size="sm" variant="danger" icon="trash"
                             wire:click="confirmDelete('{{ $loan->id }}')">
-                            Hapus
                         </flux:button>
                     </flux:table.cell>
 

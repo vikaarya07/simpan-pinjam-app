@@ -28,12 +28,7 @@ class Payment extends Model
 
     protected $with = ['loan.member', 'meeting'];
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relationships
-    |--------------------------------------------------------------------------
-    */
-
+    // Relationships
     public function loan()
     {
         return $this->belongsTo(Loan::class);
@@ -44,12 +39,7 @@ class Payment extends Model
         return $this->belongsTo(Meeting::class);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Date Helper
-    |--------------------------------------------------------------------------
-    */
-
+    // Date Helper
     protected function getDateColumn(): string
     {
         return 'payment_date';
@@ -62,12 +52,7 @@ class Payment extends Model
             : 'Unpaid';
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Search
-    |--------------------------------------------------------------------------
-    */
-
+    // Search Scope
     public function scopeSearch(Builder $query, ?string $search): Builder
     {
         return $query->when($search, function (Builder $query) use ($search) {
@@ -79,12 +64,7 @@ class Payment extends Model
         });
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Model Events
-    |--------------------------------------------------------------------------
-    */
-
+    // Model Events
     protected static function booted(): void
     {
         // Status Payment

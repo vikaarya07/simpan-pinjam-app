@@ -5,6 +5,8 @@ namespace App\Livewire\Payment;
 use App\Models\Loan;
 use App\Models\Meeting;
 use App\Models\Payment;
+use App\Services\SavingService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -97,18 +99,27 @@ class Form extends Component
 
     public function save(): void
     {
-        if ($this->amount > $this->loan->remaining) {
+        // Validasi nominal
+        $maxPayment = $this->loan->remaining;
 
+        if ($this->isEdit && $this->payment) {
+            $maxPayment += (float) $this->payment->amount;
+        }
+
+        if ($this->amount > $maxPayment) {
             $this->addError(
                 'amountFormatted',
-                'Nominal pembayaran tidak boleh melebihi sisa hutang (' . idr($this->loan->remaining) . ').'
+                'Nominal pembayaran tidak boleh melebihi sisa hutang (' .
+                    idr($maxPayment) .
+                    ').'
             );
 
             return;
         }
-        
+
         $this->validate();
 
+        // Cek pembayaran pada meeting yang sama
         $exists = Payment::query()
             ->where('loan_id', $this->loan_id)
             ->where('meeting_id', $this->meeting_id)
@@ -119,7 +130,6 @@ class Form extends Component
             ->exists();
 
         if ($exists) {
-
             $this->addError(
                 'meeting_id',
                 'Nasabah sudah melakukan pembayaran pada pertemuan ini.'
@@ -128,6 +138,7 @@ class Form extends Component
             return;
         }
 
+        // Payment Count
         if ($this->isEdit) {
 
             $paymentCount = $this->payment->payment_count;
@@ -136,7 +147,6 @@ class Form extends Component
             $paymentCount = $this->loan->next_payment_count;
 
             if ($paymentCount > 6) {
-
                 $this->dispatch(
                     'swal',
                     icon: 'error',
@@ -148,22 +158,62 @@ class Form extends Component
             }
         }
 
+        // Data Payment
         $data = [
             'loan_id'       => $this->loan_id,
             'meeting_id'    => $this->meeting_id,
             'payment_count' => $paymentCount,
             'amount'        => $this->amount,
             'payment_date'  => $this->payment_date,
-            'method'        => $this->amount > 0 ? $this->method : null,
-            'note'          => $this->note,
+
+            'method' => $this->amount > 0
+                ? $this->method
+                : null,
+
+            'status' => $this->amount > 0
+                ? 'clear'
+                : 'skip',
+
+            'note' => $this->note,
         ];
 
-        if ($this->isEdit) {
-            $this->payment->update($data);
-        } else {
-            Payment::create($data);
-        }
+        // CREATE / EDIT
+        DB::transaction(function () use ($data) {
 
+            if ($this->isEdit) {
+
+                // Simpan data Payment lama
+                $oldPayment = $this->payment->replicate();
+
+                // Update Payment
+                $this->payment->update($data);
+
+                // Ambil Payment terbaru
+                $payment = $this->payment->fresh();
+
+                // Update Saving
+                app(SavingService::class)->updateInstallment(
+                    oldPayment: $oldPayment,
+                    payment: $payment,
+                );
+
+                // Buat Loan Overdue jika memenuhi syarat
+                $payment->loan->createOverdueLoanIfNeeded();
+            } else {
+
+                // Create Payment
+                $payment = Payment::create($data);
+
+                // Create / Update Saving
+                app(SavingService::class)
+                    ->recordInstallment($payment);
+
+                // Buat Loan Overdue jika memenuhi syarat
+                $payment->loan->createOverdueLoanIfNeeded();
+            }
+        });
+
+        // Success
         $this->dispatch('payment-saved');
 
         $this->dispatch(

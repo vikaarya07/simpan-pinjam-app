@@ -18,6 +18,15 @@ trait HasIndonesianDate
             : 'created_at';
     }
 
+    public function getWaktuLengkapAttribute()
+    {
+        $column = $this->getDateColumn();
+
+        return $this->{$column}
+            ? $this->{$column}->translatedFormat('l, d F Y | H:i')
+            : null;
+    }
+
     public function getWaktuAttribute()
     {
         $column = $this->getDateColumn();

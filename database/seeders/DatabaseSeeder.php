@@ -2,12 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Loan;
 use App\Models\Meeting;
 use App\Models\Member;
-use App\Models\Saving;
 use App\Models\User;
-use Database\Seeders\PaymentSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -26,19 +23,51 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('password'),
         ]);
 
-        // Meeting::factory()->count(3)->create();
+        Meeting::create([
+            'meeting_date' => '2026-07-04',
+            'place' => 'Room 1',
+        ]);
+        Meeting::create([
+            'meeting_date' => '2026-07-11',
+            'place' => 'Room 2',
+        ]);
+        Meeting::create([
+            'meeting_date' => '2026-07-18',
+            'place' => 'Room 3',
+        ]);
+        Meeting::create([
+            'meeting_date' => '2026-07-25',
+            'place' => 'Room 4',
+        ]);
+        Meeting::create([
+            'meeting_date' => '2026-08-01',
+            'place' => 'Room 5',
+        ]);
+        Meeting::create([
+            'meeting_date' => '2026-08-08',
+            'place' => 'Room 6',
+        ]);
 
-        // $members = Member::factory()->count(3)->create();
-
-        // foreach ($members as $member) {
-        //     Loan::factory()->create([
-        //         'member_id' => $member->id,
-        //     ]);
-        // }
-
-        // $this->call([
-        //     PaymentSeeder::class,
-        // ]);
+        Member::create([
+            'npk' => 'S001',
+            'name' => 'Janggar',
+            'email' => 'janggar@gmail.com',
+            'phone' => '08512598592',
+            'gender' => 'Male',
+            'date_birth' => '2000-01-12',
+            'date_join' => '2014-08-17',
+            'status' => 'Active',
+        ]);
+        Member::create([
+            'npk' => 'S002',
+            'name' => 'Wowo',
+            'email' => 'wowo@gmail.com',
+            'phone' => '08788994984',
+            'gender' => 'Male',
+            'date_birth' => '2002-02-02',
+            'date_join' => '2016-08-17',
+            'status' => 'Active',
+        ]);
 
         // Saving::create([
         //     'transaction_date' => now(),
@@ -51,26 +80,5 @@ class DatabaseSeeder extends Seeder
         //     'description' => 'Saldo Awal Kas',
         // ]);
 
-        // Saving::create([
-        //     'transaction_date' => now(),
-        //     'type' => 'Loan',
-        //     'debit' => 0,
-        //     'credit' => 1000000,
-        //     'balance' => 4500000,
-        //     'receivable' => 1000000,
-        //     'amount' => 5550000,
-        //     'description' => 'Pinjaman dari Nasabah',
-        // ]);
-
-        // Saving::create([
-        //     'transaction_date' => now(),
-        //     'type' => 'Assistance',
-        //     'debit' => 500000,
-        //     'credit' => 0,
-        //     'balance' => 5500000,
-        //     'receivable' => 0,
-        //     'amount' => 5500000,
-        //     'description' => 'Bantuan Pemerintah',
-        // ]);
     }
 }

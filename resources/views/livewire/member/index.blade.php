@@ -96,25 +96,23 @@
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        <flux:badge color="{{ $member->gender === 'Male' ? 'blue' : 'red' }}">
-                            {{ $member->gender === 'Male' ? '♂ Laki-laki' : '♀ Perempuan' }}
+                        <flux:badge color="{{ $member->gender_color }}">
+                            {{ $member->gender_label }}
                         </flux:badge>
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        <flux:badge color="{{ $member->status === 'Active' ? 'green' : 'grey' }}">
-                            {{ $member->status }}
+                        <flux:badge :color="$member->status_color">
+                            {{ $member->status_label }}
                         </flux:badge>
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        <flux:button size="sm" variant="outline" icon="pencil-square"
+                        <flux:button class="flex gap-0!" size="sm" variant="outline" icon="pencil-square"
                             wire:click="edit('{{ $member->id }}')">
-                            Edit
                         </flux:button>
-                        <flux:button size="sm" variant="danger" icon="trash"
+                        <flux:button class="flex gap-0!" size="sm" variant="danger" icon="trash"
                             wire:click="confirmDelete('{{ $member->id }}')">
-                            Hapus
                         </flux:button>
                     </flux:table.cell>
 

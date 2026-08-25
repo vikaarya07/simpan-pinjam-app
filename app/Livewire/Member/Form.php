@@ -31,18 +31,23 @@ class Form extends Component
                 'required',
                 Rule::unique('members', 'npk')->ignore($this->member?->id),
             ],
-            'name' => 'required|min:3',
+            'name' => ['required', 'min:3',],
             'email' => [
                 'required',
                 'email',
                 Rule::unique('members', 'email')->ignore($this->member?->id),
             ],
-            'phone' => 'required|string|max:20',
-            'gender' => 'required|in:Male,Female',
-            'date_birth' => 'required|date',
-            'date_join' => 'required|date',
-            'status' => 'required|in:Active,Inactive',
-
+            'phone' => ['required', 'string', 'max:20',],
+            'gender' => [
+                'required',
+                Rule::in(Member::GENDERS),
+            ],
+            'date_birth' => ['required', 'date',],
+            'date_join' => ['required', 'date',],
+            'status' => [
+                'required',
+                Rule::in(['Active', 'Inactive']),
+            ],
         ];
     }
 
@@ -67,8 +72,8 @@ class Form extends Component
         $this->email = $member->email;
         $this->phone = $member->phone;
         $this->gender = $member->gender;
-        $this->date_birth = optional($member->date_birth)->format('Y-m-d');
-        $this->date_join = optional($member->date_join)->format('Y-m-d');
+        $this->date_birth = $member->date_birth;
+        $this->date_join = $member->date_join;
         $this->status = $member->status;
 
         $this->resetValidation();

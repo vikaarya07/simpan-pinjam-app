@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\SavingService;
 use App\Traits\HasIndonesianDate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -40,12 +41,7 @@ class Loan extends Model
 
     protected $with = ['member'];
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relationships
-    |--------------------------------------------------------------------------
-    */
-
+    // Relationships
     public function member()
     {
         return $this->belongsTo(Member::class);
@@ -80,12 +76,7 @@ class Loan extends Model
         );
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Search Scope
-    |--------------------------------------------------------------------------
-    */
-
+    // Search Scope
     public function scopeSearch(Builder $query, ?string $search): Builder
     {
         return $query->when($search, function (Builder $query) use ($search) {
@@ -99,12 +90,7 @@ class Loan extends Model
         });
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Query Scope
-    |--------------------------------------------------------------------------
-    */
-
+    // Query Scope
     public function scopeRunning($query)
     {
         return $query->where(
@@ -120,16 +106,14 @@ class Loan extends Model
             ->having('payments_count', '<', 6);
     }
 
-    /**
-     * Loan yang harus tampil pada Meeting.
-     *
-     * Rule:
-     * - Status masih running
-     * - Pembayaran belum 6x
-     * - Loan dibuat sebelum tanggal meeting
-     * - Loan yang dibuat tepat pada hari meeting
-     *   baru muncul pada meeting berikutnya
-     */
+    //  Loan yang harus tampil pada Meeting.
+    //  Rule:
+    //  Status masih running
+    //  Pembayaran belum 6x
+    //  Loan dibuat sebelum tanggal meeting
+    //  Loan yang dibuat tepat pada hari meeting
+    //  baru muncul pada meeting berikutnya
+
     public function scopeForMeeting(Builder $query, Meeting $meeting): Builder
     {
         return $query
@@ -142,141 +126,123 @@ class Loan extends Model
             ->whereDate('loan_date', '<', $meeting->meeting_date);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Date Helper
-    |--------------------------------------------------------------------------
-    */
-
+    // Date Helper
     protected function getDateColumn(): string
     {
         return 'loan_date';
     }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Interest Helper
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Mengambil persentase bunga berdasarkan jenis pinjaman.
-     */
+    // Interest Helper
+    // Mengambil persentase bunga berdasarkan jenis pinjaman.
     public static function getInterestPercent(string $type): int
     {
         return match ($type) {
+            'loan' => 5,
             'loan_overdue' => 10,
-            default => 5,
+            default => 0,
         };
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Model Events / Booted
-    |--------------------------------------------------------------------------
-    */
-
+    // Model Events / Booted
     protected static function booted(): void
     {
         static::saving(function (Loan $loan) {
 
-            // Tentukan bunga otomatis berdasarkan jenis pinjaman
-            $loan->interest_percent = self::getInterestPercent($loan->type);
+            $loan->interest_percent =
+                self::getInterestPercent($loan->type);
 
-            // Hitung nominal bunga
-            $loan->interest_amount = ($loan->principal * $loan->interest_percent) / 100;
+            $loan->interest_amount =
+                ($loan->principal * $loan->interest_percent) / 100;
 
-            // Total pinjaman
-            $loan->amount = $loan->principal + $loan->interest_amount;
+            $loan->amount =
+                $loan->principal + $loan->interest_amount;
 
-            // Saat create, remaining = amount
             if (! $loan->exists) {
                 $loan->remaining = $loan->amount;
             }
 
-            // Status otomatis
-            $loan->status = $loan->remaining <= 0 ? 'finish' : 'running';
+            if ($loan->remaining <= 0) {
+                $loan->status = 'finish';
+            } elseif ($loan->status !== 'overdue') {
+                $loan->status = 'running';
+            }
 
-            /*
-             * Disbursement
-             *
-             * loan_overdue tidak mendapatkan
-             * pencairan uang baru.
-             */
             if ($loan->type === 'loan_overdue') {
                 $loan->disbursement = 0;
             } elseif ($loan->previousLoan) {
-                /*
-                 * Loan baru / top-up
-                 *
-                 * Principal baru
-                 * dikurangi sisa loan sebelumnya.
-                 */
-                $loan->disbursement = max(0, $loan->principal - $loan->previousLoan->remaining);
+                $loan->disbursement = max(
+                    0,
+                    $loan->principal - $loan->previousLoan->remaining
+                );
             } else {
                 $loan->disbursement = $loan->principal;
             }
         });
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Create Overdue Loan
-    |--------------------------------------------------------------------------
-    */
+    // Create Overdue Loan
     public function createOverdueLoanIfNeeded(): ?Loan
     {
-        $this->refresh();
+        // Sudah ada overdue untuk loan ini
+        if (
+            $this->type === 'loan'
+            && $this->payments()->count() >= 6
+            && $this->remaining > 0
+        ) {
+            $overdueExists = Loan::query()
+                ->where('previous_loan_id', $this->id)
+                ->where('type', 'loan_overdue')
+                ->exists();
 
-        // Hanya loan normal
-        if ($this->type !== 'loan') {
-            return null;
+            if ($overdueExists) {
+                return null;
+            }
+
+            $overdue = Loan::create([
+                'member_id' => $this->member_id,
+                'previous_loan_id' => $this->id,
+                'loan_number' => 'LN-' . now()->format('Ymd') . '-' .
+                    str_pad(
+                        Loan::max('id') + 1,
+                        5,
+                        '0',
+                        STR_PAD_LEFT
+                    ),
+                'loan_date' => now()->toDateString(),
+                'type' => 'loan_overdue',
+
+                // Maksimal sebesar sisa hutang
+                'principal' => $this->remaining,
+
+                'interest_percent' => 10,
+                'interest_amount' => $this->remaining * 10 / 100,
+                'amount' => $this->remaining * 1.10,
+
+                'remaining' => $this->remaining * 1.10,
+
+                // Tidak ada pencairan uang baru
+                'disbursement' => 0,
+
+                'status' => 'running',
+            ]);
+
+            // Loan lama menjadi overdue
+            $this->update([
+                'status' => 'overdue',
+            ]);
+
+            // PENTING:
+            // Simpan Loan Overdue ke Saving
+            app(SavingService::class)
+                ->recordLoan($overdue);
+
+            return $overdue;
         }
 
-        // Harus sudah pembayaran ke-6
-        $sixthPayment = $this->payments()
-            ->where('payment_count', 6)
-            ->where('amount', '>', 0)
-            ->first();
-
-        if (! $sixthPayment) {
-            return null;
-        }
-
-        // Sudah lunas
-        if ($this->remaining <= 0) {
-            return null;
-        }
-
-        // Jangan buat dua kali
-        if ($this->overdueLoan()->exists()) {
-            return null;
-        }
-
-        // Buat loan overdue
-        $overdueLoan = self::create([
-            'member_id' => $this->member_id,
-            'previous_loan_id' => $this->id,
-            'loan_number' => self::generateLoanNumber(),
-            'loan_date' => now(),
-            'type' => 'loan_overdue',
-            'principal' => $this->remaining,
-        ]);
-
-        // Tandai loan lama sebagai overdue
-        $this->updateQuietly([
-            'status' => 'overdue',
-        ]);
-
-        return $overdueLoan;
+        return null;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Loan Number Generator
-    |--------------------------------------------------------------------------
-    */
-
+    // Loan Number Generator
     public static function generateLoanNumber(): string
     {
         $prefix = 'LN';
@@ -304,71 +270,50 @@ class Loan extends Model
         );
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Accessors
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Total pinjaman (Pokok + Jasa)
-     */
+    // Accessors
+    // Total pinjaman (Pokok + Jasa)
     public function getTotalAmountAttribute(): float
     {
         return (float) $this->amount;
     }
 
-    /**
-     * Total pembayaran yang sudah dilakukan.
-     */
+    // Total pembayaran yang sudah dilakukan.
     public function getTotalPaidAttribute(): float
     {
         return (float) $this->payments()->sum('amount');
     }
 
-    /**
-     * Sisa hutang sebenarnya.
-     */
+    // Sisa hutang sebenarnya.
     public function getRemainingAmountAttribute(): float
     {
         return max(0, $this->total_amount - $this->total_paid);
     }
 
-    /**
-     * Pembayaran pada meeting yang sedang dibuka.
-     *
-     * Scope forMeeting() sudah memfilter relasi payments,
-     * sehingga cukup mengambil payment pertama.
-     */
+    //  Pembayaran pada meeting yang sedang dibuka.
+    //  Scope forMeeting() sudah memfilter relasi payments,
+    //  sehingga cukup mengambil payment pertama.
     public function getCurrentPaymentAttribute(): ?Payment
     {
         return $this->payments->first();
     }
 
-    /**
-     * Sudah membayar pada meeting ini?
-     */
+    // Sudah membayar pada meeting ini?
     public function getIsPaidAttribute(): bool
     {
         return $this->current_payment !== null;
     }
 
-    /**
-     * Cicilan berikutnya.
-     */
+    // Cicilan berikutnya.
     public function getNextPaymentCountAttribute(): int
     {
         return ($this->payments_count ?? $this->payments()->count()) + 1;
     }
 
-    /**
-     * Progress pembayaran.
-     *
-     * Contoh:
-     * 0/6
-     * 3/6
-     * 6/6
-     */
+    //  Progress pembayaran.
+    //  Contoh:
+    //  0/6
+    //  3/6
+    //  6/6
     public function getPaymentProgressAttribute(): string
     {
         $count = $this->payments_count ?? $this->payments()->count();
@@ -376,9 +321,8 @@ class Loan extends Model
         return "{$count}/6";
     }
 
-    /**
-     * Masih boleh melakukan pembayaran.
-     */
+    //  Masih boleh melakukan pembayaran.
+
     public function getCanPayAttribute(): bool
     {
         $count = $this->payments_count ?? $this->payments()->count();
@@ -386,9 +330,7 @@ class Loan extends Model
         return $this->status === 'running' && $count < 6;
     }
 
-    /**
-     * Pembayaran terakhir.
-     */
+    //  Pembayaran terakhir.
     public function getLastPaymentAttribute(): ?Payment
     {
         return $this->payments()
@@ -396,15 +338,8 @@ class Loan extends Model
             ->first();
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Business Logic
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Hitung ulang sisa hutang setelah ada perubahan payment.
-     */
+    // Business Logic
+    // Hitung ulang sisa hutang setelah ada perubahan payment.
     public function recalculate(): void
     {
         $totalPaid = $this->payments()

@@ -8,17 +8,17 @@
             <div>
 
                 <flux:heading size="lg">
-                    {{ $isEdit ? 'Edit Payment' : 'Tambah Payment' }}
+                    {{ $isEdit ? 'Ubah Angsuran' : 'Bayar Angsuran' }}
                 </flux:heading>
 
                 <flux:text>
-                    Catat pembayaran angsuran pinjaman.
+                    Pembayaran angsuran pinjaman
                 </flux:text>
 
             </div>
 
             {{-- Form --}}
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-4 mb-4">
 
                 {{-- Pertemuan --}}
                 <flux:input label="Pertemuan" :value="$meeting?->place" readonly />
@@ -58,10 +58,13 @@
                     </flux:select>
                 @endif
 
-                {{-- Catatan --}}
-                <flux:input label="Catatan" wire:model="note" placeholder="Opsional" />
-
             </div>
+
+            {{-- Catatan --}}
+            <flux:field>
+                <flux:textarea label="Catatan" wire:model="note" rows="1" placeholder="Masukkan catatan..." />
+                <flux:error name="note" />
+            </flux:field>
 
             {{-- Footer --}}
             <div class="flex justify-end gap-2">

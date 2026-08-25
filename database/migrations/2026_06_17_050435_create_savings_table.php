@@ -17,16 +17,23 @@ return new class extends Migration
             $table->enum('type', [
                 'Opening',
                 'Loan',
+                'Loan Overdue',
                 'Installment',
                 'Assistance',
             ]);
             $table->decimal('debit', 15, 0)->default(0);
             $table->decimal('credit', 15, 0)->default(0);
-            $table->decimal('balance', 15, 0);
-            $table->decimal('receivable', 15, 0);
-            $table->decimal('amount', 15, 0);
+            $table->decimal('balance', 15, 0)->default(0);
+            $table->decimal('receivable', 15, 0)->default(0);
+            $table->decimal('amount', 15, 0)->default(0);
+            $table->decimal('interest_percent', 5, 2)->default(0);
+            $table->decimal('interest_amount', 15, 0)->default(0);
             $table->text('description')->nullable();
             $table->timestamps();
+            $table->unique([
+                'transaction_date',
+                'type',
+            ]);
         });
     }
 

@@ -6,6 +6,7 @@ use App\Livewire\Concerns\WithSorting;
 use App\Models\Loan;
 use App\Models\Meeting;
 use App\Models\Payment;
+use App\Services\SavingService;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -46,28 +47,38 @@ class Show extends Component
         );
     }
 
-    public function confirmDelete(int $paymentId): void
+    public function confirmResetPayment(int $paymentId): void
     {
         $payment = Payment::findOrFail($paymentId);
 
         $this->dispatch(
             'confirm-delete',
-            action: 'delete-payment',
-            id: $paymentId,
-            text: "{$payment->loan->loan_number} - {$payment->loan->member->name}",
+            action: 'reset-payment',
+            id: $payment->id,
+            text: 'Pembayaran ini akan dihapus dan dapat diisi kembali.'
         );
     }
 
-    #[On('delete-payment')]
-    public function delete(int $paymentId): void
+    #[On('reset-payment')]
+    public function resetPayment(int $id): void
     {
-        Payment::findOrFail($paymentId)->delete();
+        $payment = Payment::findOrFail($id);
+
+        $date = $payment->payment_date->format('Y-m-d');
+
+        $payment->delete();
+
+        // Sinkronkan Saving
+        app(SavingService::class)
+            ->syncInstallmentByDate($date);
+
+        $this->dispatch('payment-saved');
 
         $this->dispatch(
             'swal',
             icon: 'success',
             title: 'Berhasil',
-            text: 'Pembayaran berhasil dihapus.',
+            text: 'Pembayaran berhasil direset dan dapat diisi ulang.'
         );
     }
 

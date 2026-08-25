@@ -4,7 +4,7 @@
         <div class="space-y-6">
             <div>
                 <flux:heading size="lg">
-                    {{ $isEdit ? 'Edit Pinjaman' : 'Tambah Pinjaman' }}
+                    {{ $isEdit ? 'Edit Pinjaman' : 'Buat Pinjaman Baru' }}
                 </flux:heading>
                 <flux:text>
                     Lengkapi data pinjaman.
@@ -12,9 +12,9 @@
             </div>
             <div class="grid grid-cols-2 gap-4">
 
-                <flux:select label="Anggota" wire:model.live="member_id"
+                <flux:select label="Anggota" wire:model.live="member_id" 
                     class="{{ $isEdit ? 'pointer-events-none bg-zinc-100 dark:bg-zinc-800' : '' }}">
-                    <option value="">Pilih Anggota</option>
+                    <option value="">-- Pilih Anggota --</option>
                     @foreach ($members as $member)
                         <option value="{{ $member->id }}">
                             {{ $member->npk }} - {{ $member->name }}

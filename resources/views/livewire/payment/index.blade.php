@@ -4,11 +4,11 @@
 
         <div>
             <h1 class="text-2xl font-bold">
-                Data Anggota
+                Rapat SATYA MUDA GETAS
             </h1>
 
             <p class="text-zinc-500">
-                Daftar seluruh anggota SATYA MUDA GETAS
+                Daftar Rapat SATYA MUDA GETAS
             </p>
         </div>
 
@@ -23,6 +23,8 @@
             <flux:table.column>No</flux:table.column>
 
             <flux:table.column>Pertemuan</flux:table.column>
+
+            <flux:table.column>Waktu</flux:table.column>
 
             <flux:table.column>Waktu</flux:table.column>
 
@@ -45,6 +47,12 @@
 
                     <flux:table.cell>
                         {{ $meeting->tanggal }}
+                    </flux:table.cell>
+                    
+                    <flux:table.cell>
+                        {{ $meeting->payments->where('amount', '>', 0)->count() }}
+                        |
+                        {{ $meeting->payments->where('amount', 0)->count() }}
                     </flux:table.cell>
 
                     <flux:table.cell>

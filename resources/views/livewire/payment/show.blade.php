@@ -1,13 +1,21 @@
-<div class="space-y-6">
+<div class="space-y-4">
 
     <div class="flex items-center justify-between">
         <div>
             <h1 class="text-2xl font-bold">
-                Data Anggota
+                Angsuran
             </h1>
             <p class="text-zinc-500">
-                Daftar seluruh anggota SATYA MUDA GETAS
+                Daftar angsuran anggota SATYA MUDA GETAS
             </p>
+        </div>
+    </div>
+
+    <div class="flex items-center text-base font-semibold">
+        <div class="rounded-md bg-mist-300 px-3 py-1 text-mist-700 space-x-2">
+            <span>{{ $meeting->place }}</span>
+            <span>|</span>
+            <span>{{ $meeting->waktu }}</span>
         </div>
     </div>
 
@@ -24,11 +32,11 @@
                 </div>
             </flux:table.column>
 
-            <flux:table.column>Nama</flux:table.column>
+            <flux:table.column>Nasabah</flux:table.column>
 
             <flux:table.column>Pertemuan</flux:table.column>
 
-            <flux:table.column>Nominal</flux:table.column>
+            <flux:table.column>Pokok Pinjaman</flux:table.column>
 
 
             <flux:table.column class="cursor-pointer" wire:click="sortBy('loan_date')">
@@ -70,7 +78,7 @@
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        {{ idr($loan->remaining) }}
+                        {{ idr($loan->amount) }}
                     </flux:table.cell>
 
                     <flux:table.cell>
@@ -115,16 +123,16 @@
 
                     <flux:table.cell>
                         @if ($loan->current_payment)
-                            <flux:button size="sm" variant="outline" icon="eye"
+                            <flux:button class="flex gap-0!" size="sm" variant="outline" icon="eye"
                                 :href="route('payment.detail', $loan->current_payment)">
                             </flux:button>
 
-                            <flux:button size="sm" variant="outline" icon="pencil-square"
+                            <flux:button class="flex gap-0!" size="sm" variant="outline" icon="pencil-square"
                                 wire:click="edit({{ $loan->current_payment->id }})">
                             </flux:button>
 
-                            <flux:button size="sm" variant="danger" icon="trash"
-                                wire:click="confirmDelete({{ $loan->current_payment->id }})">
+                            <flux:button class="flex gap-0!" size="sm" variant="danger" icon="backspace"
+                                wire:click="confirmResetPayment({{ $loan->current_payment->id }})">
                             </flux:button>
                         @else
                             <flux:button size="sm" variant="primary" wire:click="create({{ $loan->id }})">

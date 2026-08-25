@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Payment;
 
-use App\Livewire\Concerns\WithSorting;
 use App\Models\Meeting;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -11,7 +10,6 @@ use Livewire\WithPagination;
 class Index extends Component
 {
     use WithPagination;
-    use WithSorting;
 
     public string $search = '';
 
@@ -30,7 +28,8 @@ class Index extends Component
     {
         return view('livewire.payment.index', [
             'meetings' => Meeting::search($this->search)
-                ->orderBy($this->sortField, $this->sortDirection)
+                ->orderByDesc('meeting_date')
+                ->orderByDesc('created_at')
                 ->paginate(10),
         ]);
     }

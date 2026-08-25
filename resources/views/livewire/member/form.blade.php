@@ -28,7 +28,7 @@
 
                     <flux:select label="Jenis Kelamin" wire:model="gender">
 
-                        <option value="">Pilih</option>
+                        <option value="" selected disabled>-- Pilih Jenis Kelamin --</option>
                         <option value="Male">Laki-laki</option>
                         <option value="Female">Perempuan</option>
 
