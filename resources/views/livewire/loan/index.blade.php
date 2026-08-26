@@ -19,7 +19,7 @@
     </div>
 
     <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass"
-        placeholder="Cari NPK, Nama atau No Pinjaman ..." />
+        placeholder="Cari No Pinjaman, Nasabah atau Waktu..." />
 
     <flux:table>
 
@@ -103,8 +103,8 @@
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        <flux:badge color="{{ $loan->type === 'loan_overdue' ? 'red' : 'blue' }}">
-                            {{ $loan->type === 'loan_overdue' ? 'Telat' : 'Pinjaman' }}
+                        <flux:badge :color="$loan->type_color">
+                            {{ $loan->type_label }}
                         </flux:badge>
                     </flux:table.cell>
 
@@ -129,19 +129,8 @@
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        <flux:badge
-                            :color="match ($loan->status) {
-                                        'finish' => 'green',
-                                        'overdue' => 'red',
-                                        'running' => 'blue',
-                                        default => 'zinc',
-                                    }">
-                            {{ match ($loan->status) {
-                                'finish' => 'Lunas',
-                                'overdue' => 'Overdue',
-                                'running' => 'Berjalan',
-                                default => ucfirst($loan->status),
-                            } }}
+                        <flux:badge :color="$loan->status_color">
+                            {{ $loan->status_label }}
                         </flux:badge>
                     </flux:table.cell>
 

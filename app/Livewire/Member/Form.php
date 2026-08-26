@@ -72,8 +72,8 @@ class Form extends Component
         $this->email = $member->email;
         $this->phone = $member->phone;
         $this->gender = $member->gender;
-        $this->date_birth = $member->date_birth;
-        $this->date_join = $member->date_join;
+        $this->date_birth = $member->date_birth->format('Y-m-d');
+        $this->date_join = $member->date_join->format('Y-m-d');
         $this->status = $member->status;
 
         $this->resetValidation();

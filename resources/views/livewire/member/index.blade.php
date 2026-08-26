@@ -18,7 +18,7 @@
 
     </div>
 
-    <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" placeholder="Cari NPK atau Nama ..." />
+    <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" placeholder="Cari NPK, Nama, No Telp..." />
 
     <flux:table>
 
@@ -35,7 +35,7 @@
 
             </flux:table.column>
 
-            <flux:table.column>Nama</flux:table.column>
+            <flux:table.column>Nama Anggota</flux:table.column>
 
             <flux:table.column>Email</flux:table.column>
 

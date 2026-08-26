@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\HasIndonesianDate;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -45,21 +46,52 @@ class Payment extends Model
         return 'payment_date';
     }
 
-    public function getPaymentStatusAttribute(): string
+    // Accessors
+    public function statusLabel(): Attribute
     {
-        return $this->payment_count
-            ? 'Clear'
-            : 'Unpaid';
+        return Attribute::get(fn(): string => match ($this->status) {
+            'clear' => 'Clear',
+            'skip' => 'Skip',
+            default => '-',
+        });
+    }
+
+    public function statusColor(): Attribute
+    {
+        return Attribute::get(fn(): string => match ($this->status) {
+            'clear' => 'green',
+            'skip' => 'yellow',
+            default => 'zinc',
+        });
+    }
+
+    public function methodLabel(): Attribute
+    {
+        return Attribute::get(fn(): string => match ($this->method) {
+            'cash' => 'Cash',
+            'transfer' => 'Transfer',
+            'qris' => 'QRIS',
+            default => '-',
+        });
+    }
+
+    public function methodColor(): Attribute
+    {
+        return Attribute::get(fn(): string => match ($this->method) {
+            'cash' => 'green',
+            'transfer' => 'blue',
+            'qris' => 'purple',
+            default => 'zinc',
+        });
     }
 
     // Search Scope
     public function scopeSearch(Builder $query, ?string $search): Builder
     {
         return $query->when($search, function (Builder $query) use ($search) {
-            $query->whereHas('loan.member', function ($query) use ($search) {
-                $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('npk', 'like', "%{$search}%")
-                    ->orWhere('phone', 'like', "%{$search}%");
+            $query->where(function (Builder $q) use ($search) {
+                $q->where('place', 'like', "%{$search}%")
+                    ->orWhere('meeting_date', 'like', "%{$search}%");
             });
         });
     }

@@ -14,7 +14,7 @@
 
     </div>
 
-    <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" placeholder="Cari NPK atau Nama ..." />
+    <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" placeholder="Cari Tempat atau Waktu ..." />
 
     <flux:table>
 
@@ -26,7 +26,7 @@
 
             <flux:table.column>Waktu</flux:table.column>
 
-            <flux:table.column>Waktu</flux:table.column>
+            <flux:table.column>Angsuran Tersedia</flux:table.column>
 
             <flux:table.column>Aksi</flux:table.column>
 
@@ -48,11 +48,21 @@
                     <flux:table.cell>
                         {{ $meeting->tanggal }}
                     </flux:table.cell>
-                    
+
                     <flux:table.cell>
-                        {{ $meeting->payments->where('amount', '>', 0)->count() }}
-                        |
-                        {{ $meeting->payments->where('amount', 0)->count() }}
+                        <div class="flex items-center gap-1">
+                            <flux:badge color="green">
+                                Clear : {{ $meeting->payment_summary['clear'] }}
+                            </flux:badge>
+                            |
+                            <flux:badge color="amber">
+                                Skip : {{ $meeting->payment_summary['skip'] }}
+                            </flux:badge>
+                            |
+                            <flux:badge color="red">
+                                Unpaid : {{ $meeting->payment_summary['unpaid'] }}
+                            </flux:badge>
+                        </div>
                     </flux:table.cell>
 
                     <flux:table.cell>

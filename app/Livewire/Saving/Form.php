@@ -53,7 +53,7 @@ class Form extends Component
         $this->isEdit = true;
 
         $this->transaction_date =
-            $this->saving->transaction_date;
+            $this->saving->transaction_date->format('Y-m-d');
 
         $this->type = $this->saving->type;
 

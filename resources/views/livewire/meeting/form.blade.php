@@ -3,17 +3,14 @@
         <form wire:submit="save">
 
             <div class="space-y-6">
-
                 <div>
 
                     <flux:heading size="lg">
-
-                        {{ $isEdit ? 'Edit Member' : 'Tambah Member' }}
-
+                        {{ $isEdit ? 'Edit Rapat' : 'Tambah Rapat' }}
                     </flux:heading>
 
                     <flux:text>
-                        Lengkapi data anggota.
+                        Lengkapi data tempat rapat.
                     </flux:text>
 
                 </div>
@@ -33,11 +30,10 @@
                     </flux:button>
 
                     <flux:button type="submit" variant="primary">
-                        {{ $isEdit ? 'Update' : 'Simpan' }}
+                        Simpan
                     </flux:button>
-
+                    
                 </div>
-
             </div>
 
         </form>

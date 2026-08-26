@@ -19,11 +19,6 @@
 
     </div>
 
-
-    {{-- Search --}}
-    <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" placeholder="Cari transaksi..." />
-
-
     {{-- Table --}}
     <flux:table>
 
@@ -108,7 +103,6 @@
                     </flux:table.cell>
 
                     {{-- Jasa --}}
-                    {{-- Jasa --}}
                     <flux:table.cell>
                         @if (in_array($saving->type, ['Loan', 'Loan Overdue']) && $saving->interest_amount > 0)
                             <div>
@@ -143,7 +137,7 @@
                     {{-- Keterangan --}}
                     <flux:table.cell>
                         @if ($saving->description)
-                            <div x-data="{ open: false }" class="flex justify-center">
+                            <div x-data="{ open: false }" class="flex justify-start">
 
                                 {{-- Keterangan singkat --}}
                                 <flux:button variant="ghost" size="sm"

@@ -86,14 +86,8 @@
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        <flux:badge
-                            color="{{ match ($loan->current_payment?->method) {
-                                'cash' => 'green',
-                                'transfer' => 'blue',
-                                'qris' => 'purple',
-                                default => 'gray',
-                            } }}">
-                            {{ $loan->current_payment?->method ? ucfirst($loan->current_payment->method) : '-' }}
+                        <flux:badge :color="$loan->current_payment?->method_color ?? 'zinc'">
+                            {{ $loan->current_payment?->method_label ?? '-' }}
                         </flux:badge>
                     </flux:table.cell>
 
@@ -102,22 +96,8 @@
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        @php
-                            $payment = $loan->current_payment;
-
-                            if (!$payment) {
-                                $status = 'Unpaid';
-                                $color = 'red';
-                            } elseif ($payment->status === 'skip') {
-                                $status = 'Skip';
-                                $color = 'yellow';
-                            } else {
-                                $status = 'Clear';
-                                $color = 'green';
-                            }
-                        @endphp
-                        <flux:badge color="{{ $color }}">
-                            {{ $status }}
+                        <flux:badge :color="$loan->payment_status_color">
+                            {{ $loan->payment_status_label }}
                         </flux:badge>
                     </flux:table.cell>
 

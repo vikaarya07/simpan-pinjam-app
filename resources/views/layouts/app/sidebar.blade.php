@@ -53,7 +53,7 @@
                     {{ __('Pinjaman') }}
                 </flux:sidebar.item>
                 <flux:sidebar.item icon="credit-card" :href="route('payment.index')"
-                    :current="request()->routeIs('payment.index')" wire:navigate>
+                    :current="request()->routeIs('payment.*')" wire:navigate>
                     {{ __('Angsuran') }}
                 </flux:sidebar.item>
             </flux:sidebar.group>

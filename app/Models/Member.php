@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Models\Payment;
 use App\Traits\HasIndonesianDate;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -48,10 +50,10 @@ class Member extends Model
     }
 
     // Search Scope
-    public function scopeSearch($query, $search)
+    public function scopeSearch(Builder $query, ?string $search): Builder
     {
-        $query->when($search, function ($query) use ($search) {
-            $query->where(function ($q) use ($search) {
+        return $query->when($search, function (Builder $query) use ($search) {
+            $query->where(function (Builder $q) use ($search) {
                 $q->where('npk', 'like', "%{$search}%")
                     ->orWhere('name', 'like', "%{$search}%")
                     ->orWhere('phone', 'like', "%{$search}%");
@@ -59,7 +61,7 @@ class Member extends Model
         });
     }
 
-    public function scopeActive($query)
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where('status', 'Active');
     }
@@ -78,47 +80,46 @@ class Member extends Model
     }
 
     // Accessors
-
-    public function getGenderLabelAttribute(): string
+    public function genderLabel(): Attribute
     {
-        return match ($this->gender) {
+        return Attribute::get(fn(): string => match ($this->gender) {
             'Male' => '♂ Laki-laki',
             'Female' => '♀ Perempuan',
             default => $this->gender,
-        };
+        });
     }
 
-    public function getGenderColorAttribute(): string
+    public function genderColor(): Attribute
     {
-        return match ($this->gender) {
+        return Attribute::get(fn(): string => match ($this->gender) {
             'Male' => 'blue',
             'Female' => 'red',
             default => 'zinc',
-        };
+        });
     }
 
-    public function getStatusLabelAttribute(): string
+    public function statusLabel(): Attribute
     {
-        return match ($this->status) {
+        return Attribute::get(fn(): string => match ($this->status) {
             'Active' => 'Aktif',
             'Inactive' => 'Tidak Aktif',
             default => $this->status,
-        };
+        });
     }
 
-    public function getStatusColorAttribute(): string
+    public function statusColor(): Attribute
     {
-        return match ($this->status) {
+        return Attribute::get(fn(): string => match ($this->status) {
             'Active' => 'green',
             'Inactive' => 'zinc',
             default => 'zinc',
-        };
+        });
     }
 
-    public function getAgeAttribute()
+    public function age(): Attribute
     {
-        return $this->date_birth
+        return Attribute::get(fn(): ?int => $this->date_birth
             ? Carbon::parse($this->date_birth)->age
-            : null;
+            : null);
     }
 }

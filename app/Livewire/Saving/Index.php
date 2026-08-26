@@ -14,8 +14,6 @@ class Index extends Component
 
     protected string $paginationTheme = 'tailwind';
 
-    public string $search = '';
-
     public function updatingSearch(): void
     {
         $this->resetPage();
@@ -65,8 +63,7 @@ class Index extends Component
     public function render()
     {
         return view('livewire.saving.index', [
-            'savings' => Saving::search($this->search)
-                ->orderByDesc('transaction_date')
+            'savings' => Saving::orderByDesc('transaction_date')
                 ->orderByDesc('created_at')
                 ->paginate(10),
         ]);

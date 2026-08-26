@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Services\SavingService;
 use App\Traits\HasIndonesianDate;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -83,15 +84,15 @@ class Loan extends Model
             $query->where(function (Builder $query) use ($search) {
                 $query->where('loan_number', 'like', "%{$search}%")
                     ->orWhereHas('member', function (Builder $query) use ($search) {
-                        $query->where('name', 'like', "%{$search}%")
-                            ->orWhere('npk', 'like', "%{$search}%");
-                    });
+                        $query->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhere('loan_date', 'like', "%{$search}%");
             });
         });
     }
 
     // Query Scope
-    public function scopeRunning($query)
+    public function scopeRunning(Builder $query): Builder
     {
         return $query->where(
             'status',
@@ -99,7 +100,7 @@ class Loan extends Model
         );
     }
 
-    public function scopeCanBePaid($query)
+    public function scopeCanBePaid(Builder $query): Builder
     {
         return $query
             ->withCount('payments')
@@ -272,41 +273,41 @@ class Loan extends Model
 
     // Accessors
     // Total pinjaman (Pokok + Jasa)
-    public function getTotalAmountAttribute(): float
+    public function totalAmount(): Attribute
     {
-        return (float) $this->amount;
+        return Attribute::get(fn(): float => (float) $this->amount);
     }
 
     // Total pembayaran yang sudah dilakukan.
-    public function getTotalPaidAttribute(): float
+    public function totalPaid(): Attribute
     {
-        return (float) $this->payments()->sum('amount');
+        return Attribute::get(fn(): float => (float) $this->payments()->sum('amount'));
     }
 
     // Sisa hutang sebenarnya.
-    public function getRemainingAmountAttribute(): float
+    public function remainingAmount(): Attribute
     {
-        return max(0, $this->total_amount - $this->total_paid);
+        return Attribute::get(fn(): float => max(0, $this->total_amount - $this->total_paid));
     }
 
     //  Pembayaran pada meeting yang sedang dibuka.
     //  Scope forMeeting() sudah memfilter relasi payments,
     //  sehingga cukup mengambil payment pertama.
-    public function getCurrentPaymentAttribute(): ?Payment
+    public function currentPayment(): Attribute
     {
-        return $this->payments->first();
+        return Attribute::get(fn(): ?Payment => $this->payments->first());
     }
 
     // Sudah membayar pada meeting ini?
-    public function getIsPaidAttribute(): bool
+    public function isPaid(): Attribute
     {
-        return $this->current_payment !== null;
+        return Attribute::get(fn(): bool => $this->current_payment !== null);
     }
 
     // Cicilan berikutnya.
-    public function getNextPaymentCountAttribute(): int
+    public function nextPaymentCount(): Attribute
     {
-        return ($this->payments_count ?? $this->payments()->count()) + 1;
+        return Attribute::get(fn(): int => ($this->payments_count ?? $this->payments()->count()) + 1);
     }
 
     //  Progress pembayaran.
@@ -314,28 +315,21 @@ class Loan extends Model
     //  0/6
     //  3/6
     //  6/6
-    public function getPaymentProgressAttribute(): string
+    public function paymentProgress(): Attribute
     {
-        $count = $this->payments_count ?? $this->payments()->count();
-
-        return "{$count}/6";
+        return Attribute::get(fn(): string => $this->payments_count . "/6" ?? $this->payments()->count() . "/6");
     }
 
     //  Masih boleh melakukan pembayaran.
-
-    public function getCanPayAttribute(): bool
+    public function canPay(): Attribute
     {
-        $count = $this->payments_count ?? $this->payments()->count();
-
-        return $this->status === 'running' && $count < 6;
+        return Attribute::get(fn(): bool => $this->status === 'running' && ($this->payments_count ?? $this->payments()->count()) < 6);
     }
 
     //  Pembayaran terakhir.
-    public function getLastPaymentAttribute(): ?Payment
+    public function lastPayment(): Attribute
     {
-        return $this->payments()
-            ->latest('payment_date')
-            ->first();
+        return Attribute::get(fn(): ?Payment => $this->payments()->latest('payment_date')->first());
     }
 
     // Business Logic
@@ -356,5 +350,57 @@ class Loan extends Model
             : 'running';
 
         $this->saveQuietly();
+    }
+
+    protected function paymentStatusLabel(): Attribute
+    {
+        return Attribute::get(
+            fn() => $this->current_payment?->status_label ?? 'Unpaid'
+        );
+    }
+
+    protected function paymentStatusColor(): Attribute
+    {
+        return Attribute::get(
+            fn() => $this->current_payment?->status_color ?? 'red'
+        );
+    }
+
+    protected function typeLabel(): Attribute
+    {
+        return Attribute::get(fn() => match ($this->type) {
+            'loan_overdue' => 'Telat',
+            'loan' => 'Pinjaman',
+            default => ucfirst($this->type),
+        });
+    }
+
+    protected function typeColor(): Attribute
+    {
+        return Attribute::get(fn() => match ($this->type) {
+            'loan_overdue' => 'red',
+            'loan' => 'blue',
+            default => 'zinc',
+        });
+    }
+
+    protected function statusLabel(): Attribute
+    {
+        return Attribute::get(fn() => match ($this->status) {
+            'finish' => 'Lunas',
+            'overdue' => 'Telat',
+            'running' => 'Berjalan',
+            default => ucfirst($this->status),
+        });
+    }
+
+    protected function statusColor(): Attribute
+    {
+        return Attribute::get(fn() => match ($this->status) {
+            'finish' => 'green',
+            'overdue' => 'red',
+            'running' => 'blue',
+            default => 'zinc',
+        });
     }
 }

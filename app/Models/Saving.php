@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasIndonesianDate;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -45,47 +45,33 @@ class Saving extends Model
         'Assistance',
     ];
 
-    public function getTypeLabelAttribute(): string
+    public function typeLabel(): Attribute
     {
-        return match ($this->type) {
+        return Attribute::get(fn(): string => match ($this->type) {
             'Opening' => 'Pembukaan',
             'Loan' => 'Pinjaman',
             'Loan Overdue' => 'Telat',
             'Installment' => 'Angsuran',
             'Assistance' => 'Bantuan',
             default => $this->type,
-        };
+        });
     }
 
-    public function getTypeColorAttribute(): string
+    public function typeColor(): Attribute
     {
-        return match ($this->type) {
+        return Attribute::get(fn(): string => match ($this->type) {
             'Opening' => 'zinc',
             'Assistance' => 'amber',
             'Loan' => 'blue',
             'Loan Overdue' => 'red',
             'Installment' => 'green',
             default => 'zinc',
-        };
+        });
     }
 
     // Date Helper
     protected function getDateColumn(): string
     {
         return 'transaction_date';
-    }
-
-    // Search Scope
-    public function scopeSearch(Builder $query, ?string $search): Builder
-    {
-        return $query->when($search, function (Builder $query) use ($search) {
-            $query->where(function (Builder $query) use ($search) {
-                $query->where('loan_number', 'like', "%{$search}%")
-                    ->orWhereHas('member', function (Builder $query) use ($search) {
-                        $query->where('name', 'like', "%{$search}%")
-                            ->orWhere('npk', 'like', "%{$search}%");
-                    });
-            });
-        });
     }
 }

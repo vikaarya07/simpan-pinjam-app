@@ -59,12 +59,11 @@
                     {{ idr($this->remaining) }}
                 </div>
             </div>
+        </div>
 
-            <div>
-                <div class="text-sm text-gray-500 font-bold">Catatan</div>
-                <div>{{ $payment?->note ?? '-' }}</div>
-            </div>
-
+        <div class="pt-6">
+            <div class="text-sm text-gray-500 font-bold">Catatan</div>
+            <div class="text-sm font-normal leading-relaxed tracking-wide text-justify">{{ $payment?->note ?? '-' }}</div>
         </div>
 
     </flux:card>

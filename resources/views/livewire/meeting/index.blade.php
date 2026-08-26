@@ -13,7 +13,7 @@
         </div>
 
         <flux:button variant="primary" icon="plus" wire:click="create">
-            Tambah Anggota
+            Tambah Rapat
         </flux:button>
 
     </div>
