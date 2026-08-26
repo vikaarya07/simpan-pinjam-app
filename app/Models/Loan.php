@@ -91,6 +91,15 @@ class Loan extends Model
         });
     }
 
+    public function scopeIsCustomer(Builder $query): Builder
+    {
+        return $query->whereIn('status', [
+            'running',
+            'finish',
+            'overdue'
+        ]);
+    }
+
     // Query Scope
     public function scopeRunning(Builder $query): Builder
     {
@@ -369,7 +378,7 @@ class Loan extends Model
     protected function typeLabel(): Attribute
     {
         return Attribute::get(fn() => match ($this->type) {
-            'loan_overdue' => 'Telat',
+            'loan_overdue' => 'Pinjaman Telat',
             'loan' => 'Pinjaman',
             default => ucfirst($this->type),
         });
@@ -378,8 +387,8 @@ class Loan extends Model
     protected function typeColor(): Attribute
     {
         return Attribute::get(fn() => match ($this->type) {
-            'loan_overdue' => 'red',
-            'loan' => 'blue',
+            'loan_overdue' => 'rose',
+            'loan' => 'indigo',
             default => 'zinc',
         });
     }
@@ -402,5 +411,13 @@ class Loan extends Model
             'running' => 'blue',
             default => 'zinc',
         });
+    }
+
+    protected function hasOutstandingOverdue(): Attribute
+    {
+        return Attribute::get(
+            fn(): bool =>
+            $this->status === 'overdue' && $this->remaining > 0
+        );
     }
 }

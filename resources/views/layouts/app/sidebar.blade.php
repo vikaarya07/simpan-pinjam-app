@@ -35,8 +35,8 @@
                     :current="request()->routeIs('member.index')" wire:navigate>
                     {{ __('Data Anggota') }}
                 </flux:sidebar.item>
-                <flux:sidebar.item icon="user" :href="route('dashboard')" :current="request()->routeIs('dashboard')"
-                    wire:navigate>
+                <flux:sidebar.item icon="user" :href="route('customer.index')"
+                    :current="request()->routeIs('customer.*')" wire:navigate>
                     {{ __('Data Nasabah') }}
                 </flux:sidebar.item>
             </flux:sidebar.group>

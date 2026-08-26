@@ -1,8 +1,10 @@
 <?php
 
 use App\Livewire\Dashboard;
-use App\Livewire\Member\Index as MemberIndex;
 use App\Livewire\Meeting\Index as MeetingIndex;
+use App\Livewire\Member\Index as MemberIndex;
+use App\Livewire\Customer\Index as CustomerIndex;
+use App\Livewire\Customer\Show as CustomerShow;
 use App\Livewire\Saving\Index as SavingIndex;
 use App\Livewire\Loan\Index as LoanIndex;
 use App\Livewire\Payment\Index as PaymentIndex;
@@ -17,11 +19,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', Dashboard::class)
         ->name('dashboard');
 
+    Route::get('/meetings', MeetingIndex::class)
+        ->name('meeting.index');
+
     Route::get('/members', MemberIndex::class)
         ->name('member.index');
 
-    Route::get('/meetings', MeetingIndex::class)
-        ->name('meeting.index');
+    Route::get('/customers', CustomerIndex::class)
+        ->name('customer.index');
+    Route::get('/customers/{customer}', CustomerShow::class)
+        ->name('customer.show');
 
     Route::get('/savings', SavingIndex::class)
         ->name('saving.index');

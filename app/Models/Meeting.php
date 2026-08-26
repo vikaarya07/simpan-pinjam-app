@@ -72,7 +72,7 @@ class Meeting extends Model
         return 'meeting_date';
     }
 
-    public function scopeSearch(Builder $query, ?string $search):Builder
+    public function scopeSearch(Builder $query, ?string $search): Builder
     {
         return $query->when($search, function (Builder $query) use ($search) {
             $query->where(function (Builder $q) use ($search) {

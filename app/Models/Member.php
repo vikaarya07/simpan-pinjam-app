@@ -93,7 +93,7 @@ class Member extends Model
     {
         return Attribute::get(fn(): string => match ($this->gender) {
             'Male' => 'blue',
-            'Female' => 'red',
+            'Female' => 'pink',
             default => 'zinc',
         });
     }
@@ -111,7 +111,7 @@ class Member extends Model
     {
         return Attribute::get(fn(): string => match ($this->status) {
             'Active' => 'green',
-            'Inactive' => 'zinc',
+            'Inactive' => 'slate',
             default => 'zinc',
         });
     }

@@ -60,7 +60,7 @@ class Payment extends Model
     {
         return Attribute::get(fn(): string => match ($this->status) {
             'clear' => 'green',
-            'skip' => 'yellow',
+            'skip' => 'amber',
             default => 'zinc',
         });
     }
@@ -78,9 +78,9 @@ class Payment extends Model
     public function methodColor(): Attribute
     {
         return Attribute::get(fn(): string => match ($this->method) {
-            'cash' => 'green',
-            'transfer' => 'blue',
-            'qris' => 'purple',
+            'cash' => 'lime',
+            'transfer' => 'cyan',
+            'qris' => 'fuchsia',
             default => 'zinc',
         });
     }

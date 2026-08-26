@@ -50,7 +50,7 @@ class Saving extends Model
         return Attribute::get(fn(): string => match ($this->type) {
             'Opening' => 'Pembukaan',
             'Loan' => 'Pinjaman',
-            'Loan Overdue' => 'Telat',
+            'Loan Overdue' => 'Pinjaman Telat',
             'Installment' => 'Angsuran',
             'Assistance' => 'Bantuan',
             default => $this->type,
@@ -60,11 +60,11 @@ class Saving extends Model
     public function typeColor(): Attribute
     {
         return Attribute::get(fn(): string => match ($this->type) {
-            'Opening' => 'zinc',
+            'Opening' => 'slate',
             'Assistance' => 'amber',
-            'Loan' => 'blue',
-            'Loan Overdue' => 'red',
-            'Installment' => 'green',
+            'Loan' => 'indigo',
+            'Loan Overdue' => 'rose',
+            'Installment' => 'teal',
             default => 'zinc',
         });
     }
