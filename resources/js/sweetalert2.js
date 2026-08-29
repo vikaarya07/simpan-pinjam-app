@@ -38,8 +38,34 @@ document.addEventListener("livewire:init", () => {
             }).then((result) => {
                 if (result.isConfirmed) {
                     Livewire.dispatch(action, {
-                        id
+                        id,
                     });
+                }
+            });
+        },
+    );
+
+    // Confirm Download PDF
+    Livewire.on(
+        "confirm-download-pdf",
+        ({
+            action,
+            title = "Download Laporan?",
+            text = "",
+            confirmButtonText = "Ya, Download",
+            cancelButtonText = "Batal",
+        }) => {
+            Swal.fire({
+                title,
+                text,
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText,
+                cancelButtonText,
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.dispatch(action);
                 }
             });
         },

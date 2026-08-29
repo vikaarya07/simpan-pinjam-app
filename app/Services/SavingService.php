@@ -2,13 +2,18 @@
 
 namespace App\Services;
 
+use App\Enums\SavingType;
 use App\Models\Loan;
 use App\Models\Payment;
 use App\Models\Saving;
+use InvalidArgumentException;
 
 class SavingService
 {
+    // =========================================================
     // MANUAL
+    // =========================================================
+
     public function recordOpening(
         string $date,
         float $amount,
@@ -16,7 +21,7 @@ class SavingService
     ): Saving {
         return $this->recordManual(
             date: $date,
-            type: 'Opening',
+            type: SavingType::Opening,
             amount: $amount,
             description: $description,
         );
@@ -29,7 +34,7 @@ class SavingService
     ): Saving {
         return $this->recordManual(
             date: $date,
-            type: 'Assistance',
+            type: SavingType::Assistance,
             amount: $amount,
             description: $description,
         );
@@ -37,22 +42,19 @@ class SavingService
 
     public function recordManual(
         string $date,
-        string $type,
+        SavingType $type,
         float $amount,
         ?string $description = null,
     ): Saving {
-        if (! in_array($type, [
-            'Opening',
-            'Assistance',
-        ])) {
-            throw new \InvalidArgumentException(
+        if (! $type->isManual()) {
+            throw new InvalidArgumentException(
                 'Jenis transaksi manual hanya Opening atau Assistance.'
             );
         }
 
         $saving = Saving::query()
             ->whereDate('transaction_date', $date)
-            ->where('type', $type)
+            ->where('type', $type->value)
             ->first();
 
         if ($saving) {
@@ -66,7 +68,7 @@ class SavingService
         } else {
             $saving = Saving::create([
                 'transaction_date' => $date,
-                'type' => $type,
+                'type' => $type->value,
 
                 'debit' => $amount,
                 'credit' => 0,
@@ -87,35 +89,32 @@ class SavingService
         return $saving->fresh();
     }
 
+    // =========================================================
     // UPDATE MANUAL
+    // =========================================================
+
     public function updateManual(
         Saving $saving,
         string $date,
-        string $type,
+        SavingType $type,
         float $amount,
         ?string $description = null,
     ): Saving {
-        if (! in_array($saving->type, [
-            'Opening',
-            'Assistance',
-        ])) {
-            throw new \InvalidArgumentException(
+        if (! $saving->type->isManual()) {
+            throw new InvalidArgumentException(
                 'Hanya Opening dan Assistance yang dapat diedit.'
             );
         }
 
-        if (! in_array($type, [
-            'Opening',
-            'Assistance',
-        ])) {
-            throw new \InvalidArgumentException(
+        if (! $type->isManual()) {
+            throw new InvalidArgumentException(
                 'Jenis transaksi manual hanya Opening atau Assistance.'
             );
         }
 
         $saving->update([
             'transaction_date' => $date,
-            'type' => $type,
+            'type' => $type->value,
 
             'debit' => $amount,
             'credit' => 0,
@@ -131,14 +130,15 @@ class SavingService
         return $saving->fresh();
     }
 
+    // =========================================================
     // AUTOMATIC - LOAN
+    // =========================================================
+
     public function recordLoan(Loan $loan): void
     {
         $date = $loan->loan_date->format('Y-m-d');
 
-        $type = $loan->type === 'loan_overdue'
-            ? 'Loan Overdue'
-            : 'Loan';
+        $type = $loan->type->savingType();
 
         $this->syncAutomaticLoan(
             date: $date,
@@ -150,35 +150,31 @@ class SavingService
 
     public function syncAutomaticLoanByDate(
         string $date,
-        string $type
+        SavingType $type,
     ): void {
         $this->syncAutomaticLoan($date, $type);
         $this->rebuild();
     }
 
-    private  function syncAutomaticLoan(
+    private function syncAutomaticLoan(
         string $date,
-        string $type,
+        SavingType $type,
     ): void {
-        $loanType = $type === 'Loan'
-            ? 'loan'
-            : 'loan_overdue';
+        $loanType = $type->loanType();
 
         $loans = Loan::query()
             ->whereDate('loan_date', $date)
-            ->where('type', $loanType)
+            ->where('type', $loanType->value)
             ->get();
 
         $saving = Saving::query()
             ->whereDate('transaction_date', $date)
-            ->where('type', $type)
+            ->where('type', $type->value)
             ->first();
 
-        /*
-    |--------------------------------------------------------------------------
-    | Tidak ada Loan
-    |--------------------------------------------------------------------------
-    */
+        // =====================================================
+        // Tidak ada Loan
+        // =====================================================
 
         if ($loans->isEmpty()) {
             if ($saving) {
@@ -188,22 +184,20 @@ class SavingService
             return;
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Hitung ulang dari Loan
-    |--------------------------------------------------------------------------
-    */
+        // =====================================================
+        // Hitung ulang dari Loan
+        // =====================================================
 
         $credit = (float) $loans->sum('principal');
 
         $interestAmount = (float) $loans->sum(
-            fn(Loan $loan) => (float) $loan->interest_amount
+            fn (Loan $loan) => (float) $loan->interest_amount
         );
 
         $interestPercents = $loans
             ->pluck('interest_percent')
-            ->filter(fn($value) => $value !== null)
-            ->map(fn($value) => (float) $value)
+            ->filter(fn ($value) => $value !== null)
+            ->map(fn ($value) => (float) $value)
             ->unique()
             ->values();
 
@@ -211,11 +205,9 @@ class SavingService
             ? $interestPercents->first()
             : 0;
 
-        /*
-    |--------------------------------------------------------------------------
-    | UPDATE
-    |--------------------------------------------------------------------------
-    */
+        // =====================================================
+        // UPDATE
+        // =====================================================
 
         if ($saving) {
             $saving->update([
@@ -227,60 +219,59 @@ class SavingService
             return;
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | CREATE
-    |--------------------------------------------------------------------------
-    */
+        // =====================================================
+        // CREATE
+        // =====================================================
 
         Saving::create([
             'transaction_date' => $date,
-            'type' => $type,
+            'type' => $type->value,
+
             'debit' => 0,
             'credit' => $credit,
+
             'balance' => 0,
             'receivable' => 0,
             'amount' => 0,
+
             'interest_percent' => $interestPercent,
             'interest_amount' => $interestAmount,
+
             'description' => null,
         ]);
     }
 
+    // =========================================================
     // REMOVE LOAN
+    // =========================================================
+
     public function removeLoan(Loan $loan): void
     {
         $date = $loan->loan_date->format('Y-m-d');
 
-        $type = $loan->type === 'loan_overdue'
-            ? 'Loan Overdue'
-            : 'Loan';
+        $type = $loan->type->savingType();
 
-        // Sinkronkan Installment
-        // Payment dari Loan ini mungkin sudah menghasilkan Saving Installment.
-        // Setelah Loan/Payment dihapus, Installment pada tanggal tersebut
-        // harus dihitung ulang.
+        // Payment dari Loan ini mungkin sudah menghasilkan
+        // Saving Installment.
         $this->syncInstallmentByDate($date);
 
         // Cek Loan sejenis yang masih tersisa
         $remainingLoans = Loan::query()
             ->whereDate('loan_date', $date)
-            ->where('type', $loan->type)
+            ->where('type', $loan->type->value)
             ->whereKeyNot($loan->id)
             ->exists();
 
         // Tidak ada Loan lagi
         if (! $remainingLoans) {
-
             Saving::query()
                 ->whereDate('transaction_date', $date)
-                ->where('type', $type)
+                ->where('type', $type->value)
                 ->delete();
         }
 
-        //   Masih ada Loan
+        // Masih ada Loan
         else {
-
             $this->syncAutomaticLoan(
                 date: $date,
                 type: $type,
@@ -290,7 +281,10 @@ class SavingService
         $this->rebuild();
     }
 
+    // =========================================================
     // INSTALLMENT - CREATE
+    // =========================================================
+
     public function recordInstallment(Payment $payment): ?Saving
     {
         $date = $payment->payment_date->format('Y-m-d');
@@ -299,11 +293,14 @@ class SavingService
 
         return Saving::query()
             ->whereDate('transaction_date', $date)
-            ->where('type', 'Installment')
+            ->where('type', SavingType::Installment->value)
             ->first();
     }
 
+    // =========================================================
     // INSTALLMENT - UPDATE
+    // =========================================================
+
     public function updateInstallment(
         Payment $oldPayment,
         Payment $payment
@@ -322,8 +319,10 @@ class SavingService
         $this->rebuild();
     }
 
+    // =========================================================
     // INSTALLMENT - RESET
-    // Dipanggil SEBELUM payment kehilangan payment_date.
+    // =========================================================
+
     public function resetInstallment(string $date): void
     {
         $this->syncInstallmentByDate($date);
@@ -331,9 +330,10 @@ class SavingService
         $this->rebuild();
     }
 
+    // =========================================================
     // SYNC INSTALLMENT BY DATE
-    // Semua Payment pada tanggal yang sama dijumlahkan.
-    // Payment amount = 0 tidak dihitung.
+    // =========================================================
+
     public function syncInstallmentByDate(string $date): void
     {
         $debit = Payment::query()
@@ -343,7 +343,7 @@ class SavingService
 
         $saving = Saving::query()
             ->whereDate('transaction_date', $date)
-            ->where('type', 'Installment')
+            ->where('type', SavingType::Installment->value)
             ->first();
 
         if ($debit <= 0) {
@@ -363,14 +363,18 @@ class SavingService
         } else {
             Saving::create([
                 'transaction_date' => $date,
-                'type' => 'Installment',
+                'type' => SavingType::Installment->value,
+
                 'debit' => $debit,
                 'credit' => 0,
+
                 'balance' => 0,
                 'receivable' => 0,
                 'amount' => 0,
+
                 'interest_percent' => 0,
                 'interest_amount' => 0,
+
                 'description' => null,
             ]);
         }
@@ -378,11 +382,10 @@ class SavingService
         $this->rebuild();
     }
 
+    // =========================================================
     // REBUILD
-    // Menghitung ulang:
-    // balance
-    // receivable
-    // amount
+    // =========================================================
+
     public function rebuild(): void
     {
         $balance = 0;
@@ -394,54 +397,31 @@ class SavingService
             ->get();
 
         foreach ($savings as $saving) {
+            match ($saving->type) {
 
-            switch ($saving->type) {
+                SavingType::Opening,
+                SavingType::Assistance => $balance += (float) $saving->debit,
 
-                // OPENING
-                case 'Opening':
-
-                    $balance += (float) $saving->debit;
-
-                    break;
-
-                // ASSISTANCE
-                case 'Assistance':
-
-                    $balance += (float) $saving->debit;
-
-                    break;
-
-                // LOAN
-                case 'Loan':
-
-                    $balance -= (float) $saving->credit;
+                SavingType::Loan => [
+                    $balance -= (float) $saving->credit,
 
                     $receivable +=
                         (float) $saving->credit
-                        + (float) $saving->interest_amount;
+                        + (float) $saving->interest_amount,
+                ],
 
-                    break;
+                SavingType::LoanOverdue =>
+                    $receivable += (float) $saving->interest_amount,
 
-                // LOAN OVERDUE
-                case 'Loan Overdue':
+                SavingType::Installment => [
+                    $balance += (float) $saving->debit,
+                    $receivable -= (float) $saving->debit,
+                ],
+            };
 
-                    $receivable += (float) $saving->interest_amount;
-
-                    break;
-
-                // INSTALLMENT
-                case 'Installment':
-
-                    $balance += (float) $saving->debit;
-                    $receivable -= (float) $saving->debit;
-
-                    break;
-            }
-
-            // PIUTANG TIDAK BOLEH NEGATIF
+            // Piutang tidak boleh negatif
             $receivable = max(0, $receivable);
 
-            // TOTAL
             // Amount = Balance + Receivable
             $amount = $balance + $receivable;
 

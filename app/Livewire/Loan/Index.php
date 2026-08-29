@@ -96,7 +96,6 @@ class Index extends Component
     {
         return view('livewire.loan.index', [
             'loans' => Loan::search($this->search)
-                ->orderByDesc('loan_date')
                 ->orderBy($this->sortField, $this->sortDirection)
                 ->paginate(10),
         ]);

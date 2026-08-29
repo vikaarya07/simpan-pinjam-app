@@ -53,4 +53,13 @@ trait HasIndonesianDate
             ? $this->{$column}->translatedFormat('d F Y')
             : null;
     }
+
+    public function getJamAttribute()
+    {
+        $column = $this->getDateColumn();
+
+        return $this->{$column}
+            ? $this->{$column}->translatedFormat('H:i')
+            : null;
+    }
 }

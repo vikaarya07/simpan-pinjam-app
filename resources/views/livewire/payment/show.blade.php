@@ -1,142 +1,296 @@
-<div class="space-y-4">
+<div class="space-y-5">
 
-    <div class="flex items-center justify-between">
+    {{-- Header --}}
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
         <div>
-            <h1 class="text-2xl font-bold">
+            <flux:heading size="xl">
                 Angsuran
-            </h1>
-            <p class="text-zinc-500">
+            </flux:heading>
+
+            <flux:text class="mt-1">
                 Daftar angsuran anggota SATYA MUDA GETAS
-            </p>
+            </flux:text>
         </div>
+
+        {{-- Info Pertemuan --}}
+        <div
+            class="flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+
+            <div
+                class="flex size-9 items-center justify-center rounded-lg bg-mist-100 text-mist-700 dark:bg-mist-900/40 dark:text-mist-300">
+                <flux:icon name="calendar-days" class="size-5" />
+            </div>
+
+            <div class="leading-tight">
+                <div class="text-xs font-medium text-zinc-500">
+                    Pertemuan
+                </div>
+
+                <div class="mt-0.5 flex items-center gap-2 text-sm font-semibold">
+                    <span>{{ $meeting->place }}</span>
+                    <span class="text-zinc-300">•</span>
+                    <span>{{ $meeting->waktu }}</span>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 
-    <div class="flex items-center text-base font-semibold">
-        <div class="rounded-md bg-mist-300 px-3 py-1 text-mist-700 space-x-2">
-            <span>{{ $meeting->place }}</span>
-            <span>|</span>
-            <span>{{ $meeting->waktu }}</span>
+    {{-- Table Card --}}
+    <flux:card class="overflow-hidden p-0">
+
+        {{-- Table Header --}}
+        <div
+            class="flex flex-col gap-3 border-b border-zinc-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-700">
+
+            <div>
+                <div class="text-sm font-semibold text-zinc-900 dark:text-white">
+                    Daftar Angsuran
+                </div>
+
+                <div class="text-xs text-zinc-500">
+                    Data pembayaran pada pertemuan ini
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+
+                <flux:badge color="slate">
+                    {{ $loans->total() }} Pinjaman
+                </flux:badge>
+
+            </div>
+
         </div>
+
+        <flux:table class="px-5!">
+
+            <flux:table.columns>
+
+                <flux:table.column class="w-12">
+                    #
+                </flux:table.column>
+
+                <flux:table.column class="cursor-pointer" wire:click="sortBy('loan_number')">
+                    <div class="flex items-center gap-1">
+                        Nomor Pinjaman
+                        @include('components.sort-icon', [
+                            'field' => 'loan_number',
+                        ])
+                    </div>
+                </flux:table.column>
+
+                <flux:table.column>
+                    Nasabah
+                </flux:table.column>
+
+                <flux:table.column>
+                    Pertemuan
+                </flux:table.column>
+
+                <flux:table.column>
+                    Pokok Pinjaman
+                </flux:table.column>
+
+                <flux:table.column class="cursor-pointer" wire:click="sortBy('loan_date')">
+                    <div class="flex items-center gap-1">
+                        Waktu
+                        @include('components.sort-icon', [
+                            'field' => 'loan_date',
+                        ])
+                    </div>
+                </flux:table.column>
+
+                <flux:table.column>
+                    Metode
+                </flux:table.column>
+
+                <flux:table.column>
+                    Sisa Hutang
+                </flux:table.column>
+
+                <flux:table.column>
+                    Status
+                </flux:table.column>
+
+                <flux:table.column class="text-right">
+                    Aksi
+                </flux:table.column>
+
+            </flux:table.columns>
+
+            <flux:table.rows>
+
+                @forelse($loans as $loan)
+                    <flux:table.row wire:key="loan-{{ $loan->id }}"
+                        class="transition hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+
+                        {{-- No --}}
+                        <flux:table.cell class="text-zinc-500">
+                            {{ $loop->iteration }}
+                        </flux:table.cell>
+
+                        {{-- Loan Number --}}
+                        <flux:table.cell>
+
+                            <div class="font-medium">
+                                {{ $loan->loan_number }}
+                            </div>
+
+                            @if ($loan->type)
+                                <flux:text size="xs" class="mt-0.5">
+                                    {{ $loan->type->label() }}
+                                </flux:text>
+                            @endif
+
+                        </flux:table.cell>
+
+                        {{-- Member --}}
+                        <flux:table.cell>
+
+                            <div class="flex items-center gap-3">
+
+                                <flux:avatar size="sm" :name="$loan->member->name" />
+
+                                <div class="min-w-0">
+                                    <div class="truncate font-medium">
+                                        {{ $loan->member->name }}
+                                    </div>
+
+                                    @if ($loan->member->npk)
+                                        <flux:text size="xs">
+                                            {{ $loan->member->npk }}
+                                        </flux:text>
+                                    @endif
+                                </div>
+
+                            </div>
+
+                        </flux:table.cell>
+
+                        {{-- Payment Progress --}}
+                        <flux:table.cell>
+
+                            <flux:badge color="zinc" size="sm">
+                                {{ $loan->payment_progress }}
+                            </flux:badge>
+
+                        </flux:table.cell>
+
+                        {{-- Amount --}}
+                        <flux:table.cell>
+
+                            <div class="font-medium tabular-nums">
+                                {{ idr($loan->amount) }}
+                            </div>
+
+                        </flux:table.cell>
+
+                        {{-- Date --}}
+                        <flux:table.cell>
+                            <flux:text>
+                                {{ $loan->tanggal }}
+                            </flux:text>
+                        </flux:table.cell>
+
+                        {{-- Payment Method --}}
+                        <flux:table.cell>
+                            <flux:badge :color="$loan->current_payment?->method?->color() ?? 'zinc'" size="sm">
+                                {{ $loan->current_payment?->method?->label() ?? '-' }}
+                            </flux:badge>
+                        </flux:table.cell>
+
+                        {{-- Remaining --}}
+                        <flux:table.cell>
+
+                            <div class="font-semibold tabular-nums">
+                                {{ idr($loan->remaining) }}
+                            </div>
+
+                        </flux:table.cell>
+
+                        {{-- Status --}}
+                        <flux:table.cell>
+
+                            <flux:badge :color="$loan->payment_status?->color() ?? 'red'" size="sm">
+                                {{ $loan->payment_status?->label() ?? 'Unpaid' }}
+                            </flux:badge>
+
+                        </flux:table.cell>
+
+                        {{-- Actions --}}
+                        <flux:table.cell>
+
+                            <div class="flex justify-end gap-1">
+
+                                @if ($loan->current_payment)
+                                    {{-- Detail --}}
+                                    <flux:button size="sm" variant="ghost" icon="eye"
+                                        :href="route('payment.detail',$loan->current_payment)"
+                                        tooltip="Lihat pembayaran" />
+
+                                    {{-- Edit --}}
+                                    <flux:button size="sm" variant="ghost" icon="pencil-square"
+                                        wire:click="edit({{ $loan->current_payment->id }})"
+                                        tooltip="Edit pembayaran" />
+
+                                    {{-- Reset --}}
+                                    <flux:button size="sm" variant="ghost" icon="arrow-uturn-left"
+                                        class="text-red-500 hover:text-red-600"
+                                        wire:click="confirmResetPayment({{ $loan->current_payment->id }})"
+                                        tooltip="Reset pembayaran" />
+                                @else
+                                    <flux:button size="sm" variant="primary" icon="banknotes"
+                                        wire:click="create({{ $loan->id }})">
+                                        Bayar
+                                    </flux:button>
+                                @endif
+
+                            </div>
+
+                        </flux:table.cell>
+
+                    </flux:table.row>
+
+                @empty
+
+                    <flux:table.row>
+
+                        <flux:table.cell colspan="10">
+
+                            <div class="flex flex-col items-center justify-center py-12 text-center">
+
+                                <flux:icon name="clipboard-document-list" class="size-10 text-zinc-400" />
+
+                                <flux:heading size="sm" class="mt-3">
+                                    Belum ada data angsuran
+                                </flux:heading>
+
+                                <flux:text class="mt-1">
+                                    Belum terdapat daftar angsuran untuk pertemuan ini.
+                                </flux:text>
+
+                            </div>
+
+                        </flux:table.cell>
+
+                    </flux:table.row>
+                @endforelse
+
+            </flux:table.rows>
+
+        </flux:table>
+
+    </flux:card>
+
+    {{-- Pagination --}}
+    <div>
+        {{ $loans->links() }}
     </div>
 
-    <flux:table>
-
-        <flux:table.columns>
-
-            <flux:table.column>No</flux:table.column>
-
-            <flux:table.column class="cursor-pointer" wire:click="sortBy('loan_number')">
-                <div class="flex items-center gap-1">
-                    Nomor Pinjaman
-                    @include('components.sort-icon', ['field' => 'loan_number'])
-                </div>
-            </flux:table.column>
-
-            <flux:table.column>Nasabah</flux:table.column>
-
-            <flux:table.column>Pertemuan</flux:table.column>
-
-            <flux:table.column>Pokok Pinjaman</flux:table.column>
-
-
-            <flux:table.column class="cursor-pointer" wire:click="sortBy('loan_date')">
-                <div class="flex items-center gap-1">
-                    Waktu
-                    @include('components.sort-icon', ['field' => 'loan_date'])
-                </div>
-            </flux:table.column>
-
-            <flux:table.column>Metode Bayar</flux:table.column>
-
-            <flux:table.column>Sisa Hutang</flux:table.column>
-
-            <flux:table.column>Status</flux:table.column>
-
-            <flux:table.column>Aksi</flux:table.column>
-
-        </flux:table.columns>
-
-        <flux:table.rows>
-
-            @forelse($loans as $loan)
-                <flux:table.row>
-
-                    <flux:table.cell>
-                        {{ $loop->iteration }}
-                    </flux:table.cell>
-
-                    <flux:table.cell>
-                        {{ $loan->loan_number }}
-                    </flux:table.cell>
-
-                    <flux:table.cell>
-                        {{ $loan->member->name }}
-                    </flux:table.cell>
-
-                    <flux:table.cell>
-                        {{ $loan->payment_progress }}
-                    </flux:table.cell>
-
-                    <flux:table.cell>
-                        {{ idr($loan->amount) }}
-                    </flux:table.cell>
-
-                    <flux:table.cell>
-                        {{ $loan->tanggal }}
-                    </flux:table.cell>
-
-                    <flux:table.cell>
-                        <flux:badge :color="$loan->current_payment?->method_color ?? 'zinc'">
-                            {{ $loan->current_payment?->method_label ?? '-' }}
-                        </flux:badge>
-                    </flux:table.cell>
-
-                    <flux:table.cell>
-                        {{ idr($loan->remaining) }}
-                    </flux:table.cell>
-
-                    <flux:table.cell>
-                        <flux:badge :color="$loan->payment_status_color">
-                            {{ $loan->payment_status_label }}
-                        </flux:badge>
-                    </flux:table.cell>
-
-                    <flux:table.cell>
-                        @if ($loan->current_payment)
-                            <flux:button class="flex gap-0!" size="sm" variant="outline" icon="eye"
-                                :href="route('payment.detail', $loan->current_payment)">
-                            </flux:button>
-
-                            <flux:button class="flex gap-0!" size="sm" variant="outline" icon="pencil-square"
-                                wire:click="edit({{ $loan->current_payment->id }})">
-                            </flux:button>
-
-                            <flux:button class="flex gap-0!" size="sm" variant="danger" icon="backspace"
-                                wire:click="confirmResetPayment({{ $loan->current_payment->id }})">
-                            </flux:button>
-                        @else
-                            <flux:button size="sm" variant="primary" wire:click="create({{ $loan->id }})">
-                                Bayar
-                            </flux:button>
-                        @endif
-                    </flux:table.cell>
-
-                </flux:table.row>
-
-            @empty
-                <flux:table.row>
-                    <flux:table.cell colspan="6">
-                        Belum ada data.
-                    </flux:table.cell>
-                </flux:table.row>
-            @endforelse
-
-        </flux:table.rows>
-
-    </flux:table>
-
-    {{ $loans->links() }}
-
+    {{-- Payment Form --}}
     <livewire:payment.form />
 
 </div>

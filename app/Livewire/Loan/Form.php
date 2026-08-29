@@ -2,9 +2,13 @@
 
 namespace App\Livewire\Loan;
 
+use App\Enums\LoanStatus;
+use App\Enums\LoanType;
+use App\Enums\SavingType;
 use App\Models\Loan;
 use App\Models\Member;
 use App\Models\Saving;
+use App\Services\CustomerNotificationService;
 use App\Services\SavingService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -14,39 +18,74 @@ use Livewire\Component;
 class Form extends Component
 {
     public bool $showFormModal = false;
+
     public bool $isEdit = false;
 
     public ?Loan $loan = null;
+
     public ?Loan $previousLoan = null;
 
-    public ?int $member_id = null;
+    public int|string $member_id = '';
 
     public string $loan_number = '';
+
     public string $loan_date = '';
-    public string $type = 'loan';
+
+    public string $type = LoanType::Loan->value;
 
     public float $principal = 0;
+
     public string $principalFormatted = '';
+
     public float $interest_percent = 5;
+
     public float $interest_amount = 0;
+
     public float $amount = 0;
+
     public float $remaining = 0;
+
     public float $disbursement = 0;
 
-    public string $status = 'running';
+    public string $status = LoanStatus::Running->value;
 
     protected function rules(): array
     {
         $rules = [
-            'member_id' => ['required', 'exists:members,id'],
-            'loan_number' => ['required'],
-            'loan_date' => ['required', 'date'],
-            'type' => ['required', Rule::in(['loan', 'loan_overdue'])],
-            'principal' => ['required', 'numeric', 'min:1'],
+            'member_id' => [
+                'required',
+                'exists:members,id',
+            ],
+
+            'loan_number' => [
+                'required',
+            ],
+
+            'loan_date' => [
+                'required',
+                'date',
+            ],
+
+            'type' => [
+                'required',
+                Rule::enum(LoanType::class),
+            ],
+
+            'principal' => [
+                'required',
+                'numeric',
+                'min:1',
+            ],
         ];
 
-        // Loan overdue tidak boleh melebihi sisa pinjaman sebelumnya
-        if ($this->type === 'loan_overdue' && $this->previousLoan) {
+        /*
+         * Loan Overdue tidak boleh melebihi
+         * sisa pinjaman sebelumnya.
+         */
+        if (
+            $this->type === LoanType::LoanOverdue->value
+            && $this->previousLoan
+        ) {
             $rules['principal'][] = 'max:' . $this->previousLoan->remaining;
         }
 
@@ -59,15 +98,23 @@ class Form extends Component
         $this->resetForm();
 
         $this->loan_date = now()->format('Y-m-d');
-        $this->type = 'loan';
+
+        $this->type = LoanType::Loan->value;
+
         $this->interest_percent = 5;
 
-        $lastId = Loan::max('id') + 1;
+        $lastId = (Loan::max('id') ?? 0) + 1;
 
-        $this->loan_number = 'LN-'
+        $this->loan_number =
+            'LN-'
             . now()->format('Ymd')
             . '-'
-            . str_pad($lastId, 5, '0', STR_PAD_LEFT);
+            . str_pad(
+                $lastId,
+                5,
+                '0',
+                STR_PAD_LEFT
+            );
 
         $this->showFormModal = true;
     }
@@ -78,23 +125,37 @@ class Form extends Component
         $loan = Loan::findOrFail($id);
 
         $this->loan = $loan;
+
         $this->isEdit = true;
 
         $this->member_id = $loan->member_id;
+
         $this->loan_number = $loan->loan_number;
+
         $this->loan_date = $loan->loan_date->format('Y-m-d');
 
-        $this->type = $loan->type;
+        $this->type = $loan->type->value;
 
         $this->principal = (float) $loan->principal;
-        $this->principalFormatted = number_format($loan->principal, 0, ',', '.');
+
+        $this->principalFormatted = number_format(
+            $loan->principal,
+            0,
+            ',',
+            '.'
+        );
+
         $this->interest_percent = (float) $loan->interest_percent;
+
         $this->interest_amount = (float) $loan->interest_amount;
+
         $this->amount = (float) $loan->amount;
+
         $this->remaining = (float) $loan->remaining;
+
         $this->disbursement = (float) $loan->disbursement;
 
-        $this->status = $loan->status;
+        $this->status = $loan->status->value;
 
         $this->previousLoan = $loan->previousLoan;
 
@@ -103,31 +164,37 @@ class Form extends Component
 
     public function save(): void
     {
-        // VALIDASI TOP UP
+        /*
+         * VALIDASI TOP UP
+         *
+         * Loan baru harus lebih besar dari
+         * sisa pinjaman sebelumnya.
+         */
         if (
-            $this->type === 'loan'
+            $this->type === LoanType::Loan->value
             && $this->previousLoan
             && $this->principal < $this->previousLoan->remaining
         ) {
             $this->addError(
                 'principalFormatted',
-                'Nominal pinjaman harus lebih besar dari sisa hutang (' .
-                    idr($this->previousLoan->remaining) .
-                    ').'
+                'Nominal pinjaman harus lebih besar dari sisa hutang ('
+                    . idr($this->previousLoan->remaining)
+                    . ').'
             );
 
             return;
         }
 
-        // VALIDASI FORM
         $this->validate();
 
-        // HITUNG LOAN
         $this->calculateLoan();
 
-        // CEK SALDO SAVING
-        // Yang dibandingkan adalah PRINCIPAL.
-        // Bukan amount, karena amount sudah termasuk jasa.
+        /*
+         * CEK SALDO SAVING
+         *
+         * Yang dibandingkan adalah PRINCIPAL,
+         * bukan amount karena amount sudah termasuk jasa.
+         */
         $savingBalance = (float) (
             Saving::query()
             ->latest('transaction_date')
@@ -135,32 +202,31 @@ class Form extends Component
             ->value('balance') ?? 0
         );
 
-        // CREATE
+        /*
+         * CREATE
+         */
         if (! $this->isEdit) {
-
             if ($this->principal > $savingBalance) {
                 $this->addError(
                     'principalFormatted',
                     'Nominal pinjaman tidak boleh melebihi saldo simpanan. '
-                        . 'Saldo tersedia: ' . idr($savingBalance)
+                        . 'Saldo tersedia: '
+                        . idr($savingBalance)
                 );
 
                 return;
             }
         }
 
-        // EDIT
-        // Saat edit, jangan menggunakan saldo sekarang secara langsung.
-        // Karena Loan lama sudah mengambil saldo sebelumnya.
+        /*
+         * EDIT
+         *
+         * Hanya tambahan principal yang membutuhkan
+         * saldo baru.
+         */
         if ($this->isEdit) {
-
             $oldPrincipal = (float) $this->loan->principal;
 
-            // Selisih kebutuhan kas.
-            // Contoh:
-            // Loan lama = 3.000.000
-            // Loan baru = 4.000.000
-            // Tambahan = 1.000.000
             $additionalPrincipal = max(
                 0,
                 $this->principal - $oldPrincipal
@@ -169,116 +235,171 @@ class Form extends Component
             if ($additionalPrincipal > $savingBalance) {
                 $this->addError(
                     'principalFormatted',
-                    'Penambahan pinjaman tidak boleh melebihi saldo simpanan. '
-                        . 'Saldo tersedia: ' . idr($savingBalance)
+                    'Penambahan pinjaman tidak boleh melebihi '
+                        . 'saldo simpanan. Saldo tersedia: '
+                        . idr($savingBalance)
                 );
 
                 return;
             }
         }
 
-        // DATA LOAN
+        /*
+         * DATA LOAN
+         */
         $data = [
             'member_id' => $this->member_id,
+
             'loan_number' => $this->loan_number,
+
             'loan_date' => $this->loan_date,
-            'type' => $this->type,
+
+            'type' => LoanType::from($this->type),
 
             'principal' => $this->principal,
 
             'interest_percent' => $this->interest_percent,
+
             'interest_amount' => $this->interest_amount,
 
             'amount' => $this->amount,
+
             'remaining' => $this->remaining,
 
             'disbursement' => $this->disbursement,
 
             'status' => $this->remaining <= 0
-                ? 'finish'
-                : 'running',
+                ? LoanStatus::Finish
+                : LoanStatus::Running,
         ];
 
-        // DATABASE TRANSACTION
-        DB::transaction(function () use ($data) {
+        /*
+         * DATABASE TRANSACTION
+         */
+        $loan = DB::transaction(function () use ($data) {
 
-            // EDIT
+            /*
+             * EDIT
+             */
             if ($this->isEdit) {
 
-                // Simpan data lama sebelum update
-                $oldLoanDate = $this->loan->loan_date->format('Y-m-d');
-                $oldLoanType = $this->loan->type;
+                $oldLoanDate =
+                    $this->loan->loan_date->format('Y-m-d');
 
-                $totalPaid = $this->loan
+                $oldLoanType =
+                    $this->loan->type;
+
+                /*
+                 * Total pembayaran tetap dipertahankan.
+                 */
+                $totalPaid = (float) $this->loan
                     ->payments()
                     ->sum('amount');
 
-                $data['remaining'] = max(
+                /*
+                 * Hitung remaining berdasarkan
+                 * amount baru.
+                 */
+                $remaining = max(
                     0,
                     $this->amount - $totalPaid
                 );
 
-                $data['status'] = $data['remaining'] <= 0
-                    ? 'finish'
-                    : 'running';
+                $data['remaining'] = $remaining;
 
-                // Update Loan
+                $data['status'] = $remaining <= 0
+                    ? LoanStatus::Finish
+                    : LoanStatus::Running;
+
+                /*
+                 * Update Loan
+                 */
                 $this->loan->update($data);
 
                 $loan = $this->loan->fresh();
 
-                // Sinkronkan tanggal lama
-                $oldSavingType = $oldLoanType === 'loan_overdue'
-                    ? 'Loan Overdue'
-                    : 'Loan';
+                /*
+                 * Sinkronisasi Saving lama.
+                 */
+                app(SavingService::class)
+                    ->syncAutomaticLoanByDate(
+                        date: $oldLoanDate,
+                        type: $oldLoanType === LoanType::LoanOverdue
+                            ? SavingType::LoanOverdue
+                            : SavingType::Loan,
+                    );
 
-                app(SavingService::class)->syncAutomaticLoanByDate(
-                    date: $oldLoanDate,
-                    type: $oldSavingType,
-                );
+                /*
+                 * Sinkronisasi Saving baru.
+                 *
+                 * Kalau tanggal/type tidak berubah,
+                 * method sync cukup dipanggil sekali.
+                 */
+                app(SavingService::class)
+                    ->syncAutomaticLoanByDate(
+                        date: $loan->loan_date->format('Y-m-d'),
+                        type: $loan->type === LoanType::LoanOverdue
+                            ? SavingType::LoanOverdue
+                            : SavingType::Loan,
+                    );
 
-                // Sinkronkan tanggal baru
-                $newSavingType = $loan->type === 'loan_overdue'
-                    ? 'Loan Overdue'
-                    : 'Loan';
-
-                app(SavingService::class)->syncAutomaticLoanByDate(
-                    date: $loan->loan_date->format('Y-m-d'),
-                    type: $newSavingType,
-                );
-
+                /*
+                 * Bangun ulang seluruh saldo.
+                 */
                 app(SavingService::class)->rebuild();
 
-                return;
+                return $loan;
             }
 
-            // CREATE
+            /*
+             * CREATE
+             */
             if ($this->previousLoan) {
-
                 $data['previous_loan_id'] =
                     $this->previousLoan->id;
 
-                // Untuk TOP UP loan biasa,
-                // Loan lama dianggap selesai.
-                if ($this->type === 'loan') {
-
+                /*
+                 * Untuk TOP UP Loan biasa,
+                 * loan sebelumnya dianggap selesai.
+                 */
+                if ($this->type === LoanType::Loan->value) {
                     $this->previousLoan->update([
                         'remaining' => 0,
-                        'status' => 'finish',
+                        'status' => LoanStatus::Finish,
                     ]);
                 }
             }
 
-            // CREATE LOAN
+            /*
+             * CREATE LOAN
+             */
             $loan = Loan::create($data);
 
-            // RECORD SAVING
-            // Jasa diambil dari Loan yang benar-benar tersimpan.
+            /*
+             * RECORD SAVING
+             */
             app(SavingService::class)
                 ->recordLoan($loan);
+
+            return $loan->fresh();
         });
 
-        // SUCCESS
+        /*
+         * NOTIFICATION
+         */
+        if (! $this->isEdit) {
+            $message = app(CustomerNotificationService::class)
+                ->loanCreated($loan);
+
+            $this->dispatch(
+                'loan-notification-created',
+                message: $message,
+            );
+        }
+
+        /*
+         * SUCCESS
+         */
         $this->dispatch('loan-saved');
 
         $this->dispatch(
@@ -287,7 +408,7 @@ class Form extends Component
             title: 'Berhasil',
             text: $this->isEdit
                 ? 'Pinjaman berhasil diperbarui.'
-                : 'Pinjaman berhasil ditambahkan.'
+                : 'Pinjaman berhasil ditambahkan.',
         );
 
         $this->closeModal();
@@ -305,35 +426,54 @@ class Form extends Component
             return;
         }
 
-        // Loan selalu memiliki jasa
-        $this->interest_percent = match ($this->type) {
-            'loan' => 5,
-            'loan_overdue' => 10,
-            default => 0,
+        /*
+         * Tentukan jasa berdasarkan enum LoanType.
+         */
+        $loanType = LoanType::from($this->type);
+
+        $this->interest_percent = match ($loanType) {
+            LoanType::Loan => 5,
+            LoanType::LoanOverdue => 10,
         };
 
-        // Jasa
+        /*
+         * Jasa
+         */
         $this->interest_amount =
-            $this->principal * $this->interest_percent / 100;
+            $this->principal
+            * $this->interest_percent
+            / 100;
 
-        // Pokok + jasa
+        /*
+         * Pokok + jasa
+         */
         $this->amount =
-            $this->principal + $this->interest_amount;
+            $this->principal
+            + $this->interest_amount;
 
         if (! $this->isEdit) {
+
             $this->remaining = $this->amount;
 
+            /*
+             * TOP UP
+             */
             if (
-                $this->type === 'loan'
+                $loanType === LoanType::Loan
                 && $this->previousLoan
             ) {
-                // Uang yang benar-benar dicairkan
+                /*
+                 * Uang yang benar-benar dicairkan.
+                 */
                 $this->disbursement = max(
                     0,
-                    $this->principal - $this->previousLoan->remaining
+                    $this->principal
+                        - $this->previousLoan->remaining
                 );
             } else {
-                // Loan pertama
+                /*
+                 * Loan pertama / Loan Overdue.
+                 */
                 $this->disbursement = $this->principal;
             }
         }
@@ -353,9 +493,27 @@ class Form extends Component
     {
         $this->previousLoan = Loan::query()
             ->where('member_id', $this->member_id)
-            ->where('status', 'running')
+            ->where('status', LoanStatus::Running)
             ->latest()
             ->first();
+
+        $this->calculateLoan();
+    }
+
+    public function updatedPrincipalFormatted($value): void
+    {
+        $number = preg_replace(
+            '/[^0-9]/',
+            '',
+            $value
+        );
+
+        $this->principal = (float) $number;
+
+        $this->principalFormatted = idr(
+            $this->principal,
+            false
+        );
 
         $this->calculateLoan();
     }
@@ -365,17 +523,6 @@ class Form extends Component
         $this->showFormModal = false;
 
         $this->resetForm();
-    }
-
-    public function updatedPrincipalFormatted($value): void
-    {
-        $number = preg_replace('/[^0-9]/', '', $value);
-
-        $this->principal = (float) $number;
-
-        $this->principalFormatted = idr($this->principal, false);
-
-        $this->calculateLoan();
     }
 
     public function resetForm(): void
@@ -388,17 +535,23 @@ class Form extends Component
             'loan_date',
         ]);
 
-        $this->type = 'loan';
+        $this->type = LoanType::Loan->value;
 
         $this->principal = 0;
+
         $this->principalFormatted = '0';
+
         $this->interest_percent = 5;
+
         $this->interest_amount = 0;
+
         $this->amount = 0;
+
         $this->remaining = 0;
+
         $this->disbursement = 0;
 
-        $this->status = 'running';
+        $this->status = LoanStatus::Running->value;
 
         $this->isEdit = false;
 

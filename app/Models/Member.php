@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\Gender;
+use App\Enums\MemberStatus;
+use App\Models\CustomerNotification;
 use App\Models\Payment;
 use App\Traits\HasIndonesianDate;
 use Carbon\Carbon;
@@ -26,12 +29,15 @@ class Member extends Model
         'status',
     ];
 
-    protected $casts = [
-        'date_birth' => 'date',
-        'date_join' => 'date',
-    ];
-
-    public const GENDERS = ['Male', 'Female'];
+    protected function casts(): array
+    {
+        return [
+            'date_birth' => 'date',
+            'date_join' => 'date',
+            'gender' => Gender::class,
+            'status' => MemberStatus::class,
+        ];
+    }
 
     // Relationships
     public function loans()
@@ -42,6 +48,11 @@ class Member extends Model
     public function payments()
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function customerNotifications()
+    {
+        return $this->hasMany(CustomerNotification::class);
     }
 
     protected function getDateColumn(): string
@@ -80,24 +91,6 @@ class Member extends Model
     }
 
     // Accessors
-    public function genderLabel(): Attribute
-    {
-        return Attribute::get(fn(): string => match ($this->gender) {
-            'Male' => '♂ Laki-laki',
-            'Female' => '♀ Perempuan',
-            default => $this->gender,
-        });
-    }
-
-    public function genderColor(): Attribute
-    {
-        return Attribute::get(fn(): string => match ($this->gender) {
-            'Male' => 'blue',
-            'Female' => 'pink',
-            default => 'zinc',
-        });
-    }
-
     public function statusLabel(): Attribute
     {
         return Attribute::get(fn(): string => match ($this->status) {

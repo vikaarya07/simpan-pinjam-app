@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    // 'whatsapp' => [
+    //     'group_id' => env('WHATSAPP_GROUP_ID'),
+    // ],
+
 ];

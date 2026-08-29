@@ -2,9 +2,12 @@
 
 namespace App\Livewire\Payment;
 
+use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
 use App\Models\Loan;
 use App\Models\Meeting;
 use App\Models\Payment;
+use App\Services\CustomerNotificationService;
 use App\Services\SavingService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -26,7 +29,7 @@ class Form extends Component
     public float $amount = 0;
     public string $amountFormatted = '';
     public string $payment_date = '';
-    public ?string $method = null;
+    public string $method = '';
     public ?string $note = null;
 
     protected function rules(): array
@@ -34,12 +37,12 @@ class Form extends Component
         return [
             'loan_id' => ['required', 'exists:loans,id'],
             'meeting_id' => ['required', 'exists:meetings,id'],
-            'amount' => ['required', 'numeric', 'max:' . $this->loan->remaining,],
+            'amount' => ['required', 'numeric'],
             'payment_date' => ['required', 'date'],
             'method' => [
                 Rule::requiredIf($this->amount > 0),
                 'nullable',
-                Rule::in(['cash', 'transfer', 'qris']),
+                Rule::enum(PaymentMethod::class),
             ],
             'note' => ['nullable', 'string'],
         ];
@@ -91,7 +94,7 @@ class Form extends Component
         $this->amount = $payment->amount;
         $this->amountFormatted = number_format($payment->amount, 0, ',', '.');
         $this->payment_date = $payment->payment_date->format('Y-m-d');
-        $this->method = $payment->method;
+        $this->method = $payment->method->value;
         $this->note = $payment->note;
 
         $this->showFormModal = true;
@@ -165,20 +168,22 @@ class Form extends Component
             'payment_count' => $paymentCount,
             'amount'        => $this->amount,
             'payment_date'  => $this->payment_date,
-
             'method' => $this->amount > 0
                 ? $this->method
                 : null,
-
             'status' => $this->amount > 0
-                ? 'clear'
-                : 'skip',
-
+                ? PaymentStatus::Clear->value
+                : PaymentStatus::Skip->value,
             'note' => $this->note,
         ];
 
-        // CREATE / EDIT
-        DB::transaction(function () use ($data) {
+        /*
+    |--------------------------------------------------------------------------
+    | CREATE / EDIT
+    |--------------------------------------------------------------------------
+    */
+
+        $payment = DB::transaction(function () use ($data) {
 
             if ($this->isEdit) {
 
@@ -188,8 +193,11 @@ class Form extends Component
                 // Update Payment
                 $this->payment->update($data);
 
-                // Ambil Payment terbaru
-                $payment = $this->payment->fresh();
+                // Payment terbaru
+                $payment = $this->payment->fresh([
+                    'loan.member',
+                    'meeting',
+                ]);
 
                 // Update Saving
                 app(SavingService::class)->updateInstallment(
@@ -199,21 +207,50 @@ class Form extends Component
 
                 // Buat Loan Overdue jika memenuhi syarat
                 $payment->loan->createOverdueLoanIfNeeded();
-            } else {
 
-                // Create Payment
-                $payment = Payment::create($data);
-
-                // Create / Update Saving
-                app(SavingService::class)
-                    ->recordInstallment($payment);
-
-                // Buat Loan Overdue jika memenuhi syarat
-                $payment->loan->createOverdueLoanIfNeeded();
+                return $payment;
             }
+
+            // Create Payment
+            $payment = Payment::create($data);
+
+            // Create / Update Saving
+            app(SavingService::class)
+                ->recordInstallment($payment);
+
+            // Buat Loan Overdue jika memenuhi syarat
+            $payment->loan->createOverdueLoanIfNeeded();
+
+            return $payment->fresh([
+                'loan.member',
+                'meeting',
+            ]);
         });
 
-        // Success
+        /*
+    |--------------------------------------------------------------------------
+    | NOTIFICATION
+    |--------------------------------------------------------------------------
+    */
+
+        if (! $this->isEdit && $payment->amount > 0) {
+
+            $message = app(CustomerNotificationService::class)
+                ->paymentReceived($payment);
+
+            // Sementara untuk testing
+            $this->dispatch(
+                'payment-notification-created',
+                message: $message,
+            );
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | SUCCESS
+    |--------------------------------------------------------------------------
+    */
+
         $this->dispatch('payment-saved');
 
         $this->dispatch(
@@ -257,11 +294,10 @@ class Form extends Component
             'note',
         ]);
 
-        $this->method = null;
-
         $this->payment_date = now()->toDateString();
 
         $this->amount = 0;
+        
         $this->amountFormatted = '0';
 
         $this->isEdit = false;

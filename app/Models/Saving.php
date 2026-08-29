@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\SavingType;
 use App\Traits\HasIndonesianDate;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -26,47 +26,19 @@ class Saving extends Model
         'description',
     ];
 
-    protected $casts = [
-        'transaction_date' => 'date',
-        'debit' => 'float',
-        'credit' => 'float',
-        'balance' => 'float',
-        'receivable' => 'float',
-        'amount' => 'float',
-        'interest_percent' => 'float',
-        'interest_amount' => 'float',
-    ];
-
-    public const TYPES = [
-        'Opening',
-        'Loan',
-        'Loan Overdue',
-        'Installment',
-        'Assistance',
-    ];
-
-    public function typeLabel(): Attribute
+    protected function casts(): array
     {
-        return Attribute::get(fn(): string => match ($this->type) {
-            'Opening' => 'Pembukaan',
-            'Loan' => 'Pinjaman',
-            'Loan Overdue' => 'Pinjaman Telat',
-            'Installment' => 'Angsuran',
-            'Assistance' => 'Bantuan',
-            default => $this->type,
-        });
-    }
-
-    public function typeColor(): Attribute
-    {
-        return Attribute::get(fn(): string => match ($this->type) {
-            'Opening' => 'slate',
-            'Assistance' => 'amber',
-            'Loan' => 'indigo',
-            'Loan Overdue' => 'rose',
-            'Installment' => 'teal',
-            default => 'zinc',
-        });
+        return [
+            'transaction_date' => 'date',
+            'debit' => 'float',
+            'credit' => 'float',
+            'balance' => 'float',
+            'receivable' => 'float',
+            'amount' => 'float',
+            'interest_percent' => 'float',
+            'interest_amount' => 'float',
+            'type' => SavingType::class,
+        ];
     }
 
     // Date Helper

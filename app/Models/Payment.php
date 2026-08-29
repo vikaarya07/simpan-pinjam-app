@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
 use App\Traits\HasIndonesianDate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -25,7 +27,15 @@ class Payment extends Model
         'note',
     ];
 
-    protected $casts = ['payment_date' => 'date', 'amount' => 'float'];
+    protected function casts(): array
+    {
+        return [
+            'payment_date' => 'date',
+            'amount' => 'float',
+            'status' => PaymentStatus::class,
+            'method' => PaymentMethod::class,
+        ];
+    }
 
     protected $with = ['loan.member', 'meeting'];
 
@@ -46,45 +56,6 @@ class Payment extends Model
         return 'payment_date';
     }
 
-    // Accessors
-    public function statusLabel(): Attribute
-    {
-        return Attribute::get(fn(): string => match ($this->status) {
-            'clear' => 'Clear',
-            'skip' => 'Skip',
-            default => '-',
-        });
-    }
-
-    public function statusColor(): Attribute
-    {
-        return Attribute::get(fn(): string => match ($this->status) {
-            'clear' => 'green',
-            'skip' => 'amber',
-            default => 'zinc',
-        });
-    }
-
-    public function methodLabel(): Attribute
-    {
-        return Attribute::get(fn(): string => match ($this->method) {
-            'cash' => 'Cash',
-            'transfer' => 'Transfer',
-            'qris' => 'QRIS',
-            default => '-',
-        });
-    }
-
-    public function methodColor(): Attribute
-    {
-        return Attribute::get(fn(): string => match ($this->method) {
-            'cash' => 'lime',
-            'transfer' => 'cyan',
-            'qris' => 'fuchsia',
-            default => 'zinc',
-        });
-    }
-
     // Search Scope
     public function scopeSearch(Builder $query, ?string $search): Builder
     {
@@ -100,33 +71,58 @@ class Payment extends Model
     protected static function booted(): void
     {
         // Status Payment
-        static::creating(function (Payment $payment) {
+        //  amount > 0  => Clear
+        //  amount = 0  => Skip
+        static::saving(function (Payment $payment) {
             $payment->status = $payment->amount > 0
-                ? 'clear'
-                : 'skip';
+                ? PaymentStatus::Clear
+                : PaymentStatus::Skip;
+
+            //  Skip tidak memiliki metode pembayaran.
+            if ($payment->amount <= 0) {
+                $payment->method = null;
+            }
         });
 
-        static::updating(function (Payment $payment) {
-            $payment->status = $payment->amount > 0
-                ? 'clear'
-                : 'skip';
-        });
-
-        // Setelah Payment dibuat
+        //  Setelah Payment dibuat.
         static::created(function (Payment $payment) {
             $payment->loan?->recalculate();
             $payment->loan?->createOverdueLoanIfNeeded();
         });
 
-        // Setelah Payment diubah
+        //   Setelah Payment diubah.
         static::updated(function (Payment $payment) {
             $payment->loan?->recalculate();
             $payment->loan?->createOverdueLoanIfNeeded();
         });
 
-        // Setelah Payment dihapus
+        //   Setelah Payment dihapus.
         static::deleted(function (Payment $payment) {
             $payment->loan?->recalculate();
+        });
+    }
+
+    // Accessor
+    protected function remainingAfterPayment(): Attribute
+    {
+        return Attribute::get(function (): float {
+            $totalPaid = $this->loan
+                ->payments()
+                ->where(function ($query) {
+                    $query
+                        ->where('payment_date', '<', $this->payment_date)
+                        ->orWhere(function ($query) {
+                            $query
+                                ->whereDate('payment_date', $this->payment_date)
+                                ->where('id', '<=', $this->id);
+                        });
+                })
+                ->sum('amount');
+
+            return max(
+                0,
+                $this->loan->amount - $totalPaid
+            );
         });
     }
 }

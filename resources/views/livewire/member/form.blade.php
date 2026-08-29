@@ -1,64 +1,162 @@
-    <flux:modal wire:model="showFormModal" class="md:w-3xl">
+<flux:modal wire:model="showFormModal" class="md:w-3xl">
 
-        <form wire:submit="save">
+    <form wire:submit="save">
 
-            <div class="space-y-6">
+        <div class="space-y-5">
+
+            {{-- Header --}}
+            <div>
+                <flux:heading size="lg">
+                    {{ $isEdit ? 'Edit Anggota' : 'Tambah Anggota' }}
+                </flux:heading>
+
+                <flux:text class="mt-1">
+                    {{ $isEdit ? 'Perbarui informasi data anggota.' : 'Lengkapi data anggota untuk mendaftarkan anggota baru.' }}
+                </flux:text>
+            </div>
+
+
+            {{-- Data Pribadi --}}
+            <div class="space-y-4">
 
                 <div>
-
-                    <flux:heading size="lg">
-
-                        {{ $isEdit ? 'Edit Member' : 'Tambah Member' }}
-
+                    <flux:heading size="sm">
+                        Data Pribadi
                     </flux:heading>
 
-                    <flux:text>
-                        Lengkapi data anggota.
+                    <flux:text size="sm" class="mt-1">
+                        Informasi dasar anggota.
                     </flux:text>
-
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
 
-                    <flux:input label="Nama" wire:model="name" />
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 
-                    <flux:input label="Email" type="email" wire:model="email" />
+                    {{-- Nama --}}
+                    <flux:field>
 
-                    <flux:input label="No HP" wire:model="phone" />
+                        <flux:input label="Nama" wire:model="name" placeholder="Nama lengkap" />
 
-                    <flux:select label="Jenis Kelamin" wire:model="gender">
+                        <flux:error name="name" />
 
-                        <option value="" selected disabled>-- Pilih Jenis Kelamin --</option>
-                        <option value="Male">Laki-laki</option>
-                        <option value="Female">Perempuan</option>
+                    </flux:field>
 
-                    </flux:select>
 
-                    <flux:input type="date" label="Tanggal Lahir" wire:model="date_birth" />
+                    {{-- Email --}}
+                    <flux:field>
 
-                    <flux:input type="date" label="Tanggal Bergabung" wire:model="date_join" />
+                        <flux:input label="Email" type="email" wire:model="email" placeholder="nama@email.com" />
 
-                    <flux:select label="Status" wire:model="status">
-                        <option value="Active">Aktif</option>
-                        <option value="Inactive">Nonaktif</option>
-                    </flux:select>
+                        <flux:error name="email" />
 
-                </div>
+                    </flux:field>
 
-                <div class="flex justify-end gap-2">
 
-                    <flux:button variant="ghost" wire:click="$set('showFormModal', false)">
-                        Batal
-                    </flux:button>
+                    {{-- Phone --}}
+                    <flux:field>
 
-                    <flux:button type="submit" variant="primary">
-                        {{ $isEdit ? 'Update' : 'Simpan' }}
-                    </flux:button>
+                        <flux:input label="No. HP" wire:model="phone" placeholder="08xxxxxxxxxx" />
+
+                        <flux:error name="phone" />
+
+                    </flux:field>
+
+
+                    {{-- Gender --}}
+                    <flux:field>
+
+                        <flux:select label="Jenis Kelamin" wire:model="gender">
+
+                            <option value="" selected disabled>-- Pilih Jenis Kelamin --</option>
+
+                            @foreach (\App\Enums\Gender::cases() as $genderOption)
+                                <option value="{{ $genderOption->value }}">
+                                    {{ $genderOption->label() }}
+                                </option>
+                            @endforeach
+
+                        </flux:select>
+
+                        <flux:error name="gender" />
+
+                    </flux:field>
+
+
+                    {{-- Date Birth --}}
+                    <flux:field>
+
+                        <flux:input type="date" label="Tanggal Lahir" wire:model="date_birth" />
+
+                        <flux:error name="date_birth" />
+
+                    </flux:field>
+
+
+                    {{-- Date Join --}}
+                    <flux:field>
+
+                        <flux:input type="date" label="Tanggal Bergabung" wire:model="date_join" />
+
+                        <flux:error name="date_join" />
+
+                    </flux:field>
 
                 </div>
 
             </div>
 
-        </form>
 
-    </flux:modal>
+            <flux:separator />
+
+
+            {{-- Keanggotaan --}}
+            <div class="space-y-4">
+
+                <div>
+                    <flux:heading size="sm">
+                        Keanggotaan
+                    </flux:heading>
+
+                    <flux:text size="sm" class="mt-1">
+                        Status keanggotaan anggota.
+                    </flux:text>
+                </div>
+
+
+                <flux:field>
+
+                    <flux:select label="Status" wire:model="status">
+
+                        @foreach (\App\Enums\MemberStatus::cases() as $statusOption)
+                            <option value="{{ $statusOption->value }}">
+                                {{ $statusOption->label() }}
+                            </option>
+                        @endforeach
+
+                    </flux:select>
+
+                    <flux:error name="status" />
+
+                </flux:field>
+
+            </div>
+
+
+            {{-- Footer --}}
+            <div class="flex justify-end gap-2 pt-2">
+
+                <flux:button type="button" variant="ghost" wire:click="$set('showFormModal', false)">
+                    Batal
+                </flux:button>
+
+                <flux:button type="submit" variant="primary">
+                    {{ $isEdit ? 'Update Anggota' : 'Simpan Anggota' }}
+                </flux:button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</flux:modal>

@@ -24,8 +24,8 @@ return new class extends Migration
             $table->unsignedTinyInteger('payment_count');
             $table->enum('method', ['cash', 'transfer', 'qris'])
                 ->nullable();
-            $table->enum('status', ['clear', 'skip', 'unpaid'])
-                ->default('unpaid');
+            $table->enum('status', ['clear', 'skip'])
+                ->default('skip');
             $table->text('note')->nullable();
             $table->unique(['loan_id', 'payment_count']);
             $table->unique(['loan_id', 'meeting_id']);

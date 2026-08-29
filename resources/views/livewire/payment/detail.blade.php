@@ -1,69 +1,211 @@
-<div class="space-y-6">
+<div class="space-y-5">
 
-    <flux:heading size="xl">
-        Detail Pinjaman
-    </flux:heading>
+    {{-- Header --}}
+    <div>
+        <flux:heading size="xl">
+            Detail Pinjaman
+        </flux:heading>
 
+        <flux:text class="mt-1">
+            Informasi pinjaman dan riwayat pembayaran nasabah
+        </flux:text>
+    </div>
+
+
+    {{-- Loan Information --}}
     <flux:card>
 
-        <div class="grid grid-cols-2 gap-6">
-            <div>
-                <div class="text-sm text-gray-500 font-bold">No Pinjaman</div>
-                <div class="font-medium">{{ $payment->loan->loan_number }}</div>
-            </div>
+        <div class="space-y-6">
 
-            <div>
-                <div class="text-sm text-gray-500 font-bold">Waktu</div>
-                <div>{{ $payment->waktu }}</div>
-            </div>
+            {{-- Header Card --}}
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
-            <div>
-                <div class="text-sm text-gray-500 font-bold">Nasabah</div>
-                <div class="font-semibold">{{ $payment->loan->member->name }}</div>
-            </div>
+                <div>
+                    <flux:text size="sm" class="font-medium">
+                        Nomor Pinjaman
+                    </flux:text>
 
-            <div>
-                <div class="text-sm text-gray-500 font-bold">Status</div>
-                <flux:badge :color="$payment->status === 'clear' ? 'green' : 'red'">
-                    {{ strtoupper($payment->status) }}
+                    <flux:heading size="lg" class="mt-1">
+                        {{ $payment->loan->loan_number }}
+                    </flux:heading>
+                </div>
+
+                <flux:badge :color="$payment->status->color()" size="sm">
+                    {{ $payment->status->label() }}
                 </flux:badge>
+
             </div>
 
-            <div>
-                <div class="text-sm text-gray-500 font-bold">Pokok Pinjaman</div>
-                <div>{{ idr($payment->loan->principal) }}</div>
-            </div>
+            <flux:separator />
 
-            <div>
-                <div class="text-sm text-gray-500 font-bold">Pembayaran ke-{{ $payment->payment_count }}</div>
-                <div class="font-bold">
-                    {{ idr($payment->amount) }}
+            {{-- Basic Information --}}
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+
+                {{-- Nasabah --}}
+                <div class="flex items-center gap-3">
+
+                    <flux:avatar size="sm" :name="$payment->loan->member->name" />
+
+                    <div>
+                        <flux:text size="sm" class="font-medium">
+                            Nasabah
+                        </flux:text>
+
+                        <div class="mt-1 font-semibold">
+                            {{ $payment->loan->member->name }}
+                        </div>
+                    </div>
+
                 </div>
-            </div>
 
-            <div>
-                <div class="text-sm text-gray-500 font-bold">Total</div>
-                <div>{{ idr($payment->loan->amount) }}</div>
-            </div>
+                {{-- Waktu --}}
+                <div class="flex items-center gap-3">
 
-            <div>
-                <div class="text-sm text-gray-500 font-bold">Sudah Dibayar</div>
-                <div class="font-bold text-green-600">
-                    {{ idr($this->totalPaid) }}
+                    <flux:icon name="calendar-days" class="mt-0.5 size-7 text-zinc-500" />
+
+                    <div>
+                        <flux:text size="sm" class="font-medium">
+                            Waktu
+                        </flux:text>
+
+                        <div class="mt-1 font-medium">
+                            {{ $payment->waktu }}
+                        </div>
+                    </div>
+
                 </div>
+
+                {{-- Pokok --}}
+                <div class="flex items-center gap-3">
+
+                    <flux:icon name="banknotes" class="mt-0.5 size-7 text-zinc-500" />
+
+                    <div>
+                        <flux:text size="sm" class="font-medium">
+                            Pokok Pinjaman
+                        </flux:text>
+
+                        <div class="mt-1 font-semibold">
+                            {{ idr($payment->loan->principal) }}
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
 
-            <div>
-                <div class="text-sm text-gray-500 font-bold">Sisa Hutang</div>
-                <div class="font-bold text-red-600">
-                    {{ idr($this->remaining) }}
-                </div>
-            </div>
         </div>
 
-        <div class="pt-6">
-            <div class="text-sm text-gray-500 font-bold">Catatan</div>
-            <div class="text-sm font-normal leading-relaxed tracking-wide text-justify">{{ $payment?->note ?? '-' }}</div>
+    </flux:card>
+
+    {{-- Payment Summary --}}
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+
+        {{-- Total --}}
+        <flux:card>
+
+            <div class="flex items-start justify-between gap-3">
+
+                <div>
+                    <flux:text size="sm" class="font-medium">
+                        Total Pinjaman
+                    </flux:text>
+
+                    <flux:heading size="lg" class="mt-2">
+                        {{ idr($payment->loan->amount) }}
+                    </flux:heading>
+                </div>
+
+                <flux:icon name="receipt-percent" class="size-7 text-zinc-500" />
+
+            </div>
+
+        </flux:card>
+
+        {{-- Payment --}}
+        <flux:card>
+
+            <div class="flex items-start justify-between gap-3">
+
+                <div>
+                    <flux:text size="sm" class="font-medium">
+                        Pembayaran ke-{{ $payment->payment_count }}
+                    </flux:text>
+
+                    <flux:heading size="lg" class="mt-2">
+                        {{ idr($payment->amount) }}
+                    </flux:heading>
+                </div>
+
+                <flux:icon name="arrow-down-circle" class="size-7 text-zinc-500" />
+
+            </div>
+
+        </flux:card>
+
+        {{-- Paid --}}
+        <flux:card>
+
+            <div class="flex items-start justify-between gap-3">
+
+                <div>
+                    <flux:text size="sm" class="font-medium">
+                        Sudah Dibayar
+                    </flux:text>
+
+                    <flux:heading size="lg" class="mt-2 text-green-600">
+                        {{ idr($this->totalPaid) }}
+                    </flux:heading>
+                </div>
+
+                <flux:icon name="check-circle" class="size-7 text-green-600" />
+
+            </div>
+
+        </flux:card>
+
+    </div>
+
+    {{-- Remaining --}}
+    <flux:card>
+
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+            <div>
+                <flux:text size="sm" class="font-medium">
+                    Sisa Hutang
+                </flux:text>
+
+                <flux:heading size="xl" class="mt-1 text-red-600">
+                    {{ idr($payment->remaining_after_payment) }}
+                </flux:heading>
+            </div>
+
+            <flux:icon name="exclamation-circle" class="hidden size-12 text-red-500 sm:block" />
+
+        </div>
+
+    </flux:card>
+
+    {{-- Note --}}
+    <flux:card>
+
+        <div class="space-y-2">
+
+            <div class="flex items-center gap-2">
+
+                <flux:icon name="chat-bubble-left" class="size-5 text-zinc-400" />
+
+                <flux:text size="sm" class="font-semibold">
+                    Catatan
+                </flux:text>
+
+            </div>
+
+            <flux:text class="leading-relaxed">
+                {{ $payment?->note ?? '-' }}
+            </flux:text>
+
         </div>
 
     </flux:card>

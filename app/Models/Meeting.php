@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Loan;
+use App\Enums\LoanType;
+use App\Enums\PaymentStatus;
 use App\Traits\HasIndonesianDate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -17,61 +18,78 @@ class Meeting extends Model
 
     protected $fillable = [
         'meeting_date',
-        'place'
+        'place',
     ];
 
-    protected $casts = [
-        'meeting_date' => 'date'
-    ];
+    public function casts(): array
+    {
+        return [
+            'meeting_date' => 'datetime',
+        ];
+    }
 
+    //  Relationships
     public function payments()
     {
         return $this->hasMany(Payment::class);
     }
 
-    public function paymentSummary(): Attribute
+    // Payment Summary
+    protected function paymentSummary(): Attribute
     {
         return Attribute::get(function (): array {
             $loans = Loan::query()
-                ->whereIn('type', ['loan', 'loan_overdue'])
-                ->where('status', 'running')
+                ->whereIn('type', [
+                    LoanType::Loan,
+                    LoanType::LoanOverdue,
+                ])
                 ->forMeeting($this)
                 ->with([
                     'payments' => function ($query) {
-                        $query->where('meeting_id', $this->id);
+                        $query->where(
+                            'meeting_id',
+                            $this->id
+                        );
                     },
                 ])
                 ->get();
 
             $clear = 0;
-            $unpaid = 0;
             $skip = 0;
+            $unpaid = 0;
 
             foreach ($loans as $loan) {
                 $payment = $loan->payments->first();
 
-                if (!$payment) {
+                //   Belum ada Payment untuk meeting ini.
+                if (! $payment) {
                     $unpaid++;
-                } elseif ($payment->status === 'clear') {
-                    $clear++;
-                } elseif ($payment->status === 'skip') {
-                    $skip++;
+                    continue;
                 }
+
+                //  Payment sudah ada.
+
+                match ($payment->status) {
+                    PaymentStatus::Clear => $clear++,
+                    PaymentStatus::Skip => $skip++,
+                };
             }
 
             return [
                 'clear' => $clear,
-                'unpaid' => $unpaid,
                 'skip' => $skip,
+                'unpaid' => $unpaid,
             ];
         });
     }
 
+    //  Date Helper
     protected function getDateColumn(): string
     {
         return 'meeting_date';
     }
 
+    //  Search Scope
     public function scopeSearch(Builder $query, ?string $search): Builder
     {
         return $query->when($search, function (Builder $query) use ($search) {

@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Saving;
 
+use App\Enums\SavingType;
 use App\Models\Saving;
 use App\Services\SavingService;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -44,18 +46,19 @@ class Form extends Component
         // diedit secara manual.
         abort_unless(
             in_array($this->saving->type, [
-                'Opening',
-                'Assistance',
-            ]),
+                SavingType::Opening,
+                SavingType::Assistance,
+            ], true),
             403
         );
+
 
         $this->isEdit = true;
 
         $this->transaction_date =
             $this->saving->transaction_date->format('Y-m-d');
 
-        $this->type = $this->saving->type;
+        $this->type = $this->saving->type->value;
 
         $this->amount = (float) $this->saving->debit;
 
@@ -93,8 +96,13 @@ class Form extends Component
 
             'type' => [
                 'required',
-                'in:Opening,Assistance',
+                Rule::in([
+                    SavingType::Opening->value,
+                    SavingType::Assistance->value,
+                ]),
             ],
+
+
 
             'amount' => [
                 'required',

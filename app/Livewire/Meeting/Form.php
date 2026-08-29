@@ -41,7 +41,7 @@ class Form extends Component
         $this->isEdit = true;
 
         $this->place = $meeting->place;
-        $this->meeting_date = optional($meeting->meeting_date)->format('Y-m-d');
+        $this->meeting_date = optional($meeting->meeting_date)->format('Y-m-d\TH:i');
 
         $this->resetValidation();
 
@@ -92,7 +92,7 @@ class Form extends Component
             'meeting_date',
         ]);
 
-        $this->meeting_date = now()->format('Y-m-d');
+        $this->meeting_date = now()->format('Y-m-d\TH:i');
 
         $this->isEdit = false;
 

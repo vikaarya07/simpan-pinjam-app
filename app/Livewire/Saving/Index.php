@@ -37,7 +37,7 @@ class Index extends Component
             'confirm-delete',
             action: 'delete-saving',
             id: $saving->id,
-            text: $saving->type . ' - ' . Str::limit($saving->description, 80)
+            text: $saving->type->value . ' - ' . Str::limit($saving->description, 80)
         );
     }
 

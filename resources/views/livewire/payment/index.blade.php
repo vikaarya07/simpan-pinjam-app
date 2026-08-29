@@ -1,92 +1,198 @@
-<div class="space-y-6">
+<div class="space-y-5">
 
-    <div class="flex items-center justify-between">
-
+    {{-- Header --}}
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-            <h1 class="text-2xl font-bold">
+            <flux:heading size="xl">
                 Rapat SATYA MUDA GETAS
-            </h1>
+            </flux:heading>
 
-            <p class="text-zinc-500">
-                Daftar Rapat SATYA MUDA GETAS
-            </p>
+            <flux:text class="mt-1">
+                Daftar rapat dan status angsuran nasabah
+            </flux:text>
         </div>
-
     </div>
 
-    <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" placeholder="Cari Tempat atau Waktu ..." />
+    {{-- Filter --}}
+    <flux:card class="p-4">
+        <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
 
-    <flux:table>
+            <div class="w-full lg:max-w-md">
+                <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass"
+                    placeholder="Cari tempat atau waktu rapat..." clearable />
+            </div>
 
-        <flux:table.columns>
+            <flux:text size="sm" class="text-zinc-600">
+                Menampilkan daftar rapat yang tersedia
+            </flux:text>
 
-            <flux:table.column>No</flux:table.column>
+        </div>
+    </flux:card>
 
-            <flux:table.column>Pertemuan</flux:table.column>
+    {{-- Table --}}
+    <flux:card class="overflow-hidden px-5! py-2!">
 
-            <flux:table.column>Waktu</flux:table.column>
+        <flux:table>
 
-            <flux:table.column>Angsuran Tersedia</flux:table.column>
+            <flux:table.columns>
 
-            <flux:table.column>Aksi</flux:table.column>
+                <flux:table.column class="w-16">
+                    No
+                </flux:table.column>
 
-        </flux:table.columns>
+                <flux:table.column>
+                    Pertemuan
+                </flux:table.column>
 
-        <flux:table.rows>
+                <flux:table.column>
+                    Waktu
+                </flux:table.column>
 
-            @forelse($meetings as $meeting)
-                <flux:table.row>
+                <flux:table.column>
+                    Status Angsuran
+                </flux:table.column>
 
-                    <flux:table.cell>
-                        {{ $loop->iteration }}
-                    </flux:table.cell>
+                <flux:table.column>
+                    Aksi
+                </flux:table.column>
 
-                    <flux:table.cell>
-                        {{ $meeting->place }}
-                    </flux:table.cell>
+            </flux:table.columns>
 
-                    <flux:table.cell>
-                        {{ $meeting->tanggal }}
-                    </flux:table.cell>
+            <flux:table.rows>
 
-                    <flux:table.cell>
-                        <div class="flex items-center gap-1">
-                            <flux:badge color="green">
-                                Clear : {{ $meeting->payment_summary['clear'] }}
-                            </flux:badge>
-                            |
-                            <flux:badge color="amber">
-                                Skip : {{ $meeting->payment_summary['skip'] }}
-                            </flux:badge>
-                            |
-                            <flux:badge color="red">
-                                Unpaid : {{ $meeting->payment_summary['unpaid'] }}
-                            </flux:badge>
-                        </div>
-                    </flux:table.cell>
+                @forelse($meetings as $meeting)
+                    <flux:table.row wire:key="meeting-{{ $meeting->id }}" class="group">
 
-                    <flux:table.cell>
-                        <flux:button size="sm" variant="outline" icon="eye"
-                            :href="route('payment.show', $meeting)" wire:navigate>
-                            Lihat
-                        </flux:button>
-                    </flux:table.cell>
+                        {{-- No --}}
+                        <flux:table.cell>
+                            <flux:text size="sm" class="font-medium text-zinc-500">
+                                {{ $meetings->firstItem() + $loop->index }}
+                            </flux:text>
+                        </flux:table.cell>
 
-                </flux:table.row>
+                        {{-- Pertemuan --}}
+                        <flux:table.cell>
 
-            @empty
-                <flux:table.row>
-                    <flux:table.cell colspan="6">
-                        Belum ada data.
-                    </flux:table.cell>
-                </flux:table.row>
-            @endforelse
+                            <div class="flex items-center gap-3">
 
-        </flux:table.rows>
+                                <div
+                                    class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-800">
+                                    <flux:icon name="map-pin" variant="mini" class="text-zinc-500" />
+                                </div>
 
-    </flux:table>
+                                <flux:text class="font-semibold">
+                                    {{ $meeting->place }}
+                                </flux:text>
 
-    {{ $meetings->links() }}
+                            </div>
+
+                        </flux:table.cell>
+
+                        {{-- Waktu --}}
+                        <flux:table.cell>
+
+                            <div class="flex items-center gap-2">
+
+                                <flux:icon name="calendar-days" variant="mini" class="text-zinc-500" />
+
+                                <div>
+                                    <flux:text class="font-medium">
+                                        {{ $meeting->tanggal }}
+                                    </flux:text>
+
+                                    @if (isset($meeting->meeting_date))
+                                        <flux:text size="sm" class="text-zinc-500">
+                                            {{ $meeting->jam }}
+                                        </flux:text>
+                                    @endif
+                                </div>
+
+                            </div>
+
+                        </flux:table.cell>
+
+                        {{-- Status Angsuran --}}
+                        <flux:table.cell>
+
+                            @php
+                                $summary = $meeting->payment_summary;
+                            @endphp
+
+                            <div class="flex flex-wrap items-center gap-2">
+                                <flux:badge :color="$paymentStatus::Clear->color()"
+                                    :icon="$paymentStatus::Clear->icon()" size="sm">
+                                    {{ $summary['clear'] }}
+                                </flux:badge>
+
+                                <flux:badge :color="$paymentStatus::Skip->color()" :icon="$paymentStatus::Skip->icon()"
+                                    size="sm">
+                                    {{ $summary['skip'] }}
+                                </flux:badge>
+
+                                <flux:badge color="red" icon="x-circle" size="sm">
+                                    {{ $summary['unpaid'] }}
+                                </flux:badge>
+                            </div>
+
+                        </flux:table.cell>
+
+                        {{-- Aksi --}}
+                        <flux:table.cell>
+
+                            <flux:button size="sm" variant="outline" icon="eye"
+                                :href="route('payment.show', $meeting)" wire:navigate>
+                                Lihat
+                            </flux:button>
+
+                        </flux:table.cell>
+
+                    </flux:table.row>
+
+                @empty
+
+                    <flux:table.row>
+
+                        <flux:table.cell colspan="5">
+
+                            <div class="flex flex-col items-center justify-center py-12 text-center">
+
+                                <div
+                                    class="mb-4 flex size-14 items-center justify-center rounded-2xl bg-zinc-100 dark:bg-zinc-800">
+                                    <flux:icon name="calendar-days" class="size-7 text-zinc-400" />
+                                </div>
+
+                                <flux:heading size="lg">
+                                    Belum ada rapat
+                                </flux:heading>
+
+                                <flux:text class="mt-1 max-w-sm text-zinc-500">
+                                    Belum ada data rapat yang sesuai dengan pencarian Anda.
+                                </flux:text>
+
+                                <flux:button class="mt-5" variant="primary" icon="plus"
+                                    wire:click="$dispatch('open-meeting-form-create')">
+                                    Tambah Rapat
+                                </flux:button>
+
+                            </div>
+
+                        </flux:table.cell>
+
+                    </flux:table.row>
+                @endforelse
+
+            </flux:table.rows>
+
+        </flux:table>
+
+    </flux:card>
+
+    {{-- Pagination --}}
+    @if ($meetings->hasPages())
+        <div class="pt-2">
+            {{ $meetings->links() }}
+        </div>
+    @endif
 
     <livewire:meeting.form />
 

@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Member;
 
+use App\Enums\Gender;
+use App\Enums\MemberStatus;
 use App\Models\Member;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\On;
@@ -40,13 +42,13 @@ class Form extends Component
             'phone' => ['required', 'string', 'max:20',],
             'gender' => [
                 'required',
-                Rule::in(Member::GENDERS),
+                Rule::enum(Gender::class),
             ],
             'date_birth' => ['required', 'date',],
             'date_join' => ['required', 'date',],
             'status' => [
                 'required',
-                Rule::in(['Active', 'Inactive']),
+                Rule::enum(MemberStatus::class),
             ],
         ];
     }
@@ -71,10 +73,10 @@ class Form extends Component
         $this->name = $member->name;
         $this->email = $member->email;
         $this->phone = $member->phone;
-        $this->gender = $member->gender;
+        $this->gender = $member->gender?->value;
         $this->date_birth = $member->date_birth->format('Y-m-d');
         $this->date_join = $member->date_join->format('Y-m-d');
-        $this->status = $member->status;
+        $this->status = $member->status?->value;
 
         $this->resetValidation();
 

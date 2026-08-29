@@ -1,15 +1,18 @@
 <?php
 
-use App\Livewire\Dashboard;
-use App\Livewire\Meeting\Index as MeetingIndex;
-use App\Livewire\Member\Index as MemberIndex;
 use App\Livewire\Customer\Index as CustomerIndex;
 use App\Livewire\Customer\Show as CustomerShow;
-use App\Livewire\Saving\Index as SavingIndex;
+use App\Livewire\Dashboard;
 use App\Livewire\Loan\Index as LoanIndex;
+use App\Livewire\Meeting\Index as MeetingIndex;
+use App\Livewire\Member\Index as MemberIndex;
+use App\Livewire\Saving\Index as SavingIndex;
+use App\Livewire\Payment\Detail as PaymentDetail;
 use App\Livewire\Payment\Index as PaymentIndex;
 use App\Livewire\Payment\Show as PaymentShow;
-use App\Livewire\Payment\Detail as PaymentDetail;
+use App\Livewire\Report\Monthly as ReportMonthly;
+use App\Livewire\Report\Customer as ReportCustomer;
+use App\Livewire\Customer\Notification\Index as NotificationIndex;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/dashboard');
@@ -42,6 +45,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('payment.show');
     Route::get('/payment/{payment}/detail', PaymentDetail::class)
         ->name('payment.detail');
+
+    Route::get('/report/monthly', ReportMonthly::class)
+        ->name('report.monthly');
+    Route::get('/report/customer', ReportCustomer::class)
+        ->name('report.customer');
+
+    Route::get(
+        '/customer/{customer}/notifications',
+        NotificationIndex::class
+    )->name('customer.notifications');
 });
 
 require __DIR__ . '/settings.php';

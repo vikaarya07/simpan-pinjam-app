@@ -2,68 +2,73 @@
 
     <form wire:submit="save">
 
-        <div class="space-y-6">
+        <div class="space-y-5">
 
             {{-- Header --}}
             <div>
-
                 <flux:heading size="lg">
                     {{ $isEdit ? 'Ubah Angsuran' : 'Bayar Angsuran' }}
                 </flux:heading>
 
-                <flux:text>
+                <flux:text class="mt-1">
                     Pembayaran angsuran pinjaman
                 </flux:text>
+            </div>
+
+            {{-- Informasi Pinjaman --}}
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+                <flux:input label="Pertemuan" :value="$meeting?->place" readonly />
+
+                <flux:input label="Nomor Pinjaman" :value="$loan?->loan_number" readonly />
+
+                <flux:input label="Nasabah" :value="$loan?->member?->name" readonly />
+
+                <flux:input label="Pembayaran Ke"
+                    :value="$isEdit? $payment?->payment_count: $loan?->next_payment_count"readonly />
+
+                <flux:input label="Total Hutang" :value="$loan ? idr($loan->amount) : ''" readonly />
+
+                <flux:input label="Sisa Hutang" :value="$loan ? idr($loan->remaining) : ''" readonly />
 
             </div>
 
-            {{-- Form --}}
-            <div class="grid grid-cols-2 gap-4 mb-4">
+            {{-- Pembayaran --}}
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 
-                {{-- Pertemuan --}}
-                <flux:input label="Pertemuan" :value="$meeting?->place" readonly />
+                <div>
+                    <flux:input label="Jumlah Bayar" wire:model.live="amountFormatted" placeholder="0" />
 
-                {{-- Nomor Pinjaman --}}
-                <flux:input label="Nomor Pinjaman" :value="$loan?->loan_number" readonly />
+                    @error('amount')
+                        <flux:error name="amount">
+                            {{ $message }}
+                        </flux:error>
+                    @enderror
+                </div>
 
-                {{-- Nama Nasabah --}}
-                <flux:input label="Nasabah" :value="$loan?->member?->name" readonly />
-
-                {{-- Pembayaran Ke --}}
-                <flux:input label="Pembayaran Ke"
-                    :value="$isEdit ? $payment?->payment_count : $loan?->next_payment_count" readonly />
-
-                {{-- Total Hutang --}}
-                <flux:input label="Total Hutang" :value="$loan ? idr($loan->amount) : ''" readonly />
-
-                {{-- Sisa Hutang --}}
-                <flux:input label="Sisa Hutang" :value="$loan ? idr($loan->remaining) : ''" readonly />
-
-                {{-- Jumlah Bayar --}}
-                <flux:input label="Jumlah Bayar" wire:model.live="amountFormatted" />
-                @error('amount')
-                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                @enderror
-
-                {{-- Tanggal Bayar --}}
                 <flux:input label="Tanggal Pembayaran" type="date" wire:model="payment_date" />
 
-                {{-- Metode --}}
-                @if ($amount > 0)
-                    <flux:select label="Metode Pembayaran" wire:model="method">
-                        <option value="">- Pilih Metode -</option>
-                        <option value="cash">Cash</option>
-                        <option value="transfer">Transfer</option>
-                        <option value="qris">QRIS</option>
-                    </flux:select>
-                @endif
+                <flux:select label="Metode Pembayaran" wire:model="method">
+
+                    <option value="" selected disabled>-- Pilih Metode --</option>
+
+                    @foreach (\App\Enums\PaymentMethod::cases() as $paymentMethod)
+                        <option value="{{ $paymentMethod->value }}">
+                            {{ $paymentMethod->label() }}
+                        </option>
+                    @endforeach
+
+                </flux:select>
 
             </div>
 
             {{-- Catatan --}}
             <flux:field>
-                <flux:textarea label="Catatan" wire:model="note" rows="1" placeholder="Masukkan catatan..." />
+
+                <flux:textarea label="Catatan" wire:model="note" rows="2" placeholder="Masukkan catatan..." />
+
                 <flux:error name="note" />
+
             </flux:field>
 
             {{-- Footer --}}

@@ -61,12 +61,12 @@
 
         <flux:sidebar.nav>
             <flux:sidebar.group :heading="__('Laporan')" class="grid">
-                <flux:sidebar.item icon="document-chart-bar" :href="route('dashboard')"
-                    :current="request()->routeIs('dashboard')" wire:navigate>
+                <flux:sidebar.item icon="document-chart-bar" :href="route('report.monthly')"
+                    :current="request()->routeIs('report.monthly*')" wire:navigate>
                     {{ __('Laporan Bulanan') }}
                 </flux:sidebar.item>
-                <flux:sidebar.item icon="clipboard-document-check" :href="route('dashboard')"
-                    :current="request()->routeIs('dashboard')" wire:navigate>
+                <flux:sidebar.item icon="clipboard-document-check" :href="route('report.customer')"
+                    :current="request()->routeIs('report.customer*')" wire:navigate>
                     {{ __('Laporan Nasabah') }}
                 </flux:sidebar.item>
             </flux:sidebar.group>
