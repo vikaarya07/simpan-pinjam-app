@@ -13,22 +13,11 @@ enum NotificationType: string
     public function label(): string
     {
         return match ($this) {
-            self::LoanCreated => 'Bukti Pinjaman',
-            self::PaymentReceived => 'Bukti Pembayaran',
-            self::PaymentReminder => 'Reminder Pembayaran',
+            self::LoanCreated => 'Pinjaman Baru',
+            self::PaymentReceived => 'Pembayaran Diterima',
+            self::PaymentReminder => 'Pengingat Pembayaran',
             self::AlmostPaidOff => 'Hampir Lunas',
             self::PaidOff => 'Pinjaman Lunas',
-        };
-    }
-
-    public function icon(): string
-    {
-        return match ($this) {
-            self::LoanCreated => 'document-text',
-            self::PaymentReceived => 'banknotes',
-            self::PaymentReminder => 'bell-alert',
-            self::AlmostPaidOff => 'sparkles',
-            self::PaidOff => 'check-circle',
         };
     }
 
@@ -38,8 +27,19 @@ enum NotificationType: string
             self::LoanCreated => 'blue',
             self::PaymentReceived => 'green',
             self::PaymentReminder => 'amber',
-            self::AlmostPaidOff => 'violet',
+            self::AlmostPaidOff => 'orange',
             self::PaidOff => 'emerald',
+        };
+    }
+
+    public function icon(): string
+    {
+        return match ($this) {
+            self::LoanCreated => 'banknotes',
+            self::PaymentReceived => 'check-circle',
+            self::PaymentReminder => 'bell-alert',
+            self::AlmostPaidOff => 'clock',
+            self::PaidOff => 'check-badge',
         };
     }
 }

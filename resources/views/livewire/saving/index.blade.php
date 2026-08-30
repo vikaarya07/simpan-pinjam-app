@@ -27,49 +27,27 @@
 
             <flux:table.columns>
 
-                <flux:table.column class="w-12">
-                    #
-                </flux:table.column>
+                <flux:table.column class="w-12">#</flux:table.column>
 
-                <flux:table.column>
-                    Waktu
-                </flux:table.column>
+                <flux:table.column>Waktu</flux:table.column>
 
-                <flux:table.column>
-                    Jenis
-                </flux:table.column>
+                <flux:table.column>Jenis</flux:table.column>
 
-                <flux:table.column class="text-right">
-                    Debet
-                </flux:table.column>
+                <flux:table.column align="center">Debet</flux:table.column>
 
-                <flux:table.column class="text-right">
-                    Kredit
-                </flux:table.column>
+                <flux:table.column align="center">Kredit</flux:table.column>
 
-                <flux:table.column class="text-right">
-                    Jasa
-                </flux:table.column>
+                <flux:table.column align="center">Jasa</flux:table.column>
 
-                <flux:table.column class="text-right">
-                    Saldo
-                </flux:table.column>
+                <flux:table.column align="center">Saldo</flux:table.column>
 
-                <flux:table.column class="text-right">
-                    Piutang
-                </flux:table.column>
+                <flux:table.column align="center">Piutang</flux:table.column>
 
-                <flux:table.column class="text-right">
-                    Total
-                </flux:table.column>
+                <flux:table.column align="center">Total</flux:table.column>
 
-                <flux:table.column>
-                    Keterangan
-                </flux:table.column>
+                <flux:table.column>Keterangan</flux:table.column>
 
-                <flux:table.column class="text-right">
-                    Aksi
-                </flux:table.column>
+                <flux:table.column align="center">Aksi</flux:table.column>
 
             </flux:table.columns>
 
@@ -141,7 +119,7 @@
 
                             @if (in_array($saving->type, [\App\Enums\SavingType::Loan, \App\Enums\SavingType::LoanOverdue], true) &&
                                     $saving->interest_amount > 0)
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center gap-1 justify-end">
 
                                     <span class="font-medium tabular-nums">
                                         {{ idr($saving->interest_amount) }}

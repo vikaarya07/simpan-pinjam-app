@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\CustomerNotification;
 use App\Models\Loan;
 use App\Models\Member;
 use App\Models\Payment;
@@ -117,34 +118,47 @@ class ReportService
 
     public function customer(Member $customer): array
     {
-        $customer->load([
-            'loans' => fn($query) => $query
-                ->with([
-                    'payments' => fn($query) => $query
-                        ->with('meeting')
-                        ->orderBy('payment_date')
-                        ->orderBy('id'),
-                ])
-                ->orderBy('created_at', 'desc'),
-        ]);
+        $loans = $customer->loans()
+            ->latest()
+            ->get();
 
-        $loans = $customer->loans;
+        $summary = [
+            'loan_count' => $loans->count(),
+            'loan_amount' => $loans->sum('amount'),
+            'payment_amount' => $loans
+                ->flatMap->payments
+                ->sum('amount'),
+            'remaining' => $loans->sum('remaining'),
+        ];
 
-        $payments = $loans
-            ->flatMap(fn($loan) => $loan->payments);
+        $notifications = CustomerNotification::query()
+            ->where('member_id', $customer->id)
+            ->latest()
+            ->get();
 
         return [
             'customer' => $customer,
+            'summary' => $summary,
             'loans' => $loans,
-            'payments' => $payments,
-            'summary' => [
-                'loan_count' => $loans->count(),
-                'loan_amount' => $loans->sum('amount'),
-                'payment_count' => $payments->count(),
-                'payment_amount' => $payments->sum('amount'),
-                'remaining' => $loans->sum('remaining'),
-            ],
+            'notifications' => $notifications,
         ];
+    }
+
+    public function createNotification(Payment $payment): void
+    {
+        $notificationService = app(NotificationService::class);
+
+        $notificationService->paymentReceived($payment);
+
+        if ($payment->loan->remaining <= 0) {
+            $notificationService->paidOff($payment);
+
+            return;
+        }
+
+        if ((int) $payment->payment_count === 5) {
+            $notificationService->almostPaidOff($payment);
+        }
     }
 
     // public function monthlyWhatsApp(int $year, int $month): string

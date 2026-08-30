@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+
         Schema::create('customer_notifications', function (Blueprint $table) {
             $table->id();
             $table->foreignId('member_id')
@@ -29,10 +30,27 @@ return new class extends Migration
                 ->constrained()
                 ->nullOnDelete();
             $table->string('type');
+            $table->string('title');
             $table->text('message');
-            $table->timestamp('sent_at')->nullable();
+            $table->json('data')
+                ->nullable();
+            $table->timestamp('read_at')
+                ->nullable();
+            $table->timestamp('sent_at')
+                ->nullable();
             $table->timestamps();
-            $table->index(['member_id', 'type']);
+            $table->index([
+                'member_id',
+                'type',
+            ]);
+            $table->index([
+                'member_id',
+                'read_at',
+            ]);
+            $table->index([
+                'member_id',
+                'sent_at',
+            ]);
         });
     }
 

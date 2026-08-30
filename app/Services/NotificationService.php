@@ -2,15 +2,33 @@
 
 namespace App\Services;
 
+use App\Enums\NotificationType;
+use App\Models\CustomerNotification;
 use App\Models\Loan;
 use App\Models\Payment;
 
 class NotificationService
 {
-    public function loanCreated(Loan $loan): string
+    /*
+    |--------------------------------------------------------------------------
+    | Loan Created
+    |--------------------------------------------------------------------------
+    */
+
+    public function loanCreated(Loan $loan): CustomerNotification
     {
         $loan->loadMissing('member');
 
+        return $this->create(
+            type: NotificationType::LoanCreated,
+            memberId: $loan->member_id,
+            message: $this->loanCreatedMessage($loan),
+            loanId: $loan->id,
+        );
+    }
+
+    private function loanCreatedMessage(Loan $loan): string
+    {
         $member = $loan->member;
 
         return implode("\n", [
@@ -33,13 +51,33 @@ class NotificationService
         ]);
     }
 
-    public function paymentReceived(Payment $payment): string
+    /*
+    |--------------------------------------------------------------------------
+    | Payment Received
+    |--------------------------------------------------------------------------
+    */
+
+    public function paymentReceived(Payment $payment): CustomerNotification
     {
         $payment->loadMissing([
             'loan.member',
             'meeting',
         ]);
 
+        $loan = $payment->loan;
+
+        return $this->create(
+            type: NotificationType::PaymentReceived,
+            memberId: $loan->member_id,
+            message: $this->paymentReceivedMessage($payment),
+            loanId: $loan->id,
+            paymentId: $payment->id,
+            meetingId: $payment->meeting_id,
+        );
+    }
+
+    private function paymentReceivedMessage(Payment $payment): string
+    {
         $loan = $payment->loan;
         $member = $loan->member;
 
@@ -65,13 +103,36 @@ class NotificationService
         ]);
     }
 
-    public function paymentReminder(Loan $loan): string
-    {
+    /*
+    |--------------------------------------------------------------------------
+    | Payment Reminder
+    |--------------------------------------------------------------------------
+    */
+
+    public function paymentReminder(
+        Loan $loan,
+        ?int $meetingId = null,
+    ): CustomerNotification {
         $loan->loadMissing('member');
 
         $member = $loan->member;
 
         $nextPayment = ((int) $loan->payments()->max('payment_count')) + 1;
+
+        return $this->create(
+            type: NotificationType::PaymentReminder,
+            memberId: $loan->member_id,
+            message: $this->paymentReminderMessage($loan, $nextPayment),
+            loanId: $loan->id,
+            meetingId: $meetingId,
+        );
+    }
+
+    private function paymentReminderMessage(
+        Loan $loan,
+        int $nextPayment,
+    ): string {
+        $member = $loan->member;
 
         return implode("\n", [
             '🔔 *REMINDER PEMBAYARAN*',
@@ -91,12 +152,32 @@ class NotificationService
         ]);
     }
 
-    public function almostPaidOff(Payment $payment): string
+    /*
+    |--------------------------------------------------------------------------
+    | Almost Paid Off
+    |--------------------------------------------------------------------------
+    */
+
+    public function almostPaidOff(Payment $payment): CustomerNotification
     {
         $payment->loadMissing([
             'loan.member',
         ]);
 
+        $loan = $payment->loan;
+
+        return $this->create(
+            type: NotificationType::AlmostPaidOff,
+            memberId: $loan->member_id,
+            message: $this->almostPaidOffMessage($payment),
+            loanId: $loan->id,
+            paymentId: $payment->id,
+            meetingId: $payment->meeting_id,
+        );
+    }
+
+    private function almostPaidOffMessage(Payment $payment): string
+    {
         $loan = $payment->loan;
         $member = $loan->member;
 
@@ -121,12 +202,32 @@ class NotificationService
         ]);
     }
 
-    public function paidOff(Payment $payment): string
+    /*
+    |--------------------------------------------------------------------------
+    | Paid Off
+    |--------------------------------------------------------------------------
+    */
+
+    public function paidOff(Payment $payment): CustomerNotification
     {
         $payment->loadMissing([
             'loan.member',
         ]);
 
+        $loan = $payment->loan;
+
+        return $this->create(
+            type: NotificationType::PaidOff,
+            memberId: $loan->member_id,
+            message: $this->paidOffMessage($payment),
+            loanId: $loan->id,
+            paymentId: $payment->id,
+            meetingId: $payment->meeting_id,
+        );
+    }
+
+    private function paidOffMessage(Payment $payment): string
+    {
         $loan = $payment->loan;
         $member = $loan->member;
 
@@ -149,13 +250,37 @@ class NotificationService
         ]);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Create Notification
+    |--------------------------------------------------------------------------
+    */
+
+    private function create(
+        NotificationType $type,
+        int $memberId,
+        string $message,
+        ?int $loanId = null,
+        ?int $paymentId = null,
+        ?int $meetingId = null,
+    ): CustomerNotification {
+        return CustomerNotification::create([
+            'member_id' => $memberId,
+            'loan_id' => $loanId,
+            'payment_id' => $paymentId,
+            'meeting_id' => $meetingId,
+            'type' => $type,
+            'message' => $message,
+        ]);
+    }
+
     private function money(float|int|string|null $amount): string
     {
         return 'Rp ' . number_format(
             (float) $amount,
             0,
             ',',
-            '.'
+            '.',
         );
     }
 }

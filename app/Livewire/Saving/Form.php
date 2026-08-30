@@ -102,8 +102,6 @@ class Form extends Component
                 ]),
             ],
 
-
-
             'amount' => [
                 'required',
                 'numeric',
@@ -116,23 +114,23 @@ class Form extends Component
             ],
         ]);
 
+        $type = SavingType::from($validated['type']);
+
         // CREATE
         if (! $this->isEdit) {
-
             app(SavingService::class)->recordManual(
                 date: $validated['transaction_date'],
-                type: $validated['type'],
-                amount: $validated['amount'],
+                type: $type,
+                amount: (float) $validated['amount'],
                 description: $validated['description'],
             );
         } else {
-
             // EDIT
             app(SavingService::class)->updateManual(
                 saving: $this->saving,
                 date: $validated['transaction_date'],
-                type: $validated['type'],
-                amount: $validated['amount'],
+                type: $type,
+                amount: (float) $validated['amount'],
                 description: $validated['description'],
             );
         }

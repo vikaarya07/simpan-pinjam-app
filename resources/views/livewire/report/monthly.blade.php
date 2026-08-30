@@ -6,7 +6,7 @@
         <div class="space-y-3">
             <div>
                 <flux:heading size="xl">
-                    Report Bulanan
+                    Laporan Bulanan
                 </flux:heading>
 
                 <flux:text class="mt-1">

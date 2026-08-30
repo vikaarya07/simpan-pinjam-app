@@ -12,7 +12,6 @@ use App\Livewire\Payment\Index as PaymentIndex;
 use App\Livewire\Payment\Show as PaymentShow;
 use App\Livewire\Report\Monthly as ReportMonthly;
 use App\Livewire\Report\Customer as ReportCustomer;
-use App\Livewire\Customer\Notification\Index as NotificationIndex;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/dashboard');
@@ -50,11 +49,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('report.monthly');
     Route::get('/report/customer', ReportCustomer::class)
         ->name('report.customer');
-
-    Route::get(
-        '/customer/{customer}/notifications',
-        NotificationIndex::class
-    )->name('customer.notifications');
 });
 
 require __DIR__ . '/settings.php';

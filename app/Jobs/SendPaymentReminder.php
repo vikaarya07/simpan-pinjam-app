@@ -18,7 +18,7 @@ class SendPaymentReminder implements ShouldQueue
     ) {}
 
     public function handle(
-        CustomerNotificationService $notification
+        CustomerNotificationService $service
     ): void {
         $loan = Loan::find($this->loanId);
 
@@ -28,26 +28,9 @@ class SendPaymentReminder implements ShouldQueue
             return;
         }
 
-        // Loan sudah selesai
-        if (
-            $loan->status !== 'running' ||
-            $loan->remaining <= 0
-        ) {
-            return;
-        }
-
-        // Customer ternyata sudah membayar
-        $alreadyPaid = $loan->payments()
-            ->where('meeting_id', $meeting->id)
-            ->exists();
-
-        if ($alreadyPaid) {
-            return;
-        }
-
-        $notification->paymentReminder(
-            $loan,
-            $meeting,
+        $service->paymentReminder(
+            loan: $loan,
+            meeting: $meeting,
         );
     }
 }
