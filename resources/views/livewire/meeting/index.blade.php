@@ -19,7 +19,6 @@
 
     </div>
 
-
     {{-- Search --}}
     <flux:card class="p-4">
 
@@ -32,7 +31,6 @@
 
     </flux:card>
 
-
     {{-- Table --}}
     <flux:card class="overflow-hidden">
 
@@ -40,15 +38,9 @@
 
             <flux:table.columns>
 
-                <flux:table.column class="w-12">
-                    #
-                </flux:table.column>
+                <flux:table.column class="w-12">#</flux:table.column>
 
-
-                <flux:table.column>
-                    Tempat
-                </flux:table.column>
-
+                <flux:table.column>Tempat</flux:table.column>
 
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('meeting_date')">
                     <div class="flex items-center gap-1">
@@ -60,13 +52,9 @@
                     </div>
                 </flux:table.column>
 
-
-                <flux:table.column class="text-right">
-                    Aksi
-                </flux:table.column>
+                <flux:table.column class="text-right">Aksi</flux:table.column>
 
             </flux:table.columns>
-
 
             <flux:table.rows>
 
@@ -79,14 +67,13 @@
                             {{ $loop->iteration }}
                         </flux:table.cell>
 
-
                         {{-- Place --}}
                         <flux:table.cell>
 
                             <div class="flex items-center gap-3">
 
                                 <div
-                                    class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
+                                    class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
                                     <flux:icon name="map-pin" class="size-5 text-zinc-500" />
                                 </div>
 
@@ -100,14 +87,13 @@
 
                         </flux:table.cell>
 
-
                         {{-- Date --}}
                         <flux:table.cell>
 
                             <div class="flex items-center gap-3">
 
                                 <div
-                                    class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
+                                    class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
                                     <flux:icon name="calendar-days" class="size-5 text-zinc-500" />
                                 </div>
 
@@ -178,12 +164,10 @@
 
     </flux:card>
 
-
     {{-- Pagination --}}
     <div>
         {{ $meetings->links() }}
     </div>
-
 
     {{-- Form --}}
     <livewire:meeting.form />

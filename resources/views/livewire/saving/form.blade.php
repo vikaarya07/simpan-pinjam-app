@@ -89,7 +89,7 @@
 
                 <flux:field>
 
-                    <flux:textarea label="Keterangan" wire:model="description" rows="3" class="resize-y"
+                    <flux:textarea label="Keterangan" wire:model="description" rows="auto"
                         placeholder="Masukkan keterangan..." />
 
                     <flux:error name="description" />

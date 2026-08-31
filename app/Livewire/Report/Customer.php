@@ -107,11 +107,6 @@ class Customer extends Component
 
         return CustomerNotification::query()
             ->where('member_id', $this->customer->id)
-            ->with([
-                'loan',
-                'payment',
-                'meeting',
-            ])
             ->when(
                 filled($this->search),
                 function ($query) {
@@ -251,12 +246,7 @@ class Customer extends Component
 
         $notification = CustomerNotification::query()
             ->where('member_id', $this->customer->id)
-            ->with([
-                'member',
-                'loan',
-                'payment',
-                'meeting',
-            ])
+            ->with(['member'])
             ->findOrFail($id);
 
         $notification->markAsRead();

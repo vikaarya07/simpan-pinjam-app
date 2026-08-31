@@ -1,8 +1,6 @@
 <div class="space-y-5">
 
-    {{-- =========================================================
-        HEADER
-    ========================================================== --}}
+    {{-- HEADER --}}
     <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
 
         <div>
@@ -29,10 +27,7 @@
 
     </div>
 
-
-    {{-- =========================================================
-        CUSTOMER SELECTOR
-    ========================================================== --}}
+    {{-- CUSTOMER SELECTOR --}}
     <flux:card class="p-4">
 
         <flux:select label="Nasabah" wire:model.live="customerId" placeholder="-- Pilih Nasabah --">
@@ -45,10 +40,7 @@
 
     </flux:card>
 
-
-    {{-- =========================================================
-        REPORT
-    ========================================================== --}}
+    {{-- REPORT --}}
     @if ($report)
 
         @php
@@ -61,10 +53,7 @@
             );
         @endphp
 
-
-        {{-- =====================================================
-            CUSTOMER INFORMATION
-        ====================================================== --}}
+        {{-- CUSTOMER INFORMATION --}}
         <flux:card class="p-4">
 
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -109,7 +98,6 @@
 
                 </div>
 
-
                 {{-- Statistics --}}
                 <div class="flex shrink-0 gap-2">
 
@@ -127,36 +115,29 @@
 
         </flux:card>
 
-
-        {{-- =====================================================
-            TAB NAVIGATION
-        ====================================================== --}}
+        {{-- TAB NAVIGATION --}}
         <div class="border-b border-zinc-200 dark:border-zinc-700">
 
-            <nav class="flex gap-1 overflow-x-auto">
+            <nav class="flex gap-1 overflow-x-auto overflow-y-hidden">
 
                 {{-- SUMMARY --}}
                 <button type="button" wire:click="selectTab('summary')"
-                    class="relative flex shrink-0 items-center gap-2 px-4 py-3
-                           text-sm font-medium transition
+                    class="relative flex shrink-0 items-center gap-2 px-4 py-3 text-sm font-medium transition
                            {{ $tab === 'summary'
                                ? 'text-zinc-900 dark:text-white'
                                : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white' }}">
 
                     <flux:icon name="chart-bar" class="size-4" />
 
-                    <span>
-                        Ringkasan
-                    </span>
+                    <span>Ringkasan</span>
 
                     @if ($tab === 'summary')
                         <span
-                            class="absolute inset-x-0 -bottom-px h-0.5
-                                   bg-zinc-900 dark:bg-white"></span>
+                            class="absolute inset-x-0 -bottom-px h-1 rounded-t-lg
+                                   bg-zinc-700 dark:bg-white"></span>
                     @endif
 
                 </button>
-
 
                 {{-- LOANS --}}
                 <button type="button" wire:click="selectTab('loans')"
@@ -168,9 +149,7 @@
 
                     <flux:icon name="banknotes" class="size-4" />
 
-                    <span>
-                        Riwayat Pinjaman
-                    </span>
+                    <span>Riwayat Pinjaman</span>
 
                     <span
                         class="rounded-full bg-zinc-100 px-2 py-0.5 text-xs
@@ -180,12 +159,11 @@
 
                     @if ($tab === 'loans')
                         <span
-                            class="absolute inset-x-0 -bottom-px h-0.5
-                                   bg-zinc-900 dark:bg-white"></span>
+                            class="absolute inset-x-0 -bottom-px h-1 rounded-t-lg
+                                   bg-zinc-700 dark:bg-white"></span>
                     @endif
 
                 </button>
-
 
                 {{-- NOTIFICATION --}}
                 <button type="button" wire:click="selectTab('notification')"
@@ -197,9 +175,7 @@
 
                     <flux:icon name="bell" class="size-4" />
 
-                    <span>
-                        Notification
-                    </span>
+                    <span>Notification</span>
 
                     @if ($this->notificationCount)
                         <span
@@ -217,8 +193,8 @@
 
                     @if ($tab === 'notification')
                         <span
-                            class="absolute inset-x-0 -bottom-px h-0.5
-                                   bg-zinc-900 dark:bg-white"></span>
+                            class="absolute inset-x-0 -bottom-px h-1 rounded-t-lg
+                                   bg-zinc-700 dark:bg-white"></span>
                     @endif
 
                 </button>
@@ -227,10 +203,7 @@
 
         </div>
 
-
-        {{-- =====================================================
-            SUMMARY TAB
-        ====================================================== --}}
+        {{-- SUMMARY TAB --}}
         @if ($tab === 'summary')
 
             <div class="space-y-5">
@@ -265,7 +238,6 @@
 
                     </flux:card>
 
-
                     {{-- PAYMENT --}}
                     <flux:card class="p-4">
 
@@ -292,7 +264,6 @@
                         </div>
 
                     </flux:card>
-
 
                     {{-- REMAINING --}}
                     <flux:card class="p-4">
@@ -321,7 +292,6 @@
                         </div>
 
                     </flux:card>
-
 
                     {{-- STATUS --}}
                     <flux:card class="p-4">
@@ -362,7 +332,6 @@
 
                 </div>
 
-
                 {{-- INFORMATION --}}
                 <flux:card class="p-5">
 
@@ -401,10 +370,7 @@
 
         @endif
 
-
-        {{-- =====================================================
-            LOANS TAB
-        ====================================================== --}}
+        {{-- LOANS TAB --}}
         @if ($tab === 'loans')
 
             <div class="space-y-4">
@@ -430,16 +396,14 @@
 
                 </div>
 
-
                 {{-- LOAN LIST --}}
                 <div class="space-y-3">
 
                     @forelse ($loans as $loan)
                         @php
                             $payments = $loan->payments->keyBy('payment_count');
-                            $paidCount = $loan->payments->where('amount', '>', 0)->count();
+                            $paidCount = $loan->payments->count();
                         @endphp
-
 
                         <details wire:key="loan-{{ $loan->id }}"
                             class="group overflow-hidden rounded-xl border
@@ -448,66 +412,61 @@
 
                             {{-- LOAN HEADER --}}
                             <summary
-                                class="flex cursor-pointer list-none items-center
-                                       justify-between gap-4 bg-zinc-50 px-4 py-3
-                                       transition hover:bg-zinc-100
-                                       dark:bg-zinc-800 dark:hover:bg-zinc-700">
+                                class="flex cursor-pointer list-none items-center justify-between gap-4 bg-zinc-50 px-4 py-3 transition hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700">
 
-                                <div class="flex min-w-0 flex-1 items-center gap-3">
+                                <div class="flex min-w-0 items-center gap-3">
 
-                                    {{-- ICON --}}
-                                    <div
-                                        class="flex size-10 shrink-0 items-center
-                                               justify-center rounded-lg
-                                               bg-zinc-100 dark:bg-zinc-700">
-                                        <flux:icon name="banknotes" class="size-5 text-zinc-500" />
+                                    {{-- Arrow --}}
+                                    <div class="shrink-0">
+                                        <flux:icon name="chevron-right"
+                                            class="size-5 text-zinc-500 transition-transform duration-200 group-open:rotate-90" />
                                     </div>
 
+                                    {{-- Loan Icon --}}
+                                    <div
+                                        class="hidden size-10 shrink-0 items-center justify-center rounded-lg bg-slate-200 sm:flex dark:bg-zinc-800">
+                                        <flux:icon name="banknotes" class="size-5 text-slate-400" />
+                                    </div>
 
-                                    {{-- INFORMATION --}}
-                                    <div class="min-w-0 flex-1">
-
+                                    {{-- Loan Info --}}
+                                    <div class="min-w-0">
                                         <div class="flex flex-wrap items-center gap-2">
-
-                                            <flux:text class="font-semibold">
+                                            <span class="truncate font-semibold">
                                                 {{ $loan->loan_number }}
-                                            </flux:text>
-
-                                            <flux:badge :color="$loan->type?->color() ?? 'zinc'" size="sm">
-                                                {{ $loan->type?->label() ?? '-' }}
+                                            </span>
+                                            <flux:badge :color="$loan->type->color()" size="sm">
+                                                {{ $loan->type->label() }}
                                             </flux:badge>
-
-                                            <flux:badge :color="$loan->status?->color() ?? 'zinc'" size="sm">
-                                                {{ $loan->status?->label() ?? '-' }}
-                                            </flux:badge>
-
                                         </div>
-
-                                        <flux:text class="mt-0.5 text-xs">
-                                            {{ $loan->created_at?->format('d M Y') ?? '-' }}
-                                        </flux:text>
-
+                                        <div class="mt-1 text-xs text-zinc-500">
+                                            {{ $loan->waktu }}
+                                        </div>
                                     </div>
 
                                 </div>
 
-
                                 {{-- SUMMARY --}}
-                                <div class="flex shrink-0 items-center gap-2">
+                                <div class="flex shrink-0 items-center gap-5">
+                                    <div class="hidden text-right sm:block">
+                                        <div class="text-xs text-zinc-500">Total</div>
+                                        <div class="font-semibold tabular-nums">
+                                            {{ idr($loan->amount) }}
+                                        </div>
+                                    </div>
 
-                                    <flux:text class="hidden text-sm sm:block">
-                                        {{ $paidCount }}/6
-                                    </flux:text>
+                                    <div class="hidden text-right md:block">
+                                        <div class="text-xs text-zinc-500">Pembayaran</div>
+                                        <div class="font-medium">
+                                            {{ $paidCount }}/6
+                                        </div>
+                                    </div>
 
-                                    <flux:icon name="chevron-down"
-                                        class="size-4 text-zinc-400
-                                               transition-transform duration-200
-                                               group-open:rotate-180" />
-
+                                    <flux:badge :color="$loan->status->color()" size="sm">
+                                        {{ $loan->status->label() }}
+                                    </flux:badge>
                                 </div>
 
                             </summary>
-
 
                             {{-- LOAN CONTENT --}}
                             <div class="border-t border-zinc-200 dark:border-zinc-700">
@@ -529,7 +488,6 @@
 
                                         </div>
 
-
                                         <div>
 
                                             <flux:text class="text-xs">
@@ -548,7 +506,6 @@
 
                                         </div>
 
-
                                         <div>
 
                                             <flux:text class="text-xs">
@@ -560,7 +517,6 @@
                                             </flux:text>
 
                                         </div>
-
 
                                         <div>
 
@@ -577,7 +533,6 @@
                                         </div>
 
                                     </div>
-
 
                                     {{-- PAYMENT HISTORY --}}
                                     <div>
@@ -602,36 +557,23 @@
 
                                         </div>
 
-
                                         <div class="overflow-x-auto">
 
                                             <flux:table>
 
                                                 <flux:table.columns>
 
-                                                    <flux:table.column>
-                                                        Ke
-                                                    </flux:table.column>
+                                                    <flux:table.column>Ke</flux:table.column>
 
-                                                    <flux:table.column>
-                                                        Tanggal
-                                                    </flux:table.column>
+                                                    <flux:table.column>Tanggal</flux:table.column>
 
-                                                    <flux:table.column>
-                                                        Angsuran
-                                                    </flux:table.column>
+                                                    <flux:table.column>Angsuran</flux:table.column>
 
-                                                    <flux:table.column>
-                                                        Metode
-                                                    </flux:table.column>
+                                                    <flux:table.column>Metode</flux:table.column>
 
-                                                    <flux:table.column>
-                                                        Status
-                                                    </flux:table.column>
+                                                    <flux:table.column>Status</flux:table.column>
 
-                                                    <flux:table.column>
-                                                        Catatan
-                                                    </flux:table.column>
+                                                    <flux:table.column>Catatan</flux:table.column>
 
                                                 </flux:table.columns>
 
@@ -653,12 +595,10 @@
                                                                 </span>
                                                             </flux:table.cell>
 
-
                                                             {{-- DATE --}}
                                                             <flux:table.cell>
                                                                 {{ $payment?->waktu ?? '-' }}
                                                             </flux:table.cell>
-
 
                                                             {{-- AMOUNT --}}
                                                             <flux:table.cell>
@@ -672,7 +612,6 @@
                                                                 @endif
 
                                                             </flux:table.cell>
-
 
                                                             {{-- METHOD --}}
                                                             <flux:table.cell>
@@ -689,7 +628,6 @@
 
                                                             </flux:table.cell>
 
-
                                                             {{-- STATUS --}}
                                                             <flux:table.cell>
 
@@ -704,7 +642,6 @@
                                                                 @endif
 
                                                             </flux:table.cell>
-
 
                                                             {{-- NOTE --}}
                                                             <flux:table.cell class="max-w-60">
@@ -721,7 +658,6 @@
                                                                         </flux:button>
 
                                                                     </flux:modal.trigger>
-
 
                                                                     <flux:modal
                                                                         name="payment-note-{{ $loan->id }}-{{ $i }}"
@@ -740,7 +676,6 @@
                                                                                 </flux:text>
 
                                                                             </div>
-
 
                                                                             <flux:card
                                                                                 class="bg-zinc-50 dark:bg-zinc-800">
@@ -825,10 +760,7 @@
 
         @endif
 
-
-        {{-- =====================================================
-            NOTIFICATION TAB
-        ====================================================== --}}
+        {{-- NOTIFICATION TAB --}}
         @if ($tab === 'notification')
 
             <div class="space-y-4">
@@ -856,7 +788,6 @@
 
                     </div>
 
-
                     {{-- FILTER --}}
                     <div class="flex flex-col gap-3 sm:flex-row">
 
@@ -866,7 +797,6 @@
                                 placeholder="Cari notification..." />
 
                         </div>
-
 
                         <div class="sm:w-56">
 
@@ -890,7 +820,6 @@
 
                 </div>
 
-
                 {{-- NOTIFICATION GRID --}}
                 <div class="grid gap-3 md:grid-cols-2">
 
@@ -899,29 +828,20 @@
                             $isSent = filled($notification->sent_at);
                         @endphp
 
-
                         <details wire:key="notification-{{ $notification->id }}"
-                            class="group overflow-hidden rounded-xl border
-                                   border-zinc-200 bg-white shadow-sm
-                                   transition hover:shadow-md
-                                   dark:border-zinc-700 dark:bg-zinc-900">
+                            class="group overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition hover:shadow-md dark:border-zinc-700 dark:bg-zinc-900">
 
                             {{-- NOTIFICATION HEADER --}}
                             <summary
-                                class="flex cursor-pointer list-none items-center
-                                       gap-3 px-4 py-3.5 transition
-                                       hover:bg-zinc-50 dark:hover:bg-zinc-800">
+                                class="flex cursor-pointer list-none items-center gap-3 px-4 py-3.5 transition hover:bg-zinc-50 dark:hover:bg-zinc-800">
 
                                 {{-- ICON --}}
                                 <div
-                                    class="flex size-10 shrink-0 items-center
-                                           justify-center rounded-lg bg-zinc-100
-                                           dark:bg-zinc-800">
+                                    class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
 
                                     <flux:icon :name="$notification->type->icon()" class="size-5 text-zinc-500" />
 
                                 </div>
-
 
                                 {{-- INFORMATION --}}
                                 <div class="min-w-0 flex-1">
@@ -931,7 +851,6 @@
                                         <flux:badge :color="$notification->type->color()" size="sm">
                                             {{ $notification->type->label() }}
                                         </flux:badge>
-
 
                                         @if ($isSent)
                                             <flux:badge color="green" size="sm">
@@ -945,18 +864,15 @@
 
                                     </div>
 
-
                                     <flux:text class="mt-0.5 text-sm font-medium">
                                         {{ $notification->title }}
                                     </flux:text>
-
 
                                     <flux:text class="mt-0.5 text-xs">
                                         {{ $notification->created_at->format('d M Y, H:i') }}
                                     </flux:text>
 
                                 </div>
-
 
                                 {{-- ACTIONS --}}
                                 <div class="flex shrink-0 items-center gap-1" @click.stop>
@@ -985,7 +901,6 @@
 
                             </summary>
 
-
                             {{-- NOTIFICATION CONTENT --}}
                             <div class="border-t border-zinc-200 dark:border-zinc-700">
 
@@ -995,9 +910,7 @@
                                     <div class="grid gap-3 sm:grid-cols-2">
 
                                         @if ($notification->loan)
-                                            <div
-                                                class="rounded-lg bg-zinc-50 p-3
-                                                       dark:bg-zinc-800">
+                                            <div class="rounded-lg bg-zinc-50 p-3 dark:bg-zinc-800">
 
                                                 <flux:text class="text-xs text-zinc-500">
                                                     Pinjaman
@@ -1010,11 +923,8 @@
                                             </div>
                                         @endif
 
-
                                         @if ($notification->payment)
-                                            <div
-                                                class="rounded-lg bg-zinc-50 p-3
-                                                       dark:bg-zinc-800">
+                                            <div class="rounded-lg bg-zinc-50 p-3 dark:bg-zinc-800">
 
                                                 <flux:text class="text-xs text-zinc-500">
                                                     Pembayaran
@@ -1027,11 +937,8 @@
                                             </div>
                                         @endif
 
-
                                         @if ($notification->meeting)
-                                            <div
-                                                class="rounded-lg bg-zinc-50 p-3
-                                                       dark:bg-zinc-800">
+                                            <div class="rounded-lg bg-zinc-50 p-3 dark:bg-zinc-800">
 
                                                 <flux:text class="text-xs text-zinc-500">
                                                     Pertemuan
@@ -1044,10 +951,7 @@
                                             </div>
                                         @endif
 
-
-                                        <div
-                                            class="rounded-lg bg-zinc-50 p-3
-                                                   dark:bg-zinc-800">
+                                        <div class="rounded-lg bg-zinc-50 p-3 dark:bg-zinc-800">
 
                                             <flux:text class="text-xs text-zinc-500">
                                                 Dibuat
@@ -1061,7 +965,6 @@
 
                                     </div>
 
-
                                     {{-- MESSAGE --}}
                                     <div>
 
@@ -1070,10 +973,7 @@
                                         </flux:text>
 
                                         <div
-                                            class="rounded-lg border border-zinc-200
-                                                   bg-zinc-50 p-4
-                                                   dark:border-zinc-700
-                                                   dark:bg-zinc-800">
+                                            class="rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-800">
 
                                             <flux:text class="whitespace-pre-line text-sm leading-relaxed">
                                                 {{ $notification->message }}
@@ -1083,14 +983,9 @@
 
                                     </div>
 
-
                                     {{-- SENT INFORMATION --}}
                                     <div
-                                        class="flex flex-col gap-2 border-t
-                                               border-zinc-200 pt-3
-                                               sm:flex-row sm:items-center
-                                               sm:justify-between
-                                               dark:border-zinc-700">
+                                        class="flex flex-col gap-2 border-t border-zinc-200 pt-3 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-700">
 
                                         @if ($isSent)
                                             <div class="flex items-center gap-2">
@@ -1113,7 +1008,6 @@
                                                 </flux:text>
 
                                             </div>
-
 
                                             <flux:button size="sm" variant="primary" icon="paper-airplane"
                                                 wire:click="sendNotification({{ $notification->id }})">
@@ -1138,9 +1032,7 @@
                                 <div class="flex flex-col items-center text-center">
 
                                     <div
-                                        class="flex size-12 items-center justify-center
-                                               rounded-full bg-zinc-100
-                                               dark:bg-zinc-800">
+                                        class="flex size-12 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800">
 
                                         <flux:icon name="bell-slash" class="size-6 text-zinc-400" />
 
@@ -1151,8 +1043,7 @@
                                     </flux:heading>
 
                                     <flux:text class="mt-1">
-                                        Notification akan muncul setelah transaksi
-                                        atau reminder dibuat.
+                                        Notification akan muncul setelah transaksi atau reminder dibuat.
                                     </flux:text>
 
                                 </div>
@@ -1163,7 +1054,6 @@
                     @endforelse
 
                 </div>
-
 
                 {{-- PAGINATION --}}
                 @if ($notifications->hasPages())
@@ -1176,9 +1066,7 @@
 
         @endif
 
-        {{-- =====================================================
-    NOTIFICATION DETAIL MODAL
-====================================================== --}}
+        {{-- NOTIFICATION DETAIL MODAL --}}
         @if ($selectedNotification)
 
             <flux:modal wire:model="showNotificationModal" class="md:w-xl">
@@ -1189,9 +1077,7 @@
                     <div class="flex items-start gap-3">
 
                         <div
-                            class="flex size-11 shrink-0 items-center
-                           justify-center rounded-xl
-                           bg-zinc-100 dark:bg-zinc-800">
+                            class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-800">
                             <flux:icon :name="$selectedNotification->type?->icon() ?? 'bell'"
                                 class="size-5 text-zinc-600 dark:text-zinc-300" />
                         </div>
@@ -1305,10 +1191,7 @@
                     {{-- SENT INFORMATION --}}
                     @if ($selectedNotification->sent_at)
                         <div
-                            class="rounded-lg border border-green-200
-                           bg-green-50 px-4 py-3
-                           dark:border-green-900
-                           dark:bg-green-950/30">
+                            class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 dark:border-green-900 dark:bg-green-950/30">
 
                             <div class="flex items-center gap-2">
 
@@ -1326,18 +1209,13 @@
                         </div>
                     @else
                         <div
-                            class="rounded-lg border border-amber-200
-                           bg-amber-50 px-4 py-3
-                           dark:border-amber-900
-                           dark:bg-amber-950/30">
+                            class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-900 dark:bg-amber-950/30">
 
                             <div class="flex items-center gap-2">
 
                                 <flux:icon name="clock" class="size-4 text-amber-600" />
 
-                                <flux:text
-                                    class="text-sm text-amber-700
-                                   dark:text-amber-400">
+                                <flux:text class="text-sm text-amber-700 dark:text-amber-400">
                                     Notification belum dikirim.
                                 </flux:text>
 
@@ -1367,16 +1245,6 @@
             </flux:modal>
 
         @endif
-
-
-
-
-
-
-
-
-
-
 
     @endif
 

@@ -65,7 +65,7 @@
             {{-- Catatan --}}
             <flux:field>
 
-                <flux:textarea label="Catatan" wire:model="note" rows="2" placeholder="Masukkan catatan..." />
+                <flux:textarea label="Catatan" wire:model="note" rows="auto" placeholder="Masukkan catatan..." />
 
                 <flux:error name="note" />
 

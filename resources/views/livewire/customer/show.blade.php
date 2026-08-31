@@ -83,7 +83,7 @@
 
                 {{-- Loan Header --}}
                 <summary
-                    class="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-4 transition bg-slate-100 hover:bg-slate-200 dark:hover:bg-slate-800/50">
+                    class="flex cursor-pointer list-none items-center justify-between gap-4 bg-zinc-50 px-4 py-3 transition hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700">
 
                     <div class="flex min-w-0 items-center gap-3">
 
@@ -95,8 +95,8 @@
 
                         {{-- Loan Icon --}}
                         <div
-                            class="hidden size-10 shrink-0 items-center justify-center rounded-lg bg-slate-300 sm:flex dark:bg-zinc-800">
-                            <flux:icon name="banknotes" class="size-5 text-slate-600" />
+                            class="hidden size-10 shrink-0 items-center justify-center rounded-lg bg-slate-200 sm:flex dark:bg-zinc-800">
+                            <flux:icon name="banknotes" class="size-5 text-slate-400" />
                         </div>
 
                         {{-- Loan Info --}}

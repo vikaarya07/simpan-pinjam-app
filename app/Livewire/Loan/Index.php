@@ -51,7 +51,7 @@ class Index extends Component
     {
         DB::transaction(function () use ($id) {
 
-            $loan = Loan::with('payments')->findOrFail($id);
+            $loan = Loan::query()->findOrFail($id);
 
             // Ambil tanggal Payment yang terdampak
             $paymentDates = $loan->payments

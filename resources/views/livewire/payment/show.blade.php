@@ -139,11 +139,9 @@
                                 {{ $loan->loan_number }}
                             </div>
 
-                            @if ($loan->type)
-                                <flux:text size="xs" class="mt-0.5">
-                                    {{ $loan->type->label() }}
-                                </flux:text>
-                            @endif
+                            <flux:badge size="sm" :color="$loan->type->color()" class="mt-0.5">
+                                {{ $loan->type->label() }}
+                            </flux:badge>
 
                         </flux:table.cell>
 

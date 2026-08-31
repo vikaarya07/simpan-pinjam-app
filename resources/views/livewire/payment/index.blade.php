@@ -30,31 +30,21 @@
     </flux:card>
 
     {{-- Table --}}
-    <flux:card class="overflow-hidden px-5! py-2!">
+    <flux:card class="overflow-hidden">
 
         <flux:table>
 
             <flux:table.columns>
 
-                <flux:table.column class="w-16">
-                    No
-                </flux:table.column>
+                <flux:table.column class="w-16">No</flux:table.column>
 
-                <flux:table.column>
-                    Pertemuan
-                </flux:table.column>
+                <flux:table.column>Pertemuan</flux:table.column>
 
-                <flux:table.column>
-                    Waktu
-                </flux:table.column>
+                <flux:table.column>Waktu</flux:table.column>
 
-                <flux:table.column>
-                    Status Angsuran
-                </flux:table.column>
+                <flux:table.column>Status Angsuran</flux:table.column>
 
-                <flux:table.column>
-                    Aksi
-                </flux:table.column>
+                <flux:table.column>Aksi</flux:table.column>
 
             </flux:table.columns>
 
@@ -76,11 +66,11 @@
                             <div class="flex items-center gap-3">
 
                                 <div
-                                    class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-800">
-                                    <flux:icon name="map-pin" variant="mini" class="text-zinc-500" />
+                                    class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
+                                    <flux:icon name="map-pin" class="size-5 text-zinc-500" />
                                 </div>
 
-                                <flux:text class="font-semibold">
+                                <flux:text class="font-medium">
                                     {{ $meeting->place }}
                                 </flux:text>
 
@@ -93,7 +83,10 @@
 
                             <div class="flex items-center gap-2">
 
-                                <flux:icon name="calendar-days" variant="mini" class="text-zinc-500" />
+                                <div
+                                    class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
+                                    <flux:icon name="calendar-days" class="size-5 text-zinc-500" />
+                                </div>
 
                                 <div>
                                     <flux:text class="font-medium">

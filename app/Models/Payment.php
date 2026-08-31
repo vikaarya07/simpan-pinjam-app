@@ -97,14 +97,11 @@ class Payment extends Model
             $payment->loan?->recalculate();
             $payment->loan?->createOverdueLoanIfNeeded();
 
-            app(CustomerNotificationService::class)
-                ->paymentReceived($payment);
+            $service = app(CustomerNotificationService::class);
 
-            app(CustomerNotificationService::class)
-                ->almostPaidOff($payment);
-
-            app(CustomerNotificationService::class)
-                ->paidOff($payment);
+            $service->paymentReceived($payment);
+            $service->almostPaidOff($payment->loan);
+            $service->paidOff($payment->loan);
         });
 
         //   Setelah Payment diubah.

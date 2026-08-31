@@ -11,14 +11,7 @@ class Show extends Component
 
     public function mount(Member $customer): void
     {
-        abort_unless(
-            $customer->loans()
-                ->isCustomer()
-                ->exists(),
-            404
-        );
-
-        $this->customer = $customer->load([
+        $customer->load([
             'loans' => fn($query) => $query
                 ->isCustomer()
                 ->with([
@@ -27,8 +20,12 @@ class Show extends Component
                 ])
                 ->latest(),
         ]);
+
+        abort_if($customer->loans->isEmpty(), 404);
+
+        $this->customer = $customer;
     }
-    
+
     public function render()
     {
         return view('livewire.customer.show');

@@ -122,13 +122,18 @@ class ReportService
             ->latest()
             ->get();
 
+        $overdueLoans = $loans->where('type', 'loan_overdue');
+        $normalLoans = $loans->where('type', 'loan');
+
         $summary = [
             'loan_count' => $loans->count(),
-            'loan_amount' => $loans->sum('amount'),
+            'loan_amount' => $normalLoans->sum('amount'),
             'payment_amount' => $loans
                 ->flatMap->payments
                 ->sum('amount'),
-            'remaining' => $loans->sum('remaining'),
+            'remaining' => $overdueLoans->isNotEmpty()
+                ? $overdueLoans->sum('remaining')
+                : $normalLoans->sum('remaining'),
         ];
 
         $notifications = CustomerNotification::query()
