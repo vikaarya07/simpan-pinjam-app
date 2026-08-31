@@ -40,8 +40,6 @@ class Payment extends Model
         ];
     }
 
-    protected $with = ['loan.member', 'meeting'];
-
     // Relationships
     public function loan()
     {

@@ -6,7 +6,7 @@
     @include('partials.head')
 </head>
 
-<body class="min-h-screen bg-white dark:bg-zinc-800">
+<body class="min-h-screen bg-slate-50 text-slate-600 dark:bg-zinc-800">
 
     {{-- SIDEBAR --}}
     <flux:sidebar sticky persist="false" collapsible
@@ -39,13 +39,13 @@
                 class="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider
                        text-zinc-400 dark:text-zinc-500
                        in-data-flux-sidebar-collapsed-desktop:hidden">
-                Pertemuan
+                Meeting
             </div>
 
             {{-- Meeting --}}
             <flux:sidebar.item icon="calendar-days" :href="route('meeting.index')"
                 :current="request()->routeIs('meeting.*')" wire:navigate>
-                {{ __('Meeting') }}
+                {{ __('Pertemuan') }}
 
                 <flux:badge size="sm" color="pink" class="shrink-0 px-1.5! py-0.5!">
                     Admin

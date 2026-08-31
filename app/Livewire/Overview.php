@@ -19,16 +19,6 @@ class Overview extends Component
             ->get($this->activitySort);
     }
 
-    public function openActivitiesModal(): void
-    {
-        $this->showActivitiesModal = true;
-    }
-
-    public function closeActivitiesModal(): void
-    {
-        $this->showActivitiesModal = false;
-    }
-
     public function render()
     {
         return view('livewire.overview');

@@ -425,10 +425,6 @@
                     </flux:button>
                 </div>
 
-                <flux:button variant="ghost" size="sm" wire:click="openActivitiesModal">
-                    Lihat Semua
-                </flux:button>
-
             </div>
 
             <div class="mt-5 divide-y divide-slate-100">
@@ -565,87 +561,5 @@
         </flux:card>
 
     </div>
-
-    {{-- Modal Activity --}}
-    <flux:modal wire:model="showActivitiesModal" class="w-full max-w-3xl">
-        <div class="flex items-end justify-between md:mr-7">
-            <div>
-                <flux:heading size="lg">
-                    Semua Aktivitas
-                </flux:heading>
-
-                <flux:text class="mt-1">
-                    Seluruh transaksi yang tercatat dalam aplikasi.
-                </flux:text>
-            </div>
-
-            <div class="flex items-center gap-2">
-                <flux:button size="xs" :variant="$activitySort === 'date' ? 'primary' : 'ghost'"
-                    wire:click="$set('activitySort', 'date')">
-                    Tanggal Transaksi
-                </flux:button>
-
-                <flux:button size="xs" :variant="$activitySort === 'created' ? 'primary' : 'ghost'"
-                    wire:click="$set('activitySort', 'created')">
-                    Baru Dibuat
-                </flux:button>
-            </div>
-        </div>
-
-        <div class="mt-5 max-h-[70vh] overflow-y-auto divide-y divide-slate-100 pr-2">
-            @forelse ($this->overview['all_activities'] as $activity)
-                <div class="flex items-center gap-3 py-3">
-                    <div @class([
-                        'flex size-9 shrink-0 items-center justify-center rounded-full',
-                        'bg-indigo-50 text-indigo-600' => $activity['type'] === 'loan',
-                        'bg-green-50 text-green-600' => $activity['type'] === 'payment',
-                        'bg-slate-100 text-slate-600' => $activity['type'] === 'saving',
-                    ])>
-                        <flux:icon
-                            :name="$activity['type'] === 'loan' ?
-                                'banknotes' :
-                                ($activity['type'] === 'payment' ?
-                                    'arrow-up-right' :
-                                    'wallet')"
-                            class="size-4" />
-                    </div>
-
-                    <div class="min-w-0 flex-1">
-                        <flux:text class="font-medium truncate">
-                            {{ $activity['title'] }}
-                        </flux:text>
-
-                        <flux:text class="text-xs">
-                            {{ $activity['description'] }}
-                        </flux:text>
-                    </div>
-
-                    <div class="shrink-0 text-right">
-                        <flux:text class="text-xs">
-                            {{ $activity['time']->translatedFormat('l, d F Y') }}
-                        </flux:text>
-
-                        <flux:text class="text-sm font-semibold">
-                            Rp {{ idr($activity['amount']) }}
-                        </flux:text>
-                    </div>
-                </div>
-            @empty
-                <div class="py-10 text-center">
-                    <flux:icon.information-circle class="mx-auto size-8 text-slate-300" />
-
-                    <flux:text class="mt-2">
-                        Belum ada aktivitas.
-                    </flux:text>
-                </div>
-            @endforelse
-        </div>
-
-        <div class="mt-5 flex justify-end">
-            <flux:button variant="outline" wire:click="closeActivitiesModal">
-                Tutup
-            </flux:button>
-        </div>
-    </flux:modal>
 
 </div>

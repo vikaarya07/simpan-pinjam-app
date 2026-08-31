@@ -14,37 +14,23 @@ class OverviewService
     {
         $today = Carbon::today();
 
-        $startOfMonth = $today->copy()->startOfMonth();
-        $endOfMonth = $today->copy()->endOfMonth();
-
         return [
             'financial' => $this->financial(),
-
             'members' => $this->members(),
-
             'loans' => $this->loans(),
-
             'monthly' => $this->monthly(
-                $startOfMonth,
-                $endOfMonth,
+                $today->copy()->startOfMonth(),
+                $today->copy()->endOfMonth(),
             ),
-
             'payments' => $this->payments(),
-
             'activities' => $this->activities(
                 limit: 5,
                 sort: $activitySort,
             ),
-
-            'all_activities' => $this->activities(
-                sort: $activitySort,
-            ),
-
             'today' => [
                 'loans' => Loan::query()
                     ->whereDate('loan_date', $today)
                     ->count(),
-
                 'payments' => Payment::query()
                     ->whereDate('payment_date', $today)
                     ->count(),
@@ -252,71 +238,57 @@ class OverviewService
     */
 
     protected function activities(
-        ?int $limit = null,
+        int $limit = 5,
         string $sort = 'date',
     ): array {
         $loans = Loan::query()
+            ->with('member')
             ->when(
                 $sort === 'created',
                 fn($query) => $query
                     ->latest('created_at')
                     ->latest('id'),
-
                 fn($query) => $query
                     ->latest('loan_date')
                     ->latest('id'),
             )
-            ->when(
-                $limit !== null,
-                fn($query) => $query->limit($limit)
-            )
+            ->limit($limit)
             ->get()
             ->map(function (Loan $loan) use ($sort) {
                 return [
                     'type' => 'loan',
-
                     'title' => 'Pinjaman baru',
-
                     'description' => $loan->member?->name
                         . ' - '
                         . $loan->loan_number,
-
                     'time' => $sort === 'created'
                         ? $loan->created_at
                         : $loan->loan_date,
-
                     'amount' => (float) $loan->amount,
                 ];
             });
 
         $payments = Payment::query()
+            ->with('loan.member')
             ->when(
                 $sort === 'created',
                 fn($query) => $query
                     ->latest('created_at')
                     ->latest('id'),
-
                 fn($query) => $query
                     ->latest('payment_date')
                     ->latest('id'),
             )
-            ->when(
-                $limit !== null,
-                fn($query) => $query->limit($limit)
-            )
+            ->limit($limit)
             ->get()
             ->map(function (Payment $payment) use ($sort) {
                 return [
                     'type' => 'payment',
-
                     'title' => 'Pembayaran angsuran',
-
                     'description' => $payment->loan?->member?->name ?? '-',
-
                     'time' => $sort === 'created'
                         ? $payment->created_at
                         : $payment->payment_date,
-
                     'amount' => (float) $payment->amount,
                 ];
             });
@@ -324,6 +296,7 @@ class OverviewService
         return $loans
             ->concat($payments)
             ->sortByDesc('time')
+            ->take($limit)
             ->values()
             ->all();
     }

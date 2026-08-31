@@ -2,11 +2,8 @@
 
 namespace App\Models;
 
-use App\Enums\LoanType;
-use App\Enums\PaymentStatus;
 use App\Traits\HasIndonesianDate;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -32,55 +29,6 @@ class Meeting extends Model
     public function payments()
     {
         return $this->hasMany(Payment::class);
-    }
-
-    // Payment Summary
-    protected function paymentSummary(): Attribute
-    {
-        return Attribute::get(function (): array {
-            $loans = Loan::query()
-                ->whereIn('type', [
-                    LoanType::Loan,
-                    LoanType::LoanOverdue,
-                ])
-                ->forMeeting($this)
-                ->with([
-                    'payments' => function ($query) {
-                        $query->where(
-                            'meeting_id',
-                            $this->id
-                        );
-                    },
-                ])
-                ->get();
-
-            $clear = 0;
-            $skip = 0;
-            $unpaid = 0;
-
-            foreach ($loans as $loan) {
-                $payment = $loan->payments->first();
-
-                //   Belum ada Payment untuk meeting ini.
-                if (! $payment) {
-                    $unpaid++;
-                    continue;
-                }
-
-                //  Payment sudah ada.
-
-                match ($payment->status) {
-                    PaymentStatus::Clear => $clear++,
-                    PaymentStatus::Skip => $skip++,
-                };
-            }
-
-            return [
-                'clear' => $clear,
-                'skip' => $skip,
-                'unpaid' => $unpaid,
-            ];
-        });
     }
 
     //  Date Helper

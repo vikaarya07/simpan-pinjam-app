@@ -119,6 +119,7 @@ class ReportService
     public function customer(Member $customer): array
     {
         $loans = $customer->loans()
+            ->with('payments')
             ->latest()
             ->get();
 
@@ -138,6 +139,11 @@ class ReportService
 
         $notifications = CustomerNotification::query()
             ->where('member_id', $customer->id)
+            ->with([
+                'loan.member',
+                'payment',
+                'meeting',
+            ])
             ->latest()
             ->get();
 

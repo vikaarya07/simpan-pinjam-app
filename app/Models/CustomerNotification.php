@@ -20,8 +20,6 @@ class CustomerNotification extends Model
         'read_at',
     ];
 
-    protected $with = ['loan', 'payment', 'meeting'];
-
     protected $casts = [
         'type' => NotificationType::class,
         'sent_at' => 'datetime',
