@@ -11,9 +11,8 @@
         </flux:text>
     </div>
 
-
     {{-- Loan Information --}}
-    <flux:card>
+    <flux:card class="border-none!">
 
         <div class="space-y-6">
 
@@ -44,7 +43,8 @@
                 {{-- Nasabah --}}
                 <div class="flex items-center gap-3">
 
-                    <flux:avatar size="sm" :name="$payment->loan->member->name" />
+                    <flux:avatar size="sm" :name="$payment->loan->member->name"
+                        :initials="$payment->loan->member->initials()" circle color="auto" />
 
                     <div>
                         <flux:text size="sm" class="font-medium">
@@ -61,7 +61,7 @@
                 {{-- Waktu --}}
                 <div class="flex items-center gap-3">
 
-                    <flux:icon name="calendar-days" class="mt-0.5 size-7 text-zinc-500" />
+                    <flux:icon name="calendar-days" class="mt-0.5 size-7 text-slate-500" />
 
                     <div>
                         <flux:text size="sm" class="font-medium">
@@ -78,7 +78,7 @@
                 {{-- Pokok --}}
                 <div class="flex items-center gap-3">
 
-                    <flux:icon name="banknotes" class="mt-0.5 size-7 text-zinc-500" />
+                    <flux:icon name="banknotes" class="mt-0.5 size-7 text-slate-500" />
 
                     <div>
                         <flux:text size="sm" class="font-medium">
@@ -102,7 +102,7 @@
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
 
         {{-- Total --}}
-        <flux:card>
+        <flux:card class="border-none!">
 
             <div class="flex items-start justify-between gap-3">
 
@@ -123,7 +123,7 @@
         </flux:card>
 
         {{-- Payment --}}
-        <flux:card>
+        <flux:card class="border-none!">
 
             <div class="flex items-start justify-between gap-3">
 
@@ -144,7 +144,7 @@
         </flux:card>
 
         {{-- Paid --}}
-        <flux:card>
+        <flux:card class="border-none!">
 
             <div class="flex items-start justify-between gap-3">
 
@@ -167,7 +167,7 @@
     </div>
 
     {{-- Remaining --}}
-    <flux:card>
+    <flux:card class="border-none!">
 
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
@@ -188,7 +188,7 @@
     </flux:card>
 
     {{-- Note --}}
-    <flux:card>
+    <flux:card class="border-none!">
 
         <div class="space-y-2">
 

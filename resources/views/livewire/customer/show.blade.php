@@ -12,7 +12,7 @@
     </div>
 
     {{-- Informasi Customer --}}
-    <flux:card>
+    <flux:card class="border-none!">
 
         <div class="space-y-4">
 
@@ -29,28 +29,28 @@
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
 
                 {{-- NPK --}}
-                <div class="rounded-lg bg-zinc-100 p-4 dark:bg-zinc-800/50">
+                <flux:card>
                     <flux:text size="sm">NPK</flux:text>
                     <div class="mt-1 font-semibold">
                         {{ $customer->npk }}
                     </div>
-                </div>
+                </flux:card>
 
                 {{-- Nama --}}
-                <div class="rounded-lg bg-zinc-100 p-4 dark:bg-zinc-800/50">
+                <flux:card>
                     <flux:text size="sm">Nama</flux:text>
                     <div class="mt-1 font-semibold">
                         {{ $customer->name }}
                     </div>
-                </div>
+                </flux:card>
 
                 {{-- Telepon --}}
-                <div class="rounded-lg bg-zinc-100 p-4 dark:bg-zinc-800/50">
+                <flux:card>
                     <flux:text size="sm">Telepon</flux:text>
                     <div class="mt-1 font-semibold">
                         {{ $customer->phone ?? '-' }}
                     </div>
-                </div>
+                </flux:card>
 
             </div>
 
@@ -77,8 +77,7 @@
                 $paidCount = $loan->payments->count();
             @endphp
 
-            <details
-                class="group overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-900"
+            <details class="group overflow-hidden rounded-xl border-none! bg-white shadow-sm dark:bg-zinc-900"
                 wire:key="loan-{{ $loan->id }}">
 
                 {{-- Loan Header --}}
@@ -154,19 +153,20 @@
                             <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
 
                                 {{-- Principal --}}
-                                <div class="rounded-lg bg-zinc-100 p-4 dark:bg-zinc-800/50">
+                                <flux:card>
+
                                     <flux:text size="sm">Pokok Pinjaman</flux:text>
+
                                     <div class="mt-1 font-semibold tabular-nums">
                                         {{ idr($loan->principal) }}
                                     </div>
-                                </div>
+
+                                </flux:card>
 
                                 {{-- Interest --}}
-                                <div class="rounded-lg bg-zinc-100 p-4 dark:bg-zinc-800/50">
+                                <flux:card>
 
-                                    <flux:text size="sm">
-                                        Jasa
-                                    </flux:text>
+                                    <flux:text size="sm">Jasa</flux:text>
 
                                     <div class="mt-1 flex flex-wrap items-baseline gap-1">
                                         <span class="font-semibold tabular-nums">
@@ -177,31 +177,25 @@
                                         </span>
                                     </div>
 
-                                </div>
+                                </flux:card>
 
                                 {{-- Total --}}
-                                <div class="rounded-lg bg-zinc-100 p-4 dark:bg-zinc-800/50">
+                                <flux:card>
 
-                                    <flux:text size="sm">
-                                        Total Pinjaman
-                                    </flux:text>
+                                    <flux:text size="sm">Total Pinjaman</flux:text>
 
                                     <div class="mt-1 font-semibold tabular-nums">
                                         {{ idr($loan->amount) }}
                                     </div>
 
-                                </div>
+                                </flux:card>
 
                                 {{-- Remaining --}}
-                                <div @class([
-                                    'rounded-lg p-4',
+                                <flux:card @class([
                                     'bg-red-100 dark:bg-red-950/20' => $loan->has_outstanding_overdue,
-                                    'bg-zinc-100 dark:bg-zinc-800/50' => !$loan->has_outstanding_overdue,
                                 ])>
 
-                                    <flux:text size="sm">
-                                        Sisa Hutang
-                                    </flux:text>
+                                    <flux:text size="sm">Sisa Hutang</flux:text>
 
                                     <div @class([
                                         'mt-1 font-semibold tabular-nums',
@@ -210,7 +204,7 @@
                                         {{ idr($loan->remaining) }}
                                     </div>
 
-                                </div>
+                                </flux:card>
 
                             </div>
 
@@ -415,6 +409,7 @@
                 </div>
 
             </flux:card>
+            
         @endforelse
 
     </div>

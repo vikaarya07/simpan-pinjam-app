@@ -29,7 +29,7 @@
     </div>
 
     {{-- Filter --}}
-    <flux:card class="overflow-visible p-4">
+    <flux:card class="overflow-visible p-4 border-none!">
 
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 
@@ -71,7 +71,7 @@
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
 
         {{-- Opening Balance --}}
-        <flux:card class="bg-teal-50/50 p-4">
+        <flux:card class="border border-teal-200! bg-teal-50 p-4">
 
             <div class="flex items-start justify-between gap-3">
 
@@ -93,9 +93,8 @@
 
         </flux:card>
 
-
         {{-- Opening Receivable --}}
-        <flux:card class="bg-amber-50/50 p-4">
+        <flux:card class="border border-amber-200! bg-amber-50 p-4">
 
             <div class="flex items-start justify-between gap-3">
 
@@ -117,9 +116,8 @@
 
         </flux:card>
 
-
         {{-- Opening Amount --}}
-        <flux:card class="bg-indigo-50/40 p-4">
+        <flux:card class="border border-indigo-300! bg-indigo-100 p-4">
 
             <div class="flex items-start justify-between gap-3">
 
@@ -133,7 +131,7 @@
                     </flux:heading>
                 </div>
 
-                <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100">
+                <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-indigo-200">
                     <flux:icon.calculator class="size-5 text-indigo-600" />
                 </div>
 
@@ -144,7 +142,7 @@
     </div>
 
     {{-- Cash Flow --}}
-    <flux:card class="p-4">
+    <flux:card class="p-4 border-none!">
 
         <div>
             <flux:heading size="lg">
@@ -233,7 +231,7 @@
     </flux:card>
 
     {{-- Financial Position --}}
-    <flux:card class="p-4">
+    <flux:card class="p-4 border-none!">
 
         <div>
             <flux:heading size="lg">
@@ -248,7 +246,7 @@
         <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
 
             {{-- Balance --}}
-            <flux:card class="border-teal-200 bg-teal-50/60 p-4">
+            <flux:card class="border border-teal-200! bg-teal-50/60 p-4">
 
                 <div class="flex items-center gap-3">
                     <div class="flex size-9 items-center justify-center rounded-lg bg-white shadow-sm">
@@ -267,7 +265,7 @@
             </flux:card>
 
             {{-- Receivable --}}
-            <flux:card class="border-amber-200 bg-amber-50/60 p-4">
+            <flux:card class="border border-amber-200! bg-amber-50/60 p-4">
 
                 <div class="flex items-center gap-3">
                     <div class="flex size-9 items-center justify-center rounded-lg bg-white shadow-sm">
@@ -285,9 +283,8 @@
 
             </flux:card>
 
-
             {{-- Total --}}
-            <flux:card class="border-indigo-200 bg-indigo-50/60 p-4">
+            <flux:card class="border border-indigo-200! bg-indigo-50/60 p-4">
 
                 <div class="flex items-center gap-3">
                     <div class="flex size-9 items-center justify-center rounded-lg bg-white shadow-sm">
@@ -310,7 +307,7 @@
     </flux:card>
 
     {{-- Summary --}}
-    <flux:card class="overflow-hidden p-0">
+    <flux:card class="overflow-hidden p-0 border-none!">
 
         <div
             class="flex flex-col gap-2 border-b border-slate-200 p-4 pb-3 sm:flex-row sm:items-center sm:justify-between">
@@ -373,12 +370,12 @@
                 </flux:text>
             </div>
 
-            <div class="flex items-center justify-between gap-4 bg-slate-100 px-4 py-4">
-                <flux:text class="text-lg font-bold text-slate-900">
+            <div class="flex items-center justify-between gap-4 bg-indigo-100 px-4 py-4">
+                <flux:text class="text-lg font-bold text-indigo-700">
                     Total Posisi
                 </flux:text>
 
-                <flux:text class="text-lg font-bold text-slate-700">
+                <flux:text class="text-lg font-bold text-indigo-700">
                     {{ idr($report['summary']['closing_amount']) }}
                 </flux:text>
             </div>
@@ -388,7 +385,7 @@
     </flux:card>
 
     {{-- Loans --}}
-    <flux:card class="overflow-hidden p-4">
+    <flux:card class="overflow-hidden p-4 border-none!">
 
         <div class="flex flex-col gap-2 border-b border-slate-100 pb-3 sm:flex-row sm:items-center sm:justify-between">
 
@@ -434,7 +431,8 @@
                             <flux:table.cell>
                                 <div class="flex items-center gap-3">
 
-                                    <flux:avatar :name="$loan->member->name" size="sm" />
+                                    <flux:avatar size="sm" :name="$loan->member->name"
+                                        :initials="$loan->member->initials()" circle color="auto" />
 
                                     <flux:text class="font-semibold">
                                         {{ $loan->member->name }}
@@ -506,7 +504,7 @@
     </flux:card>
 
     {{-- Payments --}}
-    <flux:card class="overflow-hidden p-4">
+    <flux:card class="overflow-hidden p-4 border-none!">
 
         <div class="flex flex-col gap-2 border-b border-slate-100 pb-3 sm:flex-row sm:items-center sm:justify-between">
 
@@ -553,7 +551,8 @@
 
                                 <div class="flex items-center gap-3">
 
-                                    <flux:avatar :name="$payment->loan->member->name" size="sm" />
+                                    <flux:avatar size="sm" :name="$payment->loan->member->name"
+                                        :initials="$payment->loan->member->initials()" circle color="auto" />
 
                                     <flux:text class="font-semibold">
                                         {{ $payment->loan->member->name }}

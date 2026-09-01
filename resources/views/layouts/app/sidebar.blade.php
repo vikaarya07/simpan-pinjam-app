@@ -6,11 +6,10 @@
     @include('partials.head')
 </head>
 
-<body class="min-h-screen bg-slate-50 text-slate-600 dark:bg-zinc-800">
+<body class="min-h-screen bg-slate-100! text-slate-600! dark:bg-slate-950!">
 
     {{-- SIDEBAR --}}
-    <flux:sidebar sticky persist="false" collapsible
-        class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+    <flux:sidebar sticky persist="false" collapsible class="bg-white text-slate-600! dark:bg-slate-950">
 
         {{-- Header --}}
         <flux:sidebar.header class="mb-2">
@@ -25,7 +24,25 @@
 
             {{-- Overview --}}
             <flux:sidebar.item icon="squares-2x2" :href="route('overview')" :current="request()->routeIs('overview')"
-                wire:navigate>
+                wire:navigate
+                class="
+                    text-slate-600!
+
+                    hover:bg-emerald-400!
+                    hover:text-emerald-50!
+
+                    data-current:bg-emerald-400!
+                    data-current:text-emerald-50!
+
+                    dark:text-slate-600!
+                    dark:hover:bg-emerald-400!
+                    dark:hover:text-emerald-50!
+
+                    dark:data-current:bg-emerald-400!
+                    dark:data-current:text-emerald-50!
+                    dark:data-current:hover:bg-emerald-400!
+                    dark:data-current:hover:text-emerald-50!
+                ">
                 {{ __('Overview') }}
             </flux:sidebar.item>
 
@@ -37,17 +54,34 @@
             {{-- Section Label --}}
             <div
                 class="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider
-                       text-zinc-400 dark:text-zinc-500
+                       text-slate-400 dark:text-slate-500
                        in-data-flux-sidebar-collapsed-desktop:hidden">
                 Meeting
             </div>
 
             {{-- Meeting --}}
             <flux:sidebar.item icon="calendar-days" :href="route('meeting.index')"
-                :current="request()->routeIs('meeting.*')" wire:navigate>
-                {{ __('Pertemuan') }}
+                :current="request()->routeIs('meeting.*')" wire:navigate
+                class="
+                    text-slate-600!
 
-                <flux:badge size="sm" color="pink" class="shrink-0 px-1.5! py-0.5!">
+                    hover:bg-emerald-400!
+                    hover:text-emerald-50!
+
+                    data-current:bg-emerald-400!
+                    data-current:text-emerald-50!
+
+                    dark:text-slate-600!
+                    dark:hover:bg-emerald-400!
+                    dark:hover:text-emerald-50!
+
+                    dark:data-current:bg-emerald-400!
+                    dark:data-current:text-emerald-50!
+                    dark:data-current:hover:bg-emerald-400!
+                    dark:data-current:hover:text-emerald-50!
+                ">
+                {{ __('Pertemuan') }}
+                <flux:badge size="sm" color="pink" variant="solid" class="shrink-0 px-1.5! py-0.5!">
                     Admin
                 </flux:badge>
             </flux:sidebar.item>
@@ -60,30 +94,60 @@
             {{-- Section Label --}}
             <div
                 class="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider
-                       text-zinc-400 dark:text-zinc-500
+                       text-slate-400 dark:text-slate-500
                        in-data-flux-sidebar-collapsed-desktop:hidden">
                 Data Master
             </div>
 
             {{-- Data Anggota --}}
             <flux:sidebar.item icon="users" :href="route('member.index')"
-                :current="request()->routeIs('member.index')" wire:navigate>
-                <span class="flex min-w-0 items-center gap-2">
+                :current="request()->routeIs('member.index')" wire:navigate
+                class="
+                    text-slate-600!
 
-                    <span class="truncate">
-                        {{ __('Data Anggota') }}
-                    </span>
+                    hover:bg-emerald-400!
+                    hover:text-emerald-50!
 
-                    <flux:badge size="sm" color="pink" class="shrink-0 px-1.5! py-0.5!">
-                        Admin
-                    </flux:badge>
+                    data-current:bg-emerald-400!
+                    data-current:text-emerald-50!
 
-                </span>
+                    dark:text-slate-600!
+                    dark:hover:bg-emerald-400!
+                    dark:hover:text-emerald-50!
+
+                    dark:data-current:bg-emerald-400!
+                    dark:data-current:text-emerald-50!
+                    dark:data-current:hover:bg-emerald-400!
+                    dark:data-current:hover:text-emerald-50!
+                ">
+                {{ __('Data Anggota') }}
+
+                <flux:badge size="sm" color="pink" variant="solid" class="shrink-0 px-1.5! py-0.5!">
+                    Admin
+                </flux:badge>
             </flux:sidebar.item>
 
             {{-- Data Nasabah --}}
             <flux:sidebar.item icon="user-group" :href="route('customer.index')"
-                :current="request()->routeIs('customer.*')" wire:navigate>
+                :current="request()->routeIs('customer.*')" wire:navigate
+                class="
+                    text-slate-600!
+
+                    hover:bg-emerald-400!
+                    hover:text-emerald-50!
+
+                    data-current:bg-emerald-400!
+                    data-current:text-emerald-50!
+
+                    dark:text-slate-600!
+                    dark:hover:bg-emerald-400!
+                    dark:hover:text-emerald-50!
+
+                    dark:data-current:bg-emerald-400!
+                    dark:data-current:text-emerald-50!
+                    dark:data-current:hover:bg-emerald-400!
+                    dark:data-current:hover:text-emerald-50!
+                ">
                 {{ __('Data Nasabah') }}
             </flux:sidebar.item>
 
@@ -95,26 +159,80 @@
             {{-- Section Label --}}
             <div
                 class="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider
-                       text-zinc-400 dark:text-zinc-500
+                       text-slate-400 dark:text-slate-500
                        in-data-flux-sidebar-collapsed-desktop:hidden">
                 Transaksi
             </div>
 
             {{-- Simpanan --}}
             <flux:sidebar.item icon="wallet" :href="route('saving.index')"
-                :current="request()->routeIs('saving.index')" wire:navigate>
+                :current="request()->routeIs('saving.index')" wire:navigate
+                class="
+                    text-slate-600!
+
+                    hover:bg-emerald-400!
+                    hover:text-emerald-50!
+
+                    data-current:bg-emerald-400!
+                    data-current:text-emerald-50!
+
+                    dark:text-slate-600!
+                    dark:hover:bg-emerald-400!
+                    dark:hover:text-emerald-50!
+
+                    dark:data-current:bg-emerald-400!
+                    dark:data-current:text-emerald-50!
+                    dark:data-current:hover:bg-emerald-400!
+                    dark:data-current:hover:text-emerald-50!
+                ">
                 {{ __('Simpanan') }}
             </flux:sidebar.item>
 
             {{-- Pinjaman --}}
             <flux:sidebar.item icon="banknotes" :href="route('loan.index')"
-                :current="request()->routeIs('loan.index')" wire:navigate>
+                :current="request()->routeIs('loan.index')" wire:navigate
+                class="
+                    text-slate-600!
+
+                    hover:bg-emerald-400!
+                    hover:text-emerald-50!
+
+                    data-current:bg-emerald-400!
+                    data-current:text-emerald-50!
+
+                    dark:text-slate-600!
+                    dark:hover:bg-emerald-400!
+                    dark:hover:text-emerald-50!
+
+                    dark:data-current:bg-emerald-400!
+                    dark:data-current:text-emerald-50!
+                    dark:data-current:hover:bg-emerald-400!
+                    dark:data-current:hover:text-emerald-50!
+                ">
                 {{ __('Pinjaman') }}
             </flux:sidebar.item>
 
             {{-- Angsuran --}}
             <flux:sidebar.item icon="receipt-percent" :href="route('payment.index')"
-                :current="request()->routeIs('payment.*')" wire:navigate>
+                :current="request()->routeIs('payment.*')" wire:navigate
+                class="
+                    text-slate-600!
+
+                    hover:bg-emerald-400!
+                    hover:text-emerald-50!
+
+                    data-current:bg-emerald-400!
+                    data-current:text-emerald-50!
+
+                    dark:text-slate-600!
+                    dark:hover:bg-emerald-400!
+                    dark:hover:text-emerald-50!
+
+                    dark:data-current:bg-emerald-400!
+                    dark:data-current:text-emerald-50!
+                    dark:data-current:hover:bg-emerald-400!
+                    dark:data-current:hover:text-emerald-50!
+                ">
                 {{ __('Angsuran') }}
             </flux:sidebar.item>
 
@@ -126,20 +244,56 @@
             {{-- Section Label --}}
             <div
                 class="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider
-                       text-zinc-400 dark:text-zinc-500
+                       text-slate-400 dark:text-slate-500
                        in-data-flux-sidebar-collapsed-desktop:hidden">
                 Laporan
             </div>
 
             {{-- Laporan Bulanan --}}
             <flux:sidebar.item icon="chart-bar" :href="route('report.monthly')"
-                :current="request()->routeIs('report.monthly*')" wire:navigate>
+                :current="request()->routeIs('report.monthly*')" wire:navigate
+                class="
+                    text-slate-600!
+
+                    hover:bg-emerald-400!
+                    hover:text-emerald-50!
+
+                    data-current:bg-emerald-400!
+                    data-current:text-emerald-50!
+
+                    dark:text-slate-600!
+                    dark:hover:bg-emerald-400!
+                    dark:hover:text-emerald-50!
+
+                    dark:data-current:bg-emerald-400!
+                    dark:data-current:text-emerald-50!
+                    dark:data-current:hover:bg-emerald-400!
+                    dark:data-current:hover:text-emerald-50!
+                ">
                 {{ __('Laporan Bulanan') }}
             </flux:sidebar.item>
 
             {{-- Laporan Nasabah --}}
             <flux:sidebar.item icon="document-chart-bar" :href="route('report.customer')"
-                :current="request()->routeIs('report.customer*')" wire:navigate>
+                :current="request()->routeIs('report.customer*')" wire:navigate
+                class="
+                    text-slate-600!
+
+                    hover:bg-emerald-400!
+                    hover:text-emerald-50!
+
+                    data-current:bg-emerald-400!
+                    data-current:text-emerald-50!
+
+                    dark:text-slate-600!
+                    dark:hover:bg-emerald-400!
+                    dark:hover:text-emerald-50!
+
+                    dark:data-current:bg-emerald-400!
+                    dark:data-current:text-emerald-50!
+                    dark:data-current:hover:bg-emerald-400!
+                    dark:data-current:hover:text-emerald-50!
+                ">
                 {{ __('Laporan Nasabah') }}
             </flux:sidebar.item>
 
@@ -157,7 +311,7 @@
     <flux:header class="lg:hidden">
 
         {{-- Mobile Sidebar Toggle --}}
-        <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
+        <flux:sidebar.toggle class="lg:hidden" icon="bars-3-bottom-left" inset="left" />
 
         <flux:spacer />
 

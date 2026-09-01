@@ -15,7 +15,7 @@
 
         {{-- Info Pertemuan --}}
         <div
-            class="flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+            class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
 
             <div
                 class="flex size-9 items-center justify-center rounded-lg bg-mist-100 text-mist-700 dark:bg-mist-900/40 dark:text-mist-300">
@@ -23,13 +23,13 @@
             </div>
 
             <div class="leading-tight">
-                <div class="text-xs font-medium text-zinc-500">
+                <div class="text-xs font-medium text-slate-500">
                     Pertemuan
                 </div>
 
                 <div class="mt-0.5 flex items-center gap-2 text-sm font-semibold">
                     <span>{{ $meeting->place }}</span>
-                    <span class="text-zinc-300">•</span>
+                    <span class="text-slate-300">•</span>
                     <span>{{ $meeting->waktu }}</span>
                 </div>
             </div>
@@ -39,18 +39,18 @@
     </div>
 
     {{-- Table Card --}}
-    <flux:card class="overflow-hidden p-0">
+    <flux:card class="overflow-hidden p-0 border-none!">
 
         {{-- Table Header --}}
         <div
-            class="flex flex-col gap-3 border-b border-zinc-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-700">
+            class="flex flex-col gap-3 border-b border-slate-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between dark:border-slate-700">
 
             <div>
-                <div class="text-sm font-semibold text-zinc-900 dark:text-white">
+                <div class="text-sm font-semibold text-slate-900 dark:text-white">
                     Daftar Angsuran
                 </div>
 
-                <div class="text-xs text-zinc-500">
+                <div class="text-xs text-slate-500">
                     Data pembayaran pada pertemuan ini
                 </div>
             </div>
@@ -65,59 +65,39 @@
 
         </div>
 
-        <flux:table class="px-5!">
+        <flux:table class="px-5! border-none!">
 
             <flux:table.columns>
 
-                <flux:table.column class="w-12">
-                    #
-                </flux:table.column>
+                <flux:table.column class="w-12">#</flux:table.column>
 
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('loan_number')">
                     <div class="flex items-center gap-1">
                         Nomor Pinjaman
-                        @include('components.sort-icon', [
-                            'field' => 'loan_number',
-                        ])
+                        @include('components.sort-icon', ['field' => 'loan_number'])
                     </div>
                 </flux:table.column>
 
-                <flux:table.column>
-                    Nasabah
-                </flux:table.column>
+                <flux:table.column>Nasabah</flux:table.column>
 
-                <flux:table.column>
-                    Pertemuan
-                </flux:table.column>
+                <flux:table.column>Pertemuan</flux:table.column>
 
-                <flux:table.column>
-                    Pokok Pinjaman
-                </flux:table.column>
+                <flux:table.column>Pokok Pinjaman</flux:table.column>
 
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('loan_date')">
                     <div class="flex items-center gap-1">
                         Waktu
-                        @include('components.sort-icon', [
-                            'field' => 'loan_date',
-                        ])
+                        @include('components.sort-icon', ['field' => 'loan_date'])
                     </div>
                 </flux:table.column>
 
-                <flux:table.column>
-                    Metode
-                </flux:table.column>
+                <flux:table.column>Metode</flux:table.column>
 
-                <flux:table.column>
-                    Sisa Hutang
-                </flux:table.column>
+                <flux:table.column>Sisa Hutang</flux:table.column>
 
-                <flux:table.column>
-                    Status
-                </flux:table.column>
+                <flux:table.column>Status</flux:table.column>
 
-                <flux:table.column class="text-right">
-                    Aksi
-                </flux:table.column>
+                <flux:table.column class="text-right">Aksi</flux:table.column>
 
             </flux:table.columns>
 
@@ -150,7 +130,8 @@
 
                             <div class="flex items-center gap-3">
 
-                                <flux:avatar size="sm" :name="$loan->member->name" />
+                                <flux:avatar size="sm" :name="$loan->member->name"
+                                    :initials="$loan->member->initials()" circle color="auto" />
 
                                 <div class="min-w-0">
                                     <div class="truncate font-medium">

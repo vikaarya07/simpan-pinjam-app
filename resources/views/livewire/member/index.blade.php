@@ -19,9 +19,8 @@
 
     </div>
 
-
     {{-- Search --}}
-    <flux:card class="p-4">
+    <flux:card class="p-4 border-none!">
 
         <div class="max-w-xl">
 
@@ -32,86 +31,55 @@
 
     </flux:card>
 
-
     {{-- Table --}}
-    <flux:card class="overflow-hidden">
+    <flux:card class="overflow-hidden border-none!">
 
         <flux:table>
 
             <flux:table.columns>
 
-                <flux:table.column class="w-12">
-                    #
-                </flux:table.column>
-
+                <flux:table.column class="w-12">#</flux:table.column>
 
                 {{-- NPK --}}
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('npk')">
                     <div class="flex items-center gap-1">
                         NPK
-
-                        @include('components.sort-icon', [
-                            'field' => 'npk',
-                        ])
+                        @include('components.sort-icon', ['field' => 'npk'])
                     </div>
                 </flux:table.column>
 
-
                 {{-- Name --}}
-                <flux:table.column>
-                    Nama Anggota
-                </flux:table.column>
-
+                <flux:table.column>Nama Anggota</flux:table.column>
 
                 {{-- Email --}}
-                <flux:table.column>
-                    Email
-                </flux:table.column>
-
+                <flux:table.column>Email</flux:table.column>
 
                 {{-- Phone --}}
-                <flux:table.column>
-                    Telepon
-                </flux:table.column>
-
+                <flux:table.column>Telepon</flux:table.column>
 
                 {{-- Age --}}
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('date_birth')">
                     <div class="flex items-center gap-1">
                         Usia
-
-                        @include('components.sort-icon', [
-                            'field' => 'date_birth',
-                        ])
+                        @include('components.sort-icon', ['field' => 'date_birth'])
                     </div>
                 </flux:table.column>
 
-
                 {{-- Gender --}}
-                <flux:table.column>
-                    Jenis Kelamin
-                </flux:table.column>
-
+                <flux:table.column>Jenis Kelamin</flux:table.column>
 
                 {{-- Status --}}
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('status')">
                     <div class="flex items-center gap-1">
                         Status
-
-                        @include('components.sort-icon', [
-                            'field' => 'status',
-                        ])
+                        @include('components.sort-icon', ['field' => 'status'])
                     </div>
                 </flux:table.column>
 
-
                 {{-- Action --}}
-                <flux:table.column class="text-right">
-                    Aksi
-                </flux:table.column>
+                <flux:table.column class="text-right">Aksi</flux:table.column>
 
             </flux:table.columns>
-
 
             <flux:table.rows>
 
@@ -124,7 +92,6 @@
                             {{ $loop->iteration }}
                         </flux:table.cell>
 
-
                         {{-- NPK --}}
                         <flux:table.cell>
 
@@ -134,13 +101,13 @@
 
                         </flux:table.cell>
 
-
                         {{-- Name --}}
                         <flux:table.cell>
 
                             <div class="flex items-center gap-3">
 
-                                <flux:avatar size="sm" :name="$member->name" />
+                                <flux:avatar size="sm" :name="$member->name" :initials="$member->initials()"
+                                    circle color="auto" />
 
                                 <div class="min-w-0">
 
@@ -153,7 +120,6 @@
                             </div>
 
                         </flux:table.cell>
-
 
                         {{-- Email --}}
                         <flux:table.cell>
@@ -170,7 +136,6 @@
 
                         </flux:table.cell>
 
-
                         {{-- Phone --}}
                         <flux:table.cell>
 
@@ -186,7 +151,6 @@
 
                         </flux:table.cell>
 
-
                         {{-- Age --}}
                         <flux:table.cell>
 
@@ -195,7 +159,6 @@
                             </span>
 
                         </flux:table.cell>
-
 
                         {{-- Gender --}}
                         <flux:table.cell>
@@ -206,7 +169,6 @@
 
                         </flux:table.cell>
 
-
                         {{-- Status --}}
                         <flux:table.cell>
 
@@ -215,7 +177,6 @@
                             </flux:badge>
 
                         </flux:table.cell>
-
 
                         {{-- Actions --}}
                         <flux:table.cell>
@@ -270,12 +231,10 @@
 
     </flux:card>
 
-
     {{-- Pagination --}}
     <div>
         {{ $members->links() }}
     </div>
-
 
     {{-- Form --}}
     <livewire:member.form />

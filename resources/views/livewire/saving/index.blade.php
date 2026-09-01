@@ -21,7 +21,7 @@
 
 
     {{-- Table --}}
-    <flux:card class="overflow-hidden">
+    <flux:card class="overflow-hidden border-none!">
 
         <flux:table>
 

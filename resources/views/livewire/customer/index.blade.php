@@ -11,9 +11,8 @@
         </flux:text>
     </div>
 
-
     {{-- Search --}}
-    <flux:card class="p-4">
+    <flux:card class="p-4 border-none!">
 
         <div class="max-w-xl">
 
@@ -24,69 +23,42 @@
 
     </flux:card>
 
-
     {{-- Table --}}
-    <flux:card class="overflow-hidden">
+    <flux:card class="overflow-hidden border-none!">
 
         <flux:table>
 
             <flux:table.columns>
 
-                <flux:table.column class="w-12">
-                    #
-                </flux:table.column>
-
+                <flux:table.column class="w-12">#</flux:table.column>
 
                 {{-- NPK --}}
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('npk')">
                     <div class="flex items-center gap-1">
                         NPK
-
-                        @include('components.sort-icon', [
-                            'field' => 'npk',
-                        ])
+                        @include('components.sort-icon', ['field' => 'npk'])
                     </div>
                 </flux:table.column>
 
+                <flux:table.column>Nasabah</flux:table.column>
 
-                <flux:table.column>
-                    Nasabah
-                </flux:table.column>
+                <flux:table.column>Telepon</flux:table.column>
 
-
-                <flux:table.column>
-                    Telepon
-                </flux:table.column>
-
-
-                <flux:table.column class="text-center">
-                    Pinjaman
-                </flux:table.column>
-
+                <flux:table.column class="text-center">Pinjaman</flux:table.column>
 
                 {{-- Usia --}}
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('date_birth')">
                     <div class="flex items-center gap-1">
                         Usia
-
-                        @include('components.sort-icon', [
-                            'field' => 'date_birth',
-                        ])
+                        @include('components.sort-icon', ['field' => 'date_birth'])
                     </div>
                 </flux:table.column>
 
+                <flux:table.column>Jenis Kelamin</flux:table.column>
 
-                <flux:table.column>
-                    Jenis Kelamin
-                </flux:table.column>
-
-
-                <flux:table.column class="text-right">
-                    Aksi
-                </flux:table.column>
+                <flux:table.column class="text-right">Aksi</flux:table.column>
 
             </flux:table.columns>
-
 
             <flux:table.rows>
 
@@ -99,7 +71,6 @@
                             {{ $customers->firstItem() + $loop->index }}
                         </flux:table.cell>
 
-
                         {{-- NPK --}}
                         <flux:table.cell>
 
@@ -109,13 +80,13 @@
 
                         </flux:table.cell>
 
-
                         {{-- Nasabah --}}
                         <flux:table.cell>
 
                             <div class="flex items-center gap-3">
 
-                                <flux:avatar size="sm" :name="$customer->name" />
+                                <flux:avatar size="sm" :name="$customer->name" :initials="$customer->initials()"
+                                    circle color="auto" />
 
                                 <div class="min-w-0">
 
@@ -128,7 +99,6 @@
                             </div>
 
                         </flux:table.cell>
-
 
                         {{-- Telepon --}}
                         <flux:table.cell>
@@ -161,7 +131,6 @@
 
                         </flux:table.cell>
 
-
                         {{-- Usia --}}
                         <flux:table.cell>
 
@@ -171,7 +140,6 @@
 
                         </flux:table.cell>
 
-
                         {{-- Gender --}}
                         <flux:table.cell>
 
@@ -180,7 +148,6 @@
                             </flux:badge>
 
                         </flux:table.cell>
-
 
                         {{-- Aksi --}}
                         <flux:table.cell>
@@ -228,7 +195,6 @@
         </flux:table>
 
     </flux:card>
-
 
     {{-- Pagination --}}
     <div>

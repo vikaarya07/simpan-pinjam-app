@@ -20,7 +20,7 @@
     </div>
 
     {{-- Search --}}
-    <flux:card class="p-4">
+    <flux:card class="p-4 border-none!">
 
         <div class="max-w-xl">
 
@@ -32,7 +32,7 @@
     </flux:card>
 
     {{-- Table --}}
-    <flux:card class="overflow-hidden">
+    <flux:card class="overflow-hidden border-none!">
 
         <flux:table>
 

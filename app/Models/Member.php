@@ -7,6 +7,7 @@ use App\Enums\MemberStatus;
 use App\Models\CustomerNotification;
 use App\Models\Payment;
 use App\Traits\HasIndonesianDate;
+use App\Traits\HasInitials;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -17,6 +18,8 @@ class Member extends Model
 {
     use HasFactory;
     use HasIndonesianDate;
+    use HasInitials;
+
 
     protected $fillable = [
         'npk',

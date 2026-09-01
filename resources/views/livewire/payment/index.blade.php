@@ -14,31 +14,25 @@
     </div>
 
     {{-- Filter --}}
-    <flux:card class="p-4">
-        <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+    <flux:card class="p-4 border-none!">
 
-            <div class="w-full lg:max-w-md">
-                <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass"
-                    placeholder="Cari tempat atau waktu rapat..." clearable />
-            </div>
-
-            <flux:text size="sm" class="text-zinc-600">
-                Menampilkan daftar rapat yang tersedia
-            </flux:text>
-
+        <div class="max-w-xl">
+            <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass"
+                placeholder="Cari tempat atau waktu rapat..." clearable />
         </div>
+
     </flux:card>
 
     {{-- Table --}}
-    <flux:card class="overflow-hidden">
+    <flux:card class="overflow-hidden border-none!">
 
         <flux:table>
 
             <flux:table.columns>
 
-                <flux:table.column class="w-16">No</flux:table.column>
+                <flux:table.column class="w-16">#</flux:table.column>
 
-                <flux:table.column>Pertemuan</flux:table.column>
+                <flux:table.column>Tempat</flux:table.column>
 
                 <flux:table.column>Waktu</flux:table.column>
 
@@ -132,7 +126,7 @@
                         {{-- Aksi --}}
                         <flux:table.cell>
 
-                            <flux:button size="sm" variant="outline" icon="eye"
+                            <flux:button size="sm" variant="ghost" icon="eye"
                                 :href="route('payment.show', $meeting)" wire:navigate>
                                 Lihat
                             </flux:button>

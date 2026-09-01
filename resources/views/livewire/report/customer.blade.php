@@ -28,7 +28,7 @@
     </div>
 
     {{-- CUSTOMER SELECTOR --}}
-    <flux:card class="p-4">
+    <flux:card class="p-4 border-none!">
 
         <flux:select label="Nasabah" wire:model.live="customerId" placeholder="-- Pilih Nasabah --">
             @foreach ($customers as $customer)
@@ -54,19 +54,15 @@
         @endphp
 
         {{-- CUSTOMER INFORMATION --}}
-        <flux:card class="p-4">
+        <flux:card class="p-4 border-none!">
 
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
                 {{-- Identity --}}
                 <div class="flex min-w-0 items-center gap-3">
 
-                    <div
-                        class="flex size-11 shrink-0 items-center justify-center
-                               rounded-full bg-zinc-100 text-lg font-bold text-zinc-600
-                               dark:bg-zinc-800 dark:text-zinc-300">
-                        {{ strtoupper(substr($customer->name, 0, 1)) }}
-                    </div>
+                    <flux:avatar size="xl" :name="$customer->name" :initials="$customer->initials()" circle
+                        color="auto" />
 
                     <div class="min-w-0">
 
@@ -212,7 +208,7 @@
                 <div class="grid grid-cols-2 gap-3 xl:grid-cols-4">
 
                     {{-- TOTAL LOAN --}}
-                    <flux:card class="p-4">
+                    <flux:card class="p-4 border-none!">
 
                         <div class="flex items-start justify-between gap-3">
 
@@ -239,7 +235,7 @@
                     </flux:card>
 
                     {{-- PAYMENT --}}
-                    <flux:card class="p-4">
+                    <flux:card class="p-4 border-none!">
 
                         <div class="flex items-start justify-between gap-3">
 
@@ -266,7 +262,7 @@
                     </flux:card>
 
                     {{-- REMAINING --}}
-                    <flux:card class="p-4">
+                    <flux:card class="p-4 border-none!">
 
                         <div class="flex items-start justify-between gap-3">
 
@@ -294,7 +290,7 @@
                     </flux:card>
 
                     {{-- STATUS --}}
-                    <flux:card class="p-4">
+                    <flux:card class="p-4 border-none!">
 
                         <div class="flex items-start justify-between gap-3">
 
@@ -333,7 +329,7 @@
                 </div>
 
                 {{-- INFORMATION --}}
-                <flux:card class="p-5">
+                <flux:card class="p-5 border-none!">
 
                     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
@@ -399,18 +395,17 @@
                 {{-- LOAN LIST --}}
                 <div class="space-y-3">
 
-                    @forelse ($loans as $loan)
+                    @forelse ($customer->loans as $loan)
                         @php
                             $payments = $loan->payments->keyBy('payment_count');
                             $paidCount = $loan->payments->count();
                         @endphp
 
-                        <details wire:key="loan-{{ $loan->id }}"
-                            class="group overflow-hidden rounded-xl border
-                                   border-zinc-200 bg-white shadow-sm
-                                   dark:border-zinc-700 dark:bg-zinc-900">
+                        <details
+                            class="group overflow-hidden rounded-xl border-none! bg-white shadow-sm dark:bg-zinc-900"
+                            wire:key="loan-{{ $loan->id }}">
 
-                            {{-- LOAN HEADER --}}
+                            {{-- Loan Header --}}
                             <summary
                                 class="flex cursor-pointer list-none items-center justify-between gap-4 bg-zinc-50 px-4 py-3 transition hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700">
 
@@ -445,7 +440,7 @@
 
                                 </div>
 
-                                {{-- SUMMARY --}}
+                                {{-- Right Summary --}}
                                 <div class="flex shrink-0 items-center gap-5">
                                     <div class="hidden text-right sm:block">
                                         <div class="text-xs text-zinc-500">Total</div>
@@ -468,257 +463,251 @@
 
                             </summary>
 
-                            {{-- LOAN CONTENT --}}
-                            <div class="border-t border-zinc-200 dark:border-zinc-700">
+                            {{-- Loan Content --}}
+                            <div class="border-t border-zinc-200 px-4 py-5 dark:border-zinc-700">
 
-                                <div class="space-y-5 p-4">
+                                <div class="space-y-6">
 
-                                    {{-- LOAN INFORMATION --}}
-                                    <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+                                    {{-- Loan Summary --}}
+                                    <div>
 
-                                        <div>
+                                        <flux:heading size="sm" class="mb-3">
+                                            Ringkasan Pinjaman
+                                        </flux:heading>
 
-                                            <flux:text class="text-xs">
-                                                Pokok Pinjaman
-                                            </flux:text>
+                                        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
 
-                                            <flux:text class="mt-1 font-semibold">
-                                                Rp {{ idr($loan->principal) }}
-                                            </flux:text>
+                                            {{-- Principal --}}
+                                            <flux:card>
 
-                                        </div>
+                                                <flux:text size="sm">Pokok Pinjaman</flux:text>
 
-                                        <div>
+                                                <div class="mt-1 font-semibold tabular-nums">
+                                                    {{ idr($loan->principal) }}
+                                                </div>
 
-                                            <flux:text class="text-xs">
-                                                Jasa
-                                            </flux:text>
+                                            </flux:card>
 
-                                            <flux:text class="mt-1 font-semibold">
+                                            {{-- Interest --}}
+                                            <flux:card>
 
-                                                Rp {{ idr($loan->interest_amount) }}
+                                                <flux:text size="sm">Jasa</flux:text>
 
-                                                <span class="font-normal text-zinc-500">
-                                                    ({{ $loan->interest_percent }}%)
-                                                </span>
+                                                <div class="mt-1 flex flex-wrap items-baseline gap-1">
+                                                    <span class="font-semibold tabular-nums">
+                                                        {{ idr($loan->interest_amount) }}
+                                                    </span>
+                                                    <span class="text-xs text-zinc-600">
+                                                        ({{ $loan->interest_percent }}%)
+                                                    </span>
+                                                </div>
 
-                                            </flux:text>
+                                            </flux:card>
 
-                                        </div>
+                                            {{-- Total --}}
+                                            <flux:card>
 
-                                        <div>
+                                                <flux:text size="sm">Total Pinjaman</flux:text>
 
-                                            <flux:text class="text-xs">
-                                                Total Pinjaman
-                                            </flux:text>
+                                                <div class="mt-1 font-semibold tabular-nums">
+                                                    {{ idr($loan->amount) }}
+                                                </div>
 
-                                            <flux:text class="mt-1 font-semibold">
-                                                Rp {{ idr($loan->amount) }}
-                                            </flux:text>
+                                            </flux:card>
 
-                                        </div>
+                                            {{-- Remaining --}}
+                                            <flux:card @class([
+                                                'bg-red-100 dark:bg-red-950/20' => $loan->has_outstanding_overdue,
+                                            ])>
 
-                                        <div>
+                                                <flux:text size="sm">Sisa Hutang</flux:text>
 
-                                            <flux:text class="text-xs">
-                                                Sisa Hutang
-                                            </flux:text>
+                                                <div @class([
+                                                    'mt-1 font-semibold tabular-nums',
+                                                    'text-red-600 dark:text-red-400' => $loan->has_outstanding_overdue,
+                                                ])>
+                                                    {{ idr($loan->remaining) }}
+                                                </div>
 
-                                            <flux:text
-                                                class="mt-1 font-semibold
-                                                       {{ $loan->has_outstanding_overdue ? 'text-red-600' : '' }}">
-                                                Rp {{ idr($loan->remaining) }}
-                                            </flux:text>
+                                            </flux:card>
 
                                         </div>
 
                                     </div>
 
-                                    {{-- PAYMENT HISTORY --}}
+                                    {{-- Payment History --}}
                                     <div>
 
-                                        <div class="mb-3 flex items-center justify-between">
+                                        <div class="mb-3 flex items-center justify-between gap-3">
 
                                             <div>
-
                                                 <flux:heading size="sm">
                                                     Riwayat Pembayaran
                                                 </flux:heading>
 
-                                                <flux:text class="mt-1 text-xs">
-                                                    Maksimal 6 kali pembayaran
+                                                <flux:text size="sm" class="mt-1">
+                                                    Maksimal 6 kali pembayaran.
                                                 </flux:text>
-
                                             </div>
 
-                                            <flux:badge color="zinc">
+                                            <flux:badge color="slate" size="sm">
                                                 {{ $paidCount }}/6
                                             </flux:badge>
 
                                         </div>
 
-                                        <div class="overflow-x-auto">
+                                        <flux:table>
 
-                                            <flux:table>
+                                            <flux:table.columns>
 
-                                                <flux:table.columns>
+                                                <flux:table.column>Ke</flux:table.column>
 
-                                                    <flux:table.column>Ke</flux:table.column>
+                                                <flux:table.column>Tanggal</flux:table.column>
 
-                                                    <flux:table.column>Tanggal</flux:table.column>
+                                                <flux:table.column>Angsuran</flux:table.column>
 
-                                                    <flux:table.column>Angsuran</flux:table.column>
+                                                <flux:table.column>Metode</flux:table.column>
 
-                                                    <flux:table.column>Metode</flux:table.column>
+                                                <flux:table.column>Status</flux:table.column>
 
-                                                    <flux:table.column>Status</flux:table.column>
+                                                <flux:table.column>Catatan</flux:table.column>
 
-                                                    <flux:table.column>Catatan</flux:table.column>
+                                            </flux:table.columns>
 
-                                                </flux:table.columns>
+                                            <flux:table.rows>
 
+                                                @for ($i = 1; $i <= 6; $i++)
+                                                    @php
+                                                        $payment = $payments->get($i);
+                                                    @endphp
 
-                                                <flux:table.rows>
+                                                    <flux:table.row
+                                                        wire:key="loan-{{ $loan->id }}-payment-{{ $i }}">
 
-                                                    @for ($i = 1; $i <= 6; $i++)
-                                                        @php
-                                                            $payment = $payments->get($i);
-                                                        @endphp
+                                                        {{-- Count --}}
+                                                        <flux:table.cell>
+                                                            <span class="font-semibold">
+                                                                {{ $i }}
+                                                            </span>
+                                                        </flux:table.cell>
 
-                                                        <flux:table.row
-                                                            wire:key="loan-{{ $loan->id }}-payment-{{ $i }}">
+                                                        {{-- Date --}}
+                                                        <flux:table.cell>
 
-                                                            {{-- COUNT --}}
-                                                            <flux:table.cell>
-                                                                <span class="font-medium">
-                                                                    {{ $i }}
+                                                            @if ($payment)
+                                                                <span class="whitespace-nowrap">
+                                                                    {{ $payment->waktu }}
                                                                 </span>
-                                                            </flux:table.cell>
-
-                                                            {{-- DATE --}}
-                                                            <flux:table.cell>
-                                                                {{ $payment?->waktu ?? '-' }}
-                                                            </flux:table.cell>
-
-                                                            {{-- AMOUNT --}}
-                                                            <flux:table.cell>
-
-                                                                @if ($payment)
-                                                                    <span class="font-semibold">
-                                                                        Rp {{ idr($payment->amount) }}
-                                                                    </span>
-                                                                @else
+                                                            @else
+                                                                <span class="text-zinc-400">
                                                                     -
-                                                                @endif
+                                                                </span>
+                                                            @endif
 
-                                                            </flux:table.cell>
+                                                        </flux:table.cell>
 
-                                                            {{-- METHOD --}}
-                                                            <flux:table.cell>
+                                                        {{-- Amount --}}
+                                                        <flux:table.cell>
 
-                                                                @if ($payment?->method)
-                                                                    <flux:badge :color="$payment->method->color()">
-                                                                        {{ $payment->method->label() }}
-                                                                    </flux:badge>
-                                                                @else
-                                                                    <flux:badge color="zinc">
-                                                                        -
-                                                                    </flux:badge>
-                                                                @endif
+                                                            @if ($payment)
+                                                                <span
+                                                                    class="font-medium tabular-nums whitespace-nowrap">
+                                                                    {{ idr($payment->amount) }}
+                                                                </span>
+                                                            @else
+                                                                <span class="text-zinc-400">
+                                                                    -
+                                                                </span>
+                                                            @endif
 
-                                                            </flux:table.cell>
+                                                        </flux:table.cell>
 
-                                                            {{-- STATUS --}}
-                                                            <flux:table.cell>
+                                                        {{-- Method --}}
+                                                        <flux:table.cell>
 
-                                                                @if ($payment?->status)
-                                                                    <flux:badge :color="$payment->status->color()">
-                                                                        {{ $payment->status->label() }}
-                                                                    </flux:badge>
-                                                                @else
-                                                                    <flux:badge color="zinc">
-                                                                        -
-                                                                    </flux:badge>
-                                                                @endif
+                                                            <flux:badge :color="$payment?->method?->color() ?? 'zinc'"
+                                                                size="sm">
+                                                                {{ $payment?->method?->label() ?? '-' }}
+                                                            </flux:badge>
 
-                                                            </flux:table.cell>
+                                                        </flux:table.cell>
 
-                                                            {{-- NOTE --}}
-                                                            <flux:table.cell class="max-w-60">
+                                                        {{-- Status --}}
+                                                        <flux:table.cell>
 
-                                                                @if ($payment?->note)
-                                                                    <flux:modal.trigger
-                                                                        name="payment-note-{{ $loan->id }}-{{ $i }}">
+                                                            <flux:badge :color="$payment?->status?->color() ?? 'zinc'"
+                                                                size="sm">
+                                                                {{ $payment?->status?->label() ?? '-' }}
+                                                            </flux:badge>
 
-                                                                        <flux:button variant="ghost" size="sm"
-                                                                            class="max-w-60 justify-start text-left">
-                                                                            <span class="line-clamp-2">
+                                                        </flux:table.cell>
+
+                                                        {{-- Note --}}
+                                                        <flux:table.cell class="max-w-60">
+
+                                                            @if ($payment?->note)
+                                                                <flux:modal.trigger
+                                                                    name="payment-note-{{ $loan->id }}-{{ $i }}">
+                                                                    <flux:button variant="ghost" size="sm"
+                                                                        class="max-w-60 justify-start text-left">
+                                                                        <span class="line-clamp-2">
+                                                                            {{ $payment->note }}
+                                                                        </span>
+                                                                    </flux:button>
+                                                                </flux:modal.trigger>
+
+                                                                <flux:modal
+                                                                    name="payment-note-{{ $loan->id }}-{{ $i }}"
+                                                                    class="md:w-lg">
+
+                                                                    <div class="space-y-4">
+
+                                                                        <div>
+                                                                            <flux:heading size="lg">
+                                                                                Catatan Pembayaran
+                                                                            </flux:heading>
+
+                                                                            <flux:text class="mt-1">
+                                                                                Pembayaran ke-{{ $i }}
+                                                                            </flux:text>
+                                                                        </div>
+
+                                                                        <flux:card class="bg-zinc-50 dark:bg-zinc-800">
+
+                                                                            <flux:text
+                                                                                class="whitespace-pre-line leading-relaxed">
                                                                                 {{ $payment->note }}
-                                                                            </span>
-                                                                        </flux:button>
+                                                                            </flux:text>
 
-                                                                    </flux:modal.trigger>
+                                                                        </flux:card>
 
-                                                                    <flux:modal
-                                                                        name="payment-note-{{ $loan->id }}-{{ $i }}"
-                                                                        class="md:w-lg">
+                                                                        <div class="flex justify-end">
 
-                                                                        <div class="space-y-4">
-
-                                                                            <div>
-
-                                                                                <flux:heading size="lg">
-                                                                                    Catatan Pembayaran
-                                                                                </flux:heading>
-
-                                                                                <flux:text class="mt-1">
-                                                                                    Pembayaran ke-{{ $i }}
-                                                                                </flux:text>
-
-                                                                            </div>
-
-                                                                            <flux:card
-                                                                                class="bg-zinc-50 dark:bg-zinc-800">
-
-                                                                                <flux:text
-                                                                                    class="whitespace-pre-line leading-relaxed">
-                                                                                    {{ $payment->note }}
-                                                                                </flux:text>
-
-                                                                            </flux:card>
-
-
-                                                                            <div class="flex justify-end">
-
-                                                                                <flux:modal.close>
-
-                                                                                    <flux:button variant="outline">
-                                                                                        Tutup
-                                                                                    </flux:button>
-
-                                                                                </flux:modal.close>
-
-                                                                            </div>
+                                                                            <flux:modal.close>
+                                                                                <flux:button variant="outline">
+                                                                                    Tutup
+                                                                                </flux:button>
+                                                                            </flux:modal.close>
 
                                                                         </div>
 
-                                                                    </flux:modal>
-                                                                @else
-                                                                    <flux:text>
-                                                                        -
-                                                                    </flux:text>
-                                                                @endif
+                                                                    </div>
 
-                                                            </flux:table.cell>
+                                                                </flux:modal>
+                                                            @else
+                                                                <flux:text>
+                                                                    -
+                                                                </flux:text>
+                                                            @endif
 
-                                                        </flux:table.row>
-                                                    @endfor
+                                                        </flux:table.cell>
 
-                                                </flux:table.rows>
+                                                    </flux:table.row>
+                                                @endfor
 
-                                            </flux:table>
+                                            </flux:table.rows>
 
-                                        </div>
+                                        </flux:table>
 
                                     </div>
 
@@ -730,23 +719,18 @@
 
                     @empty
 
-                        <flux:card class="p-10">
+                        <flux:card>
 
-                            <div class="flex flex-col items-center text-center">
+                            <div class="flex flex-col items-center justify-center py-10 text-center">
 
-                                <div
-                                    class="flex size-12 items-center justify-center
-                                           rounded-full bg-zinc-100
-                                           dark:bg-zinc-800">
-                                    <flux:icon name="banknotes" class="size-6 text-zinc-400" />
-                                </div>
+                                <flux:icon name="banknotes" class="size-10 text-zinc-400" />
 
-                                <flux:heading size="sm" class="mt-4">
+                                <flux:heading size="sm" class="mt-3">
                                     Belum ada riwayat pinjaman
                                 </flux:heading>
 
                                 <flux:text class="mt-1">
-                                    Nasabah belum memiliki riwayat pinjaman.
+                                    Customer ini belum memiliki riwayat pinjaman.
                                 </flux:text>
 
                             </div>

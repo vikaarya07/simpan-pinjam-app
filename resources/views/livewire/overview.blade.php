@@ -23,7 +23,7 @@
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
 
         {{-- Pinjaman Aktif --}}
-        <flux:card class="p-5 border-2 border-slate-200!">
+        <flux:card class="p-5 border-none!">
             <div class="flex items-start justify-between gap-4">
 
                 <div>
@@ -48,7 +48,7 @@
         </flux:card>
 
         {{-- Saldo --}}
-        <flux:card class="p-5 border-2 border-emerald-100!">
+        <flux:card class="p-5 border-none!">
             <div class="flex items-start justify-between gap-4">
 
                 <div>
@@ -73,7 +73,7 @@
         </flux:card>
 
         {{-- Piutang --}}
-        <flux:card class="p-5 border-2 border-amber-100!">
+        <flux:card class="p-5 border-none!">
             <div class="flex items-start justify-between gap-4">
 
                 <div>
@@ -98,7 +98,7 @@
         </flux:card>
 
         {{-- Total Keseluruhan --}}
-        <flux:card class="p-5 border-2 border-indigo-100!">
+        <flux:card class="p-5 border-none!">
             <div class="flex items-start justify-between gap-4">
 
                 <div>
@@ -128,7 +128,7 @@
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
 
         {{-- Pinjaman --}}
-        <flux:card class="p-5">
+        <flux:card class="p-5 border-none!">
 
             <div class="flex items-center justify-between">
 
@@ -159,7 +159,7 @@
         </flux:card>
 
         {{-- Pembayaran --}}
-        <flux:card class="p-5">
+        <flux:card class="p-5 border-none!">
 
             <div class="flex items-center justify-between">
 
@@ -190,7 +190,7 @@
         </flux:card>
 
         {{-- Nasabah --}}
-        <flux:card class="p-5">
+        <flux:card class="p-5 border-none!">
 
             <div class="flex items-center justify-between">
 
@@ -253,7 +253,7 @@
     </div>
 
     {{-- LOAN STATUS --}}
-    <flux:card class="p-5">
+    <flux:card class="p-5 border-none!">
 
         <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
 
@@ -343,7 +343,7 @@
     </flux:card>
 
     {{-- PAYMENT PROGRESS --}}
-    <flux:card class="p-5">
+    <flux:card class="p-5 border-none!">
 
         <div>
             <flux:heading size="lg">
@@ -358,7 +358,7 @@
         <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
 
             @foreach ($this->overview['payments']['meetings'] as $meeting)
-                <div class="rounded-xl border border-slate-200 p-4 text-center">
+                <div class="rounded-xl border border-slate-300 p-4 text-center">
 
                     <flux:text class="text-xs font-medium">
                         Ke-{{ $meeting['number'] }}
@@ -399,7 +399,7 @@
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
 
         {{-- Recent Activity --}}
-        <flux:card class="p-5 lg:col-span-2">
+        <flux:card class="p-5 lg:col-span-2 border-none!">
 
             <div class="flex items-center justify-between">
 
@@ -499,7 +499,7 @@
         </flux:card>
 
         {{-- Quick Action --}}
-        <flux:card class="p-5">
+        <flux:card class="p-5 border-none!">
 
             <div>
                 <flux:heading size="lg">
