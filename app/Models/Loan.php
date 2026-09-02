@@ -8,6 +8,7 @@ use App\Enums\PaymentStatus;
 use App\Models\CustomerNotification;
 use App\Services\SavingService;
 use App\Traits\HasIndonesianDate;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -294,9 +295,9 @@ class Loan extends Model
     public function createOverdueLoanIfNeeded(): ?Loan
     {
         /*
-         * Hanya Loan biasa yang dapat
-         * berubah menjadi overdue.
-         */
+     * Hanya Loan biasa yang dapat
+     * berubah menjadi overdue.
+     */
         if (
             $this->type !== LoanType::Loan
             || $this->payments()->count() < 6
@@ -306,17 +307,11 @@ class Loan extends Model
         }
 
         /*
-         * Cek apakah overdue sudah dibuat.
-         */
+     * Cek apakah overdue sudah dibuat.
+     */
         $overdueExists = self::query()
-            ->where(
-                'previous_loan_id',
-                $this->id
-            )
-            ->where(
-                'type',
-                LoanType::LoanOverdue
-            )
+            ->where('previous_loan_id', $this->id)
+            ->where('type', LoanType::LoanOverdue)
             ->exists();
 
         if ($overdueExists) {
@@ -324,58 +319,51 @@ class Loan extends Model
         }
 
         /*
-         * Buat Loan Overdue.
-         */
+     * Tanggal pembuatan Loan Overdue.
+     */
+        $loanDate = today();
+
+        /*
+     * Buat Loan Overdue.
+     */
         $overdue = self::create([
             'member_id' => $this->member_id,
-
             'previous_loan_id' => $this->id,
 
-            'loan_number' => self::generateLoanNumber(),
-
-            'loan_date' => now()->toDateString(),
+            'loan_number' => self::generateLoanNumber($loanDate),
+            'loan_date' => $loanDate,
 
             'type' => LoanType::LoanOverdue,
 
             /*
-             * Maksimal sebesar sisa hutang.
-             */
+         * Pokok overdue = sisa hutang
+         * dari loan sebelumnya.
+         */
             'principal' => $this->remaining,
 
             /*
-             * Field berikut sebenarnya akan
-             * dihitung ulang oleh booted(),
-             * tetapi tetap boleh dikirim.
-             */
+         * Loan overdue menggunakan bunga 10%.
+         */
             'interest_percent' => 10,
 
-            'interest_amount' =>
-            $this->remaining * 10 / 100,
-
-            'amount' =>
-            $this->remaining * 1.10,
-
-            'remaining' =>
-            $this->remaining * 1.10,
-
             /*
-             * Tidak ada pencairan uang baru.
-             */
+         * Tidak ada pencairan uang baru.
+         */
             'disbursement' => 0,
 
             'status' => LoanStatus::Running,
         ]);
 
         /*
-         * Loan lama menjadi overdue.
-         */
+     * Loan lama menjadi overdue.
+     */
         $this->update([
             'status' => LoanStatus::Overdue,
         ]);
 
         /*
-         * Catat Loan Overdue ke Saving.
-         */
+     * Catat Loan Overdue ke Saving.
+     */
         app(SavingService::class)
             ->recordLoan($overdue);
 
@@ -387,35 +375,23 @@ class Loan extends Model
     | Loan Number
     |--------------------------------------------------------------------------
     */
-
-    public static function generateLoanNumber(): string
+    public static function generateLoanNumber(Carbon|string $loanDate): string
     {
-        $prefix = 'LN';
-
-        $date = now()->format('Ymd');
+        $date = Carbon::parse($loanDate);
 
         $lastLoan = self::query()
-            ->whereDate(
-                'created_at',
-                today()
-            )
+            ->whereDate('loan_date', $date)
             ->latest('id')
             ->first();
 
-        if (! $lastLoan) {
-            return "{$prefix}-{$date}-00001";
-        }
-
-        $lastNumber = (int) substr(
-            $lastLoan->loan_number,
-            -5
-        );
+        $sequence = $lastLoan
+            ? ((int) substr($lastLoan->loan_number, -3)) + 1
+            : 1;
 
         return sprintf(
-            '%s-%s-%05d',
-            $prefix,
-            $date,
-            $lastNumber + 1
+            'LN%s%03d',
+            $date->format('Ymd'),
+            $sequence
         );
     }
 

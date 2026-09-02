@@ -1,4 +1,4 @@
-<flux:modal wire:model="showFormModal" class="md:w-3xl">
+<flux:modal wire:model="showFormModal" class="w-sm md:w-3xl" :dismissible="false">
 
     <form wire:submit="save">
 

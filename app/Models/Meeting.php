@@ -40,11 +40,6 @@ class Meeting extends Model
     //  Search Scope
     public function scopeSearch(Builder $query, ?string $search): Builder
     {
-        return $query->when($search, function (Builder $query) use ($search) {
-            $query->where(function (Builder $q) use ($search) {
-                $q->where('place', 'like', "%{$search}%")
-                    ->orWhere('meeting_date', 'like', "%{$search}%");
-            });
-        });
+        return $query->when($search, fn(Builder $query) => $query->where('place', 'like', "%{$search}%"));
     }
 }

@@ -103,18 +103,9 @@ class Form extends Component
 
         $this->interest_percent = 5;
 
-        $lastId = (Loan::max('id') ?? 0) + 1;
-
-        $this->loan_number =
-            'LN-'
-            . now()->format('Ymd')
-            . '-'
-            . str_pad(
-                $lastId,
-                5,
-                '0',
-                STR_PAD_LEFT
-            );
+        $this->loan_number = Loan::generateLoanNumber(
+            $this->loan_date
+        );
 
         $this->showFormModal = true;
     }
@@ -476,6 +467,21 @@ class Form extends Component
                  */
                 $this->disbursement = $this->principal;
             }
+        }
+    }
+
+    public function updatedLoanDate($value): void
+    {
+        if (blank($value)) {
+            $this->loan_number = '';
+
+            return;
+        }
+
+        // Hanya generate ulang untuk form CREATE.
+        // Saat EDIT, nomor pinjaman tidak berubah.
+        if (! $this->isEdit) {
+            $this->loan_number = Loan::generateLoanNumber($value);
         }
     }
 

@@ -395,7 +395,7 @@
                 {{-- LOAN LIST --}}
                 <div class="space-y-3">
 
-                    @forelse ($customer->loans as $loan)
+                    @forelse ($loans as $loan)
                         @php
                             $payments = $loan->payments->keyBy('payment_count');
                             $paidCount = $loan->payments->count();

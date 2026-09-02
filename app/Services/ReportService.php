@@ -115,12 +115,13 @@ class ReportService
             'savings' => $savings,
         ];
     }
-
+    
     public function customer(Member $customer): array
     {
         $loans = $customer->loans()
             ->with('payments')
-            ->latest()
+            ->orderByDesc('loan_date')
+            ->orderByDesc('id')
             ->get();
 
         $overdueLoans = $loans->where('type', 'loan_overdue');
@@ -139,11 +140,6 @@ class ReportService
 
         $notifications = CustomerNotification::query()
             ->where('member_id', $customer->id)
-            ->with([
-                'loan.member',
-                'payment',
-                'meeting',
-            ])
             ->latest()
             ->get();
 

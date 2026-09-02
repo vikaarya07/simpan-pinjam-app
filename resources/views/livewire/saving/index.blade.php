@@ -33,7 +33,7 @@
 
                 <flux:table.column>Jenis</flux:table.column>
 
-                <flux:table.column align="center">Debet</flux:table.column>
+                <flux:table.column align="center">Debit</flux:table.column>
 
                 <flux:table.column align="center">Kredit</flux:table.column>
 

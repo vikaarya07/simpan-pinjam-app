@@ -413,17 +413,15 @@
                     </flux:text>
                 </div>
 
-                <div class="flex items-center gap-2">
-                    <flux:button size="xs" :variant="$activitySort === 'date' ? 'primary' : 'ghost'"
-                        wire:click="$set('activitySort', 'date')">
+                <flux:select size="xs" wire:model.live="activitySort" class="w-auto">
+                    <option value="date">
                         Tanggal Transaksi
-                    </flux:button>
+                    </option>
 
-                    <flux:button size="xs" :variant="$activitySort === 'created' ? 'primary' : 'ghost'"
-                        wire:click="$set('activitySort', 'created')">
+                    <option value="created">
                         Baru Dibuat
-                    </flux:button>
-                </div>
+                    </option>
+                </flux:select>
 
             </div>
 
@@ -513,11 +511,6 @@
 
             <div class="mt-5 grid grid-cols-2 gap-3">
 
-                <flux:button variant="outline" icon="user-plus" href="{{ route('member.index') }}"
-                    class="justify-start">
-                    Nasabah
-                </flux:button>
-
                 <flux:button variant="outline" icon="banknotes" href="{{ route('loan.index') }}"
                     class="justify-start">
                     Pinjaman
@@ -526,11 +519,6 @@
                 <flux:button variant="outline" icon="credit-card" href="{{ route('payment.index') }}"
                     class="justify-start">
                     Angsuran
-                </flux:button>
-
-                <flux:button variant="outline" icon="calendar-days" href="{{ route('meeting.index') }}"
-                    class="justify-start">
-                    Meeting
                 </flux:button>
 
             </div>
