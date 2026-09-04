@@ -1,36 +1,59 @@
-<x-layouts::auth :title="__('Confirm password')">
-    <div class="flex flex-col gap-6">
-        <x-auth-header
-            :title="__('Confirm password')"
-            :description="__('This is a secure area of the application. Please confirm your password before continuing.')"
-        />
+<x-layouts::auth.secure :title="__('Confirm password')">
 
-        <x-auth-session-status class="text-center" :status="session('status')" />
+    <div class="mx-auto w-full max-w-md">
 
-        <x-passkey-verify
-            options-route="passkey.confirm-options"
-            submit-route="passkey.confirm"
-            :label="__('Confirm with passkey')"
-            :loading-label="__('Confirming...')"
-            :separator="__('Or confirm with password')"
-        />
+        {{-- Header --}}
+        <div class="mb-8 text-center">
 
-        <form method="POST" action="{{ route('password.confirm.store') }}" class="flex flex-col gap-6">
-            @csrf
+            {{-- Security Icon --}}
+            <div
+                class="mx-auto mb-6 flex size-14 items-center justify-center rounded-2xl
+                   border border-zinc-200 bg-zinc-50 shadow-sm
+                   dark:border-white/10 dark:bg-white/5">
+                <flux:icon.shield-exclamation />
+            </div>
 
-            <flux:input
-                name="password"
-                :label="__('Password')"
-                type="password"
-                required
-                autocomplete="current-password"
-                :placeholder="__('Password')"
-                viewable
-            />
+            <flux:heading size="xl" class="font-semibold tracking-tight">
+                {{ __('Confirm your identity') }}
+            </flux:heading>
 
-            <flux:button variant="primary" type="submit" class="w-full" data-test="confirm-password-button">
-                {{ __('Confirm') }}
-            </flux:button>
-        </form>
+            <flux:text class="mx-auto mt-2 max-w-sm text-pretty">
+                {{ __('This is a secure area of the application. Please confirm your identity before continuing.') }}
+            </flux:text>
+
+        </div>
+
+        {{-- Session Status --}}
+        <x-auth-session-status class="mb-6" :status="session('status')" />
+
+        {{-- Passkey --}}
+        <div class="space-y-5">
+
+            <x-passkey-verify options-route="passkey.confirm-options" submit-route="passkey.confirm" :label="__('Confirm with passkey')"
+                :loading-label="__('Confirming...')" :separator="__('Or confirm with password')" />
+
+            {{-- Password Confirmation --}}
+            <form method="POST" action="{{ route('password.confirm.store') }}" class="space-y-5">
+                @csrf
+
+                <flux:field>
+                    <flux:label>
+                        {{ __('Password') }}
+                    </flux:label>
+
+                    <flux:input name="password" type="password" required autofocus autocomplete="current-password"
+                        :placeholder="__('Enter your password')" viewable />
+
+                    <flux:error name="password" />
+                </flux:field>
+
+                <flux:button variant="primary" type="submit" class="w-full" data-test="confirm-password-button">
+                    {{ __('Confirm password') }}
+                </flux:button>
+            </form>
+
+        </div>
+
     </div>
-</x-layouts::auth>
+
+</x-layouts::auth.secure>

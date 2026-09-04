@@ -3,9 +3,11 @@
 namespace App\Livewire\Settings;
 
 use App\Concerns\ProfileValidationRules;
+use App\Notifications\EmailChangedNotification;
 use Flux\Flux;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -37,15 +39,46 @@ class Profile extends Component
 
         $validated = $this->validate($this->profileRules($user->id));
 
+        $oldEmail = $user->email;
+        $emailChanged = $user->email !== $validated['email'];
+
         $user->fill($validated);
 
-        if ($user->isDirty('email')) {
+        if ($emailChanged) {
             $user->email_verified_at = null;
         }
 
         $user->save();
 
-        Flux::toast(variant: 'success', text: __('Profile updated.'));
+        if ($emailChanged) {
+            // Kirim security notification ke email lama.
+            Notification::route('mail', $oldEmail)->notify(
+                new EmailChangedNotification(
+                    oldEmail: $oldEmail,
+                    newEmail: $user->email,
+                    isOldEmail: true,
+                )
+            );
+
+            // Kirim notification ke email baru.
+            $user->notify(
+                new EmailChangedNotification(
+                    oldEmail: $oldEmail,
+                    newEmail: $user->email,
+                    isOldEmail: false,
+                )
+            );
+
+            // Kirim verification email ke email baru.
+            $user->sendEmailVerificationNotification();
+        }
+
+        Flux::toast(
+            variant: 'success',
+            text: $emailChanged
+                ? __('Profile updated. A verification link has been sent to your new email address.')
+                : __('Profile updated.')
+        );
     }
 
     /**

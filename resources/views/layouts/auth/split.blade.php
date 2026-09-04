@@ -1,50 +1,230 @@
+@props([
+    'title' => null,
+])
+
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
-    <head>
-        @include('partials.head')
-    </head>
-    <body class="min-h-screen bg-white antialiased dark:bg-linear-to-b dark:from-neutral-950 dark:to-neutral-900">
-        <div class="relative grid h-dvh flex-col items-center justify-center px-8 sm:px-0 lg:max-w-none lg:grid-cols-2 lg:px-0">
-            <div class="bg-muted relative hidden h-full flex-col p-10 text-white lg:flex dark:border-e dark:border-neutral-800">
-                <div class="absolute inset-0 bg-neutral-900"></div>
-                <a href="{{ route('home') }}" class="relative z-20 flex items-center text-lg font-medium" wire:navigate>
-                    <span class="flex h-10 w-10 items-center justify-center rounded-md">
-                        <x-app-logo-icon class="me-2 h-7 fill-current text-white" />
-                    </span>
-                    {{ config('app.name', 'Laravel') }}
-                </a>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="w-full overflow-hidden">
 
-                @php
-                    [$message, $author] = str(Illuminate\Foundation\Inspiring::quotes()->random())->explode('-');
-                @endphp
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-                <div class="relative z-20 mt-auto">
-                    <blockquote class="space-y-2">
-                        <flux:heading size="lg">&ldquo;{{ trim($message) }}&rdquo;</flux:heading>
-                        <footer><flux:heading>{{ trim($author) }}</flux:heading></footer>
-                    </blockquote>
+    <title>
+        {{ $title ? $title . ' - ' . config('app.name') : config('app.name') }}
+    </title>
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    @fluxAppearance
+</head>
+
+<body class="min-h-screen bg-slate-100 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
+
+    <div class="flex min-h-screen items-center justify-center p-4">
+
+        <div
+            class="grid w-full max-w-5xl overflow-hidden rounded-2xl border
+                   border-slate-200 bg-white shadow-xl shadow-slate-900/5
+                   dark:border-slate-800 dark:bg-slate-900
+                   lg:min-h-170 lg:grid-cols-2">
+
+            {{-- ========================================================
+                 LEFT : ILLUSTRATION
+            ========================================================= --}}
+            <section class="relative hidden overflow-hidden bg-emerald-950 lg:flex lg:flex-col">
+
+                {{-- Illustration --}}
+                <div class="absolute inset-0 overflow-hidden">
+
+                    {{-- Background --}}
+                    <div class="absolute inset-0 bg-emerald-950"></div>
+
+                    {{-- Illustration --}}
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <img src="{{ asset('storage/login.png') }}" alt=""
+                            class="h-auto w-auto max-h-[55%] -translate-y-28 object-contain" />
+                    </div>
+
+                    {{-- Overlay --}}
+                    <div
+                        class="pointer-events-none absolute inset-0 bg-linear-to-br from-emerald-950/70 via-emerald-900/30 to-slate-950/60">
+                    </div>
+
                 </div>
-            </div>
-            <div class="w-full lg:p-8">
-                <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-87.5]">
-                    <a href="{{ route('home') }}" class="z-20 flex flex-col items-center gap-2 font-medium lg:hidden" wire:navigate>
-                        <span class="flex h-9 w-9 items-center justify-center rounded-md">
-                            <x-app-logo-icon class="size-9 fill-current text-black dark:text-white" />
-                        </span>
 
-                        <span class="sr-only">{{ config('app.name', 'Laravel') }}</span>
+                {{-- Decorative blur --}}
+                <div
+                    class="absolute -left-24 -top-24 size-72 rounded-full
+                           bg-emerald-400/20 blur-3xl">
+                </div>
+
+                <div
+                    class="absolute -bottom-32 -right-20 size-80 rounded-full
+                           bg-emerald-300/20 blur-3xl">
+                </div>
+
+                {{-- Content --}}
+                <div class="relative z-10 flex h-full min-h-170 flex-col p-7">
+
+                    {{-- Logo --}}
+                    <a href="{{ url('/') }}" class="flex w-fit items-center gap-3">
+                        <div
+                            class="flex size-12 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-white backdrop-blur-sm">
+                            <img src="{{ asset('storage/logo.png') }}" alt="{{ __('Logo') }}"
+                                class="size-9 object-contain">
+                        </div>
+
+                        <div>
+                            <div class="text-lg font-bold tracking-wider text-white">
+                                SATYA MUDA GETAS
+                            </div>
+
+                            <div class="text-xs font-medium tracking-wide text-emerald-100/60">
+                                {{ __('Simpan Pinjam') }}
+                            </div>
+                        </div>
                     </a>
-                    {{ $slot }}
+
+                    {{-- Hero --}}
+                    <div class="mt-auto">
+
+                        {{-- Status --}}
+                        <div
+                            class="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[11px] font-medium text-emerald-50 backdrop-blur-sm">
+
+                            <span class="size-1.5 rounded-full bg-emerald-300"></span>
+
+                            {{ __('Secure & simple financial management') }}
+                        </div>
+
+                        {{-- Heading --}}
+                        <h1 class="max-w-md text-3xl font-bold tracking-tight text-white xl:text-4xl">
+                            {{ __('Welcome back!') }}
+                        </h1>
+
+                        <p class="mt-2 max-w-md text-sm leading-6 text-emerald-50/75">
+                            {{ __('Manage members, savings, loans, and payments securely in one place.') }}
+                        </p>
+
+                        {{-- Features --}}
+                        <div class="mt-4 grid grid-cols-3 gap-2.5">
+
+                            {{-- Saving --}}
+                            <div
+                                class="flex items-start justify-between rounded-xl border border-white/10 bg-white/10 p-3 backdrop-blur-sm">
+
+                                <div class="space-y-0">
+                                    <div class="text-xs font-semibold text-white">
+                                        {{ __('Saving') }}
+                                    </div>
+                                    
+                                    <p class="text-[10px] leading-4 text-emerald-50/50">
+                                        {{ __('Manage savings') }}
+                                    </p>
+                                </div>
+                                <div
+                                    class="flex size-8 items-center justify-center rounded-lg bg-emerald-400/15 text-emerald-300">
+                                    <flux:icon.wallet class="size-4" />
+                                </div>
+                            </div>
+
+                            {{-- Loan --}}
+                            <div
+                                class="flex items-start justify-between rounded-xl border border-white/10 bg-white/10 p-3 backdrop-blur-sm">
+
+                                <div class="space-y-0">
+                                    <div class="text-xs font-semibold text-white">
+                                        {{ __('Loan') }}
+                                    </div>
+                                    
+                                    <p class="text-[10px] leading-4 text-emerald-50/50">
+                                        {{ __('Manage loans') }}
+                                    </p>
+                                </div>
+                                <div
+                                    class="flex size-8 items-center justify-center rounded-lg bg-emerald-400/15 text-emerald-300">
+                                    <flux:icon.banknotes class="size-4" />
+                                </div>
+                            </div>
+
+                            {{-- Payment --}}
+                            <div
+                                class="flex items-start justify-between rounded-xl border border-white/10 bg-white/10 p-3 backdrop-blur-sm">
+
+                                <div class="space-y-0">
+                                    <div class="text-xs font-semibold text-white">
+                                        {{ __('Payment') }}
+                                    </div>
+                                    
+                                    <p class="text-[10px] leading-4 text-emerald-50/50">
+                                        {{ __('Track payments') }}
+                                    </p>
+                                </div>
+                                <div
+                                    class="flex size-8 items-center justify-center rounded-lg bg-emerald-400/15 text-emerald-300">
+                                    <flux:icon.credit-card class="size-4" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {{-- Copyright --}}
+                    <div class="mt-7 text-[11px] text-emerald-100/45">
+                        © {{ date('Y') }} {{ config('app.name') }}.
+                    </div>
+
                 </div>
-            </div>
+            </section>
+
+
+            {{-- ========================================================
+                 RIGHT : AUTH
+            ========================================================= --}}
+            <main class="flex items-center justify-center bg-white p-7
+                       dark:bg-slate-900">
+
+                <div class="w-full max-w-md">
+
+                    {{-- Mobile Logo --}}
+                    <div class="mb-8 flex justify-center lg:hidden">
+                        <a href="{{ url('/') }}" class="flex items-center gap-3">
+                            <div
+                                class="flex size-10 items-center justify-center rounded-xl
+                                       bg-emerald-50 text-emerald-600
+                                       dark:bg-emerald-500/10 dark:text-emerald-400">
+                                <flux:icon.shield-check class="size-5" />
+                            </div>
+
+                            <span class="font-bold tracking-tight">
+                                {{ config('app.name') }}
+                            </span>
+                        </a>
+                    </div>
+
+                    {{-- Auth Content --}}
+                    {{ $slot }}
+
+                    {{-- Footer --}}
+                    <div
+                        class="mt-8 border-t border-slate-100 pt-5 text-center
+                               dark:border-slate-800">
+                        <p class="text-[11px] text-slate-400 dark:text-slate-500">
+                            © {{ date('Y') }} {{ config('app.name') }}.
+                            {{ __('All rights reserved.') }}
+                        </p>
+                    </div>
+
+                </div>
+
+            </main>
+
         </div>
 
-        @persist('toast')
-            <flux:toast.group>
-                <flux:toast />
-            </flux:toast.group>
-        @endpersist
+    </div>
 
-        @fluxScripts
-    </body>
+    @fluxScripts
+
+</body>
+
 </html>
