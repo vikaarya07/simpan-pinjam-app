@@ -297,6 +297,8 @@
                 {{ __('Laporan Nasabah') }}
             </flux:sidebar.item>
 
+            <livewire:language-switcher />
+
         </flux:sidebar.nav>
 
         {{-- Spacer --}}
@@ -318,7 +320,8 @@
         {{-- Mobile User Menu --}}
         <flux:dropdown position="top" align="end">
 
-            <flux:profile :initials="auth()->user()->initials()" icon-trailing="chevron-down" />
+            <flux:profile :initials="auth()->user()->initials()" icon-trailing="chevron-down" avatar:color="auto"
+                circle />
 
             <flux:menu>
 
@@ -329,18 +332,17 @@
 
                         <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
 
-                            <flux:avatar :name="auth()->user()->name" :initials="auth()->user()->initials()" />
+                            <flux:avatar :name="auth()->user()->name" :initials="auth()->user()->initials()"
+                                color="auto" circle badge badge:circle badge:color="green" />
 
-                            <div class="grid flex-1 text-start text-sm leading-tight">
-
-                                <flux:heading class="truncate">
+                            <div class="min-w-0 flex-1">
+                                <div class="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
                                     {{ auth()->user()->name }}
-                                </flux:heading>
+                                </div>
 
-                                <flux:text class="truncate">
+                                <div class="truncate text-xs text-slate-500 dark:text-slate-400">
                                     {{ auth()->user()->email }}
-                                </flux:text>
-
+                                </div>
                             </div>
 
                         </div>

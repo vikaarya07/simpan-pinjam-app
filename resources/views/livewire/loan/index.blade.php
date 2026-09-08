@@ -5,16 +5,16 @@
 
         <div>
             <flux:heading size="xl">
-                Pinjaman
+                {{ __('app.loan.title') }}
             </flux:heading>
 
             <flux:text class="mt-1">
-                Daftar pinjaman SATYA MUDA GETAS
+                {{ __('app.loan.subtitle') }}
             </flux:text>
         </div>
 
         <flux:button variant="primary" icon="plus" wire:click="create">
-            Buat Pinjaman Baru
+            {{ __('app.actions.create') . ' ' . __('app.loan.singular') }}
         </flux:button>
 
     </div>
@@ -25,7 +25,7 @@
         <div class="max-w-xl">
 
             <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass"
-                placeholder="Cari nomor pinjaman, nasabah atau waktu..." />
+                placeholder="{{ __('app.loan.search') }}" />
 
         </div>
 
@@ -38,28 +38,22 @@
 
             <flux:table.columns>
 
-                <flux:table.column class="w-12">
-                    #
-                </flux:table.column>
+                <flux:table.column class="w-12">#</flux:table.column>
 
                 {{-- Nomor Pinjaman --}}
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('loan_number')">
                     <div class="flex items-center gap-1">
-                        Nomor Pinjaman
-
+                        {{ __('app.loan.loan_number') }}
                         @include('components.sort-icon', ['field' => 'loan_number'])
                     </div>
                 </flux:table.column>
 
-                <flux:table.column>
-                    Nasabah
-                </flux:table.column>
+                <flux:table.column>{{ __('app.loan.name') }}</flux:table.column>
 
                 {{-- Waktu --}}
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('loan_date')">
                     <div class="flex items-center gap-1">
-                        Waktu
-
+                        {{ __('app.loan.date') }}
                         @include('components.sort-icon', ['field' => 'loan_date'])
                     </div>
                 </flux:table.column>
@@ -67,8 +61,7 @@
                 {{-- Jenis --}}
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('type')">
                     <div class="flex items-center gap-1">
-                        Jenis
-
+                        {{ __('app.loan.type') }}
                         @include('components.sort-icon', ['field' => 'type'])
                     </div>
                 </flux:table.column>
@@ -76,29 +69,21 @@
                 {{-- Pokok --}}
                 <flux:table.column class="cursor-pointer text-right" wire:click="sortBy('principal')">
                     <div class="flex items-center justify-end gap-1">
-                        Pinjaman
-
+                        {{ __('app.loan.principal') }}
                         @include('components.sort-icon', ['field' => 'principal'])
                     </div>
                 </flux:table.column>
 
-                <flux:table.column class="text-right">
-                    Jasa
-                </flux:table.column>
+                <flux:table.column class="text-right">{{ __('app.loan.interest') }}</flux:table.column>
 
-                <flux:table.column class="text-right">
-                    Nominal Jasa
-                </flux:table.column>
+                <flux:table.column class="text-right">{{ __('app.loan.interest_amount') }}</flux:table.column>
 
-                <flux:table.column class="text-right">
-                    Total
-                </flux:table.column>
+                <flux:table.column class="text-right">{{ __('app.loan.amount') }}</flux:table.column>
 
                 {{-- Remaining --}}
                 <flux:table.column class="cursor-pointer text-right" wire:click="sortBy('remaining')">
                     <div class="flex items-center justify-end gap-1">
-                        Sisa Hutang
-
+                        {{ __('app.loan.remaining') }}
                         @include('components.sort-icon', ['field' => 'remaining'])
                     </div>
                 </flux:table.column>
@@ -106,15 +91,12 @@
                 {{-- Status --}}
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('status')">
                     <div class="flex items-center gap-1">
-                        Status
-
+                        {{ __('app.loan.status') }}
                         @include('components.sort-icon', ['field' => 'status'])
                     </div>
                 </flux:table.column>
 
-                <flux:table.column class="text-right">
-                    Aksi
-                </flux:table.column>
+                <flux:table.column class="text-right">{{ __('app.action') }}</flux:table.column>
 
             </flux:table.columns>
 
@@ -207,10 +189,10 @@
                         <flux:table.cell>
                             <div class="flex justify-end gap-1">
                                 <flux:button size="sm" variant="ghost" icon="pencil-square"
-                                    wire:click="edit('{{ $loan->id }}')" tooltip="Edit pinjaman" />
+                                    wire:click="edit('{{ $loan->id }}')" tooltip="{{ __('app.actions.edit') . ' ' . __('app.loan.singular') }}" />
                                 <flux:button size="sm" variant="ghost" icon="trash"
                                     class="text-red-500 hover:text-red-600"
-                                    wire:click="confirmDelete('{{ $loan->id }}')" tooltip="Hapus pinjaman" />
+                                    wire:click="confirmDelete('{{ $loan->id }}')" tooltip="{{ __('app.actions.delete') . ' ' . __('app.loan.singular') }}" />
                             </div>
                         </flux:table.cell>
 
@@ -227,15 +209,15 @@
                                 <flux:icon name="banknotes" class="size-10 text-zinc-400" />
 
                                 <flux:heading size="sm" class="mt-3">
-                                    Belum ada data pinjaman
+                                    {{ __('app.loan.empty') }}
                                 </flux:heading>
 
                                 <flux:text class="mt-1">
-                                    Belum terdapat pinjaman yang terdaftar.
+                                    {{ __('app.loan.empty_description') }}
                                 </flux:text>
 
                                 <flux:button class="mt-4" variant="primary" icon="plus" wire:click="create">
-                                    Buat Pinjaman Baru
+                                    {{ __('app.loan.create') }}
                                 </flux:button>
 
                             </div>

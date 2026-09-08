@@ -1,20 +1,23 @@
 <flux:modal wire:model="showFormModal" class="w-sm md:w-3xl" :dismissible="false">
-    <div class="flex max-h-[85vh] flex-col">
 
-        {{-- HEADER --}}
-        <div class="shrink-0 border-b border-zinc-200 pb-4 dark:border-zinc-700">
-            <flux:heading size="lg">
-                {{ $isEdit ? 'Edit Pinjaman' : 'Buat Pinjaman Baru' }}
-            </flux:heading>
+    <form wire:submit="save">
 
-            <flux:text class="mt-1">
-                {{ $isEdit ? 'Perbarui informasi pinjaman anggota.' : 'Lengkapi data untuk membuat pinjaman baru.' }}
-            </flux:text>
-        </div>
+        <div class="flex max-h-[85vh] flex-col">
 
-        {{-- CONTENT SCROLL --}}
-        <div class="min-h-0 flex-1 overflow-y-auto">
-            <form id="loan-form" wire:submit="save" class="px-1 py-5">
+            {{-- HEADER --}}
+            <div class="shrink-0 border-b border-zinc-200 pb-4 dark:border-zinc-700">
+                <flux:heading size="lg">
+                    {{ $isEdit ? __('app.actions.edit') . ' ' . __('app.loan.singular') : __('app.actions.create') . ' ' . __('app.loan.singular') }}
+                </flux:heading>
+
+                <flux:text class="mt-1">
+                    {{ $isEdit ? __('app.loan.form_edit_description') : __('app.loan.form_create_description') }}
+                </flux:text>
+            </div>
+
+            {{-- CONTENT SCROLL --}}
+            <div class="min-h-0 flex-1 overflow-y-auto py-5 px-1">
+
                 <div class="space-y-5">
 
                     {{-- INFORMASI PINJAMAN --}}
@@ -22,11 +25,11 @@
 
                         <div>
                             <flux:heading size="sm">
-                                Informasi Pinjaman
+                                {{ __('app.loan.information') }}
                             </flux:heading>
 
                             <flux:text size="sm" class="mt-1">
-                                Tentukan anggota, jenis, tanggal, dan pokok pinjaman.
+                                {{ __('app.loan.information_description') }}
                             </flux:text>
                         </div>
 
@@ -34,8 +37,9 @@
 
                             {{-- Anggota --}}
                             <flux:field>
-                                <flux:select label="Anggota" wire:model.live="member_id" :disabled="$isEdit">
-                                    <option value="">-- Pilih Anggota --</option>
+                                <flux:select label="{{ __('app.loan.name') }}" wire:model.live="member_id"
+                                    :disabled="$isEdit">
+                                    <option value="">-- {{ __('app.loan.form_select') }} --</option>
 
                                     @foreach ($members as $member)
                                         <option value="{{ $member->id }}">
@@ -49,14 +53,16 @@
 
                             {{-- Nomor Pinjaman --}}
                             <flux:field>
-                                <flux:input label="Nomor Pinjaman" wire:model="loan_number" readonly />
+                                <flux:input label="{{ __('app.loan.loan_number') }}" wire:model="loan_number"
+                                    readonly />
 
                                 <flux:error name="loan_number" />
                             </flux:field>
 
                             {{-- Jenis Pinjaman --}}
                             <flux:field>
-                                <flux:select label="Jenis Pinjaman" wire:model.live="type">
+                                <flux:select label="{{ __('app.loan.type') . ' ' . __('app.loan.singular') }}"
+                                    wire:model.live="type">
                                     @foreach (\App\Enums\LoanType::cases() as $typeOption)
                                         <option value="{{ $typeOption->value }}">
                                             {{ $typeOption->label() }}
@@ -69,12 +75,15 @@
 
                             {{-- Tanggal Pinjaman --}}
                             <flux:field>
-                                <flux:input type="date" label="Tanggal Pinjaman" wire:model.live="loan_date" />
+                                <flux:input type="date"
+                                    label="{{ __('app.loan.date') . ' ' . __('app.loan.singular') }}"
+                                    wire:model.live="loan_date" />
 
                                 <flux:error name="loan_date" />
                             </flux:field>
 
                         </div>
+
                     </div>
 
                     <flux:separator />
@@ -84,11 +93,11 @@
 
                         <div>
                             <flux:heading size="sm">
-                                Nilai Pinjaman
+                                {{ __('app.loan.information_value') }}
                             </flux:heading>
 
                             <flux:text size="sm" class="mt-1">
-                                Masukkan pokok pinjaman. Jasa dan total dihitung otomatis.
+                                {{ __('app.loan.information_value_description') }}
                             </flux:text>
                         </div>
 
@@ -96,20 +105,18 @@
 
                             {{-- Pokok --}}
                             <flux:field class="sm:col-span-2">
-                                <flux:input label="Pokok Pinjaman" wire:model.live="principalFormatted"
+                                <flux:input label="{{ __('app.loan.principal') }}" wire:model.live="principalFormatted"
                                     inputmode="numeric" placeholder="0" />
-
-                                <flux:error name="principal" />
-                                <flux:error name="principalFormatted" />
                             </flux:field>
 
                             {{-- Jasa --}}
-                            <flux:input label="Jasa" :value="$interest_percent.
-                            '%'"
-                                readonly />
+                            <flux:input label="{{ __('app.loan.interest') }}"
+                                :value="$interest_percent.
+                                '%'" readonly />
 
                             {{-- Nominal Jasa --}}
-                            <flux:input label="Nominal Jasa" :value="idr($interest_amount)" readonly />
+                            <flux:input label="{{ __('app.loan.interest_amount') }}" :value="idr($interest_amount)"
+                                readonly />
 
                             {{-- Total --}}
                             <div class="sm:col-span-2">
@@ -118,11 +125,11 @@
 
                                         <div>
                                             <flux:text size="sm">
-                                                Total Pinjaman
+                                                {{ __('app.loan.amount') }}
                                             </flux:text>
 
                                             <flux:text size="xs" class="mt-1">
-                                                Pokok + jasa
+                                                {{ __('app.loan.principal') . ' + ' . __('app.loan.interest') }}
                                             </flux:text>
                                         </div>
 
@@ -135,6 +142,7 @@
                             </div>
 
                         </div>
+
                     </div>
 
                     {{-- PINJAMAN SEBELUMNYA --}}
@@ -146,11 +154,11 @@
 
                                 <div>
                                     <flux:heading size="sm">
-                                        Pinjaman Sebelumnya
+                                        {{ __('app.loan.previous_loan') }}
                                     </flux:heading>
 
                                     <flux:text size="sm" class="mt-1">
-                                        Ringkasan pinjaman anggota sebelumnya.
+                                        {{ __('app.loan.previous_loan_description') }}
                                     </flux:text>
                                 </div>
 
@@ -160,7 +168,7 @@
                                     <div class="flex items-center justify-between gap-4 py-3">
 
                                         <flux:text>
-                                            Nomor Pinjaman
+                                            {{ __('app.loan.loan_number') }}
                                         </flux:text>
 
                                         <flux:text class="font-medium">
@@ -173,7 +181,7 @@
                                     <div class="flex items-center justify-between gap-4 py-3">
 
                                         <flux:text>
-                                            Sisa Hutang
+                                            {{ __('app.loan.remaining') }}
                                         </flux:text>
 
                                         <flux:text class="font-semibold tabular-nums text-red-600 dark:text-red-400">
@@ -186,7 +194,7 @@
                                     <div class="flex items-center justify-between gap-4 py-3">
 
                                         <flux:text>
-                                            Dana Dicairkan
+                                            {{ __('app.loan.previous_loan_disbursement') }}
                                         </flux:text>
 
                                         <flux:text class="font-bold tabular-nums text-green-600 dark:text-green-400">
@@ -202,27 +210,30 @@
                     @endif
 
                 </div>
-            </form>
-        </div>
 
-        {{-- FOOTER --}}
-        <div class="shrink-0 border-t border-zinc-200 pt-4 dark:border-zinc-700">
+            </div>
 
-            <div class="flex justify-end gap-2">
+            {{-- FOOTER --}}
+            <div class="shrink-0 border-t border-zinc-200 pt-4 dark:border-zinc-700">
 
-                {{-- Batal --}}
-                <flux:button type="button" variant="ghost" wire:click="closeModal">
-                    Batal
-                </flux:button>
+                <div class="flex justify-end gap-2">
 
-                {{-- Simpan --}}
-                <flux:button type="submit" form="loan-form" variant="primary">
-                    {{ $isEdit ? 'Update Pinjaman' : 'Simpan Pinjaman' }}
-                </flux:button>
+                    {{-- Batal --}}
+                    <flux:button type="button" variant="ghost" wire:click="closeModal">
+                        {{ __('app.actions.cancel') }}
+                    </flux:button>
+
+                    {{-- Simpan --}}
+                    <flux:button type="submit" variant="primary">
+                        {{ $isEdit ? __('app.actions.edit') . ' ' . __('app.loan.singular') : __('app.actions.create') . ' ' . __('app.loan.singular') }}
+                    </flux:button>
+
+                </div>
 
             </div>
 
         </div>
 
-    </div>
+    </form>
+
 </flux:modal>

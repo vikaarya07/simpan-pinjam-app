@@ -7,11 +7,11 @@
             {{-- Header --}}
             <div>
                 <flux:heading size="lg">
-                    {{ $isEdit ? 'Edit Rapat' : 'Tambah Rapat' }}
+                    {{ $isEdit ? __('app.actions.edit') . ' ' . __('app.meeting.singular') : __('app.actions.add') . ' ' . __('app.meeting.singular') }}
                 </flux:heading>
 
                 <flux:text class="mt-1">
-                    {{ $isEdit ? 'Perbarui informasi jadwal rapat.' : 'Lengkapi data tempat dan waktu rapat.' }}
+                    {{ $isEdit ? __('app.meeting.form_edit_description') : __('app.meeting.form_create_description') }}
                 </flux:text>
             </div>
 
@@ -20,11 +20,11 @@
 
                 <div>
                     <flux:heading size="sm">
-                        Informasi Rapat
+                        {{ __('app.meeting.information') }}
                     </flux:heading>
 
                     <flux:text size="sm" class="mt-1">
-                        Tentukan tempat dan waktu pelaksanaan rapat.
+                        {{ __('app.meeting.information_description') }}
                     </flux:text>
                 </div>
 
@@ -32,13 +32,13 @@
 
                     {{-- Tempat --}}
                     <flux:field>
-                        <flux:input label="Tempat" wire:model="place" placeholder="Contoh: Balai Desa" />
+                        <flux:input label="{{ __('app.meeting.place') }}" wire:model="place" placeholder="Contoh: Balai Desa" />
                         <flux:error name="place" />
                     </flux:field>
 
                     {{-- Waktu --}}
                     <flux:field>
-                        <flux:input type="datetime-local" label="Waktu" wire:model="meeting_date" />
+                        <flux:input type="datetime-local" label="{{ __('app.meeting.date') . ' ' . __('app.meeting.singular') }}" wire:model="meeting_date" />
                         <flux:error name="meeting_date" />
                     </flux:field>
 
@@ -52,11 +52,11 @@
             <div class="flex justify-end gap-2">
 
                 <flux:button type="button" variant="ghost" wire:click="$set('showFormModal', false)">
-                    Batal
+                    {{ __('app.actions.cancel') }}
                 </flux:button>
 
                 <flux:button type="submit" variant="primary">
-                    {{ $isEdit ? 'Update Rapat' : 'Simpan Rapat' }}
+                    {{ $isEdit ? __('app.actions.update') . ' ' . __('app.meeting.singular') : __('app.actions.save') . ' ' . __('app.meeting.singular') }}
                 </flux:button>
 
             </div>

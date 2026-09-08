@@ -5,16 +5,16 @@
 
         <div>
             <flux:heading size="xl">
-                Data Anggota
+                {{ __('app.member.title') }}
             </flux:heading>
 
             <flux:text class="mt-1">
-                Daftar seluruh anggota SATYA MUDA GETAS
+                {{ __('app.member.subtitle') }}
             </flux:text>
         </div>
 
         <flux:button variant="primary" icon="plus" wire:click="create">
-            Tambah Anggota
+            {{ __('app.actions.add') . ' ' . __('app.member.singular') }}
         </flux:button>
 
     </div>
@@ -25,7 +25,7 @@
         <div class="max-w-xl">
 
             <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass"
-                placeholder="Cari NPK, nama, atau nomor telepon..." />
+                placeholder="{{ __('app.member.search') }}" />
 
         </div>
 
@@ -43,41 +43,41 @@
                 {{-- NPK --}}
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('npk')">
                     <div class="flex items-center gap-1">
-                        NPK
+                        {{ __('app.member.npk') }}
                         @include('components.sort-icon', ['field' => 'npk'])
                     </div>
                 </flux:table.column>
 
                 {{-- Name --}}
-                <flux:table.column>Nama Anggota</flux:table.column>
+                <flux:table.column>{{ __('app.member.name') }}</flux:table.column>
 
                 {{-- Email --}}
-                <flux:table.column>Email</flux:table.column>
+                <flux:table.column>{{ __('app.member.email') }}</flux:table.column>
 
                 {{-- Phone --}}
-                <flux:table.column>Telepon</flux:table.column>
+                <flux:table.column>{{ __('app.member.phone') }}</flux:table.column>
 
                 {{-- Age --}}
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('date_birth')">
                     <div class="flex items-center gap-1">
-                        Usia
+                        {{ __('app.member.age') }}
                         @include('components.sort-icon', ['field' => 'date_birth'])
                     </div>
                 </flux:table.column>
 
                 {{-- Gender --}}
-                <flux:table.column>Jenis Kelamin</flux:table.column>
+                <flux:table.column>{{ __('app.member.gender') }}</flux:table.column>
 
                 {{-- Status --}}
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('status')">
                     <div class="flex items-center gap-1">
-                        Status
+                        {{ __('app.member.status') }}
                         @include('components.sort-icon', ['field' => 'status'])
                     </div>
                 </flux:table.column>
 
                 {{-- Action --}}
-                <flux:table.column class="text-right">Aksi</flux:table.column>
+                <flux:table.column class="text-right">{{ __('app.action') }}</flux:table.column>
 
             </flux:table.columns>
 
@@ -184,11 +184,11 @@
                             <div class="flex justify-start gap-1">
 
                                 <flux:button size="sm" variant="ghost" icon="pencil-square"
-                                    wire:click="edit('{{ $member->id }}')" tooltip="Edit anggota" />
+                                    wire:click="edit('{{ $member->id }}')" tooltip="{{ __('app.actions.edit') . ' ' . __('app.member.singular') }}" />
 
                                 <flux:button size="sm" variant="ghost" icon="trash"
                                     class="text-red-500 hover:text-red-600"
-                                    wire:click="confirmDelete('{{ $member->id }}')" tooltip="Hapus anggota" />
+                                    wire:click="confirmDelete('{{ $member->id }}')" tooltip="{{ __('app.actions.delete') . ' ' . __('app.member.singular') }}" />
 
                             </div>
 
@@ -207,15 +207,15 @@
                                 <flux:icon name="users" class="size-10 text-zinc-400" />
 
                                 <flux:heading size="sm" class="mt-3">
-                                    Belum ada data anggota
+                                    {{ __('app.member.empty') }}
                                 </flux:heading>
 
                                 <flux:text class="mt-1">
-                                    Belum terdapat anggota yang terdaftar.
+                                    {{ __('app.member.empty_description') }}
                                 </flux:text>
 
                                 <flux:button class="mt-4" variant="primary" icon="plus" wire:click="create">
-                                    Tambah Anggota
+                                    {{ __('app.actions.add') . ' ' . __('app.member.singular') }}
                                 </flux:button>
 
                             </div>

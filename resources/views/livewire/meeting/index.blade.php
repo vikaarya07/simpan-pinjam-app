@@ -5,16 +5,16 @@
 
         <div>
             <flux:heading size="xl">
-                Data Rapat
+                {{ __('app.meeting.title') }}
             </flux:heading>
 
             <flux:text class="mt-1">
-                Daftar seluruh rapat SATYA MUDA GETAS
+                {{ __('app.meeting.subtitle') }}
             </flux:text>
         </div>
 
         <flux:button variant="primary" icon="plus" wire:click="create">
-            Tambah Rapat
+            {{ __('app.actions.add') . ' ' . __('app.meeting.singular') }}
         </flux:button>
 
     </div>
@@ -25,7 +25,7 @@
         <div class="max-w-xl">
 
             <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass"
-                placeholder="Cari tempat atau waktu..." />
+                placeholder="{{ __('app.meeting.search') }}" />
 
         </div>
 
@@ -40,11 +40,11 @@
 
                 <flux:table.column class="w-12">#</flux:table.column>
 
-                <flux:table.column>Tempat</flux:table.column>
+                <flux:table.column>{{ __('app.meeting.place') }}</flux:table.column>
 
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('meeting_date')">
                     <div class="flex items-center gap-1">
-                        Waktu
+                        {{ __('app.meeting.date') . ' ' . __('app.meeting.singular') }}
 
                         @include('components.sort-icon', [
                             'field' => 'meeting_date',
@@ -52,7 +52,7 @@
                     </div>
                 </flux:table.column>
 
-                <flux:table.column class="text-right">Aksi</flux:table.column>
+                <flux:table.column class="text-right">{{ __('app.action') }}</flux:table.column>
 
             </flux:table.columns>
 
@@ -110,18 +110,17 @@
 
                         </flux:table.cell>
 
-
                         {{-- Actions --}}
                         <flux:table.cell>
 
                             <div class="flex justify-start gap-1">
 
                                 <flux:button size="sm" variant="ghost" icon="pencil-square"
-                                    wire:click="edit('{{ $meeting->id }}')" tooltip="Edit rapat" />
+                                    wire:click="edit('{{ $meeting->id }}')" tooltip="{{ __('app.actions.edit') . ' ' . __('app.meeting.singular') }}" />
 
                                 <flux:button size="sm" variant="ghost" icon="trash"
                                     class="text-red-500 hover:text-red-600"
-                                    wire:click="confirmDelete('{{ $meeting->id }}')" tooltip="Hapus rapat" />
+                                    wire:click="confirmDelete('{{ $meeting->id }}')" tooltip="{{ __('app.actions.delete') . ' ' . __('app.meeting.singular') }}" />
 
                             </div>
 
@@ -140,15 +139,15 @@
                                 <flux:icon name="calendar-days" class="size-10 text-zinc-400" />
 
                                 <flux:heading size="sm" class="mt-3">
-                                    Belum ada data rapat
+                                    {{ __('app.meeting.empty')  }}
                                 </flux:heading>
 
                                 <flux:text class="mt-1">
-                                    Belum terdapat jadwal rapat yang terdaftar.
+                                    {{ __('app.meeting.empty_description') }}
                                 </flux:text>
 
                                 <flux:button class="mt-4" variant="primary" icon="plus" wire:click="create">
-                                    Tambah Rapat
+                                    {{ __('app.actions.add') . ' ' . __('app.meeting.singular') }}
                                 </flux:button>
 
                             </div>

@@ -51,7 +51,7 @@
 
         <flux:menu.radio.group>
 
-            <flux:menu.item :href="route('profile.edit')" icon="cog-6-tooth" wire:navigate
+            <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate
                 class="rounded-lg
                    text-slate-600!
                    hover:bg-emerald-400!

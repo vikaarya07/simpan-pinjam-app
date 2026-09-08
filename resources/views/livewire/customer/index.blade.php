@@ -3,11 +3,11 @@
     {{-- Header --}}
     <div>
         <flux:heading size="xl">
-            Data Nasabah
+            {{ __('app.customer.title') }}
         </flux:heading>
 
         <flux:text class="mt-1">
-            Daftar seluruh nasabah Simpan Pinjam SATYA MUDA GETAS
+            {{ __('app.customer.subtitle') }}
         </flux:text>
     </div>
 
@@ -17,7 +17,7 @@
         <div class="max-w-xl">
 
             <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass"
-                placeholder="Cari NPK, nama, atau nomor telepon..." />
+                placeholder="{{ __('app.customer.search') }}" />
 
         </div>
 
@@ -35,28 +35,28 @@
                 {{-- NPK --}}
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('npk')">
                     <div class="flex items-center gap-1">
-                        NPK
+                        {{ __('app.customer.npk') }}
                         @include('components.sort-icon', ['field' => 'npk'])
                     </div>
                 </flux:table.column>
 
-                <flux:table.column>Nasabah</flux:table.column>
+                <flux:table.column>{{ __('app.customer.name') }}</flux:table.column>
 
-                <flux:table.column>Telepon</flux:table.column>
+                <flux:table.column>{{ __('app.customer.phone') }}</flux:table.column>
 
-                <flux:table.column class="text-center">Pinjaman</flux:table.column>
+                <flux:table.column class="text-center">{{ __('app.customer.loan_count') }}</flux:table.column>
 
                 {{-- Usia --}}
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('date_birth')">
                     <div class="flex items-center gap-1">
-                        Usia
+                        {{ __('app.customer.age') }}
                         @include('components.sort-icon', ['field' => 'date_birth'])
                     </div>
                 </flux:table.column>
 
-                <flux:table.column>Jenis Kelamin</flux:table.column>
+                <flux:table.column>{{ __('app.customer.gender') }}</flux:table.column>
 
-                <flux:table.column class="text-right">Aksi</flux:table.column>
+                <flux:table.column class="text-right">{{ __('app.action') }}</flux:table.column>
 
             </flux:table.columns>
 
@@ -135,7 +135,7 @@
                         <flux:table.cell>
 
                             <span class="whitespace-nowrap">
-                                {{ $customer->age }} tahun
+                                {{ $customer->age }} {{ __('app.customer.year') }}
                             </span>
 
                         </flux:table.cell>
@@ -155,8 +155,8 @@
                             <div class="flex justify-start">
 
                                 <flux:button size="sm" variant="ghost" icon="eye"
-                                    :href="route('customer.show', $customer)" tooltip="Lihat detail nasabah">
-                                    Lihat
+                                    :href="route('customer.show', $customer)">
+                                    {{ __('app.actions.view') }}
                                 </flux:button>
 
                             </div>
@@ -176,11 +176,11 @@
                                 <flux:icon name="users" class="size-10 text-zinc-400" />
 
                                 <flux:heading size="sm" class="mt-3">
-                                    Belum ada nasabah
+                                    {{ __('app.customer.empty') }}
                                 </flux:heading>
 
                                 <flux:text class="mt-1">
-                                    Belum terdapat anggota yang memiliki riwayat pinjaman.
+                                    {{ __('app.customer.empty_description') }}
                                 </flux:text>
 
                             </div>

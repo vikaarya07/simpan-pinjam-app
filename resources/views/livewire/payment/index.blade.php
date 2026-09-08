@@ -99,13 +99,13 @@
                         </flux:table.cell>
 
                         {{-- Status Angsuran --}}
-                        <flux:table.cell>
+                        <flux:table.cell class="whitespace-nowrap">
 
                             @php
                                 $summary = $meeting->payment_summary;
                             @endphp
 
-                            <div class="flex flex-wrap items-center gap-2">
+                            <div class="flex flex-row items-center gap-2">
                                 <flux:badge :color="$paymentStatus::Clear->color()"
                                     :icon="$paymentStatus::Clear->icon()" size="sm">
                                     {{ $summary['clear'] }}
