@@ -1,30 +1,31 @@
+{{-- Member Form --}}
 <flux:modal wire:model="showFormModal" class="w-sm md:w-3xl" :dismissible="false">
-
     <form wire:submit="save">
 
         <div class="flex max-h-[85vh] flex-col">
 
-            {{-- HEADER --}}
-            <div class="shrink-0 border-b border-zinc-200 pb-4 dark:border-zinc-700">
-
+            {{-- Header --}}
+            <header class="shrink-0 border-b border-zinc-200 pb-4 dark:border-zinc-700">
                 <flux:heading size="lg">
-                    {{ $isEdit ? __('app.actions.edit') . ' ' . __('app.member.singular') : __('app.actions.add') . ' ' . __('app.member.singular') }}
+                    @if ($isEdit)
+                        {{ __('app.actions.edit') }} {{ __('app.member.singular') }}
+                    @else
+                        {{ __('app.actions.add') }} {{ __('app.member.singular') }}
+                    @endif
                 </flux:heading>
 
                 <flux:text class="mt-1">
                     {{ $isEdit ? __('app.member.form_edit_description') : __('app.member.form_create_description') }}
                 </flux:text>
+            </header>
 
-            </div>
-
-            {{-- CONTENT --}}
-            <div class="min-h-0 flex-1 overflow-y-auto py-5 px-1">
+            {{-- Content --}}
+            <div class="min-h-0 flex-1 overflow-y-auto px-1 py-5">
 
                 <div class="space-y-5">
 
-                    {{-- Data Pribadi --}}
-                    <div class="space-y-4">
-
+                    {{-- Personal Information --}}
+                    <section class="space-y-4">
                         <div>
                             <flux:heading size="sm">
                                 {{ __('app.member.information') }}
@@ -37,42 +38,34 @@
 
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 
-                            {{-- Nama --}}
+                            {{-- Name --}}
                             <flux:field>
-
-                                <flux:input label="{{ __('app.member.full_name') }}" wire:model="name"
-                                    placeholder="{{ __('app.member.full_name') }}" />
+                                <flux:input :label="__('app.member.full_name')" wire:model="name"
+                                    :placeholder="__('app.member.full_name')" />
 
                                 <flux:error name="name" />
-
                             </flux:field>
 
                             {{-- Email --}}
                             <flux:field>
-
-                                <flux:input label="{{ __('app.member.email') }}" type="email" wire:model="email"
+                                <flux:input type="email" :label="__('app.member.email')" wire:model="email"
                                     placeholder="email@katasama.or.id" />
 
                                 <flux:error name="email" />
-
                             </flux:field>
 
                             {{-- Phone --}}
                             <flux:field>
-
-                                <flux:input label="{{ __('app.member.phone') }}" wire:model="phone"
+                                <flux:input :label="__('app.member.phone')" wire:model="phone"
                                     placeholder="08xxxxxxxxxx" />
 
                                 <flux:error name="phone" />
-
                             </flux:field>
 
                             {{-- Gender --}}
                             <flux:field>
-
-                                <flux:select label="{{ __('app.member.gender') }}" wire:model="gender">
-
-                                    <option value="" selected disabled>
+                                <flux:select :label="__('app.member.gender')" wire:model="gender">
+                                    <option value="">
                                         -- {{ __('app.member.form_select') }} --
                                     </option>
 
@@ -81,42 +74,33 @@
                                             {{ $genderOption->label() }}
                                         </option>
                                     @endforeach
-
                                 </flux:select>
 
                                 <flux:error name="gender" />
-
                             </flux:field>
 
-                            {{-- Date Birth --}}
+                            {{-- Date of Birth --}}
                             <flux:field>
-
-                                <flux:input type="date" label="{{ __('app.member.date_birth') }}"
+                                <flux:input type="date" :label="__('app.member.date_birth')"
                                     wire:model="date_birth" />
 
                                 <flux:error name="date_birth" />
-
                             </flux:field>
 
-                            {{-- Date Join --}}
+                            {{-- Date Joined --}}
                             <flux:field>
-
-                                <flux:input type="date" label="{{ __('app.member.date_join') }}"
-                                    wire:model="date_join" />
+                                <flux:input type="date" :label="__('app.member.date_join')" wire:model="date_join" />
 
                                 <flux:error name="date_join" />
-
                             </flux:field>
 
                         </div>
-
-                    </div>
+                    </section>
 
                     <flux:separator />
 
-                    {{-- Keanggotaan --}}
-                    <div class="space-y-4">
-
+                    {{-- Membership --}}
+                    <section class="space-y-4">
                         <div>
                             <flux:heading size="sm">
                                 {{ __('app.member.information_status') }}
@@ -128,48 +112,41 @@
                         </div>
 
                         <flux:field>
-
-                            <flux:select label="{{ __('app.member.status') }}" wire:model="status">
-
+                            <flux:select :label="__('app.member.status')" wire:model="status">
                                 @foreach (\App\Enums\MemberStatus::cases() as $statusOption)
                                     <option value="{{ $statusOption->value }}">
                                         {{ $statusOption->label() }}
                                     </option>
                                 @endforeach
-
                             </flux:select>
 
                             <flux:error name="status" />
-
                         </flux:field>
-
-                    </div>
+                    </section>
 
                 </div>
-
             </div>
 
-            {{-- FOOTER --}}
-            <div class="shrink-0 border-t border-zinc-200 pt-4 dark:border-zinc-700">
-
+            {{-- Footer --}}
+            <footer class="shrink-0 border-t border-zinc-200 pt-4 dark:border-zinc-700">
                 <div class="flex justify-end gap-2">
 
-                    {{-- Batal --}}
                     <flux:button type="button" variant="ghost" wire:click="closeModal">
                         {{ __('app.actions.cancel') }}
                     </flux:button>
 
-                    {{-- Submit --}}
                     <flux:button type="submit" variant="primary">
-                        {{ $isEdit ? __('app.actions.edit') . ' ' . __('app.member.singular') : __('app.actions.add') . ' ' . __('app.member.singular') }}
+                        @if ($isEdit)
+                            {{ __('app.actions.update') }} {{ __('app.member.singular') }}
+                        @else
+                            {{ __('app.actions.save') }} {{ __('app.member.singular') }}
+                        @endif
                     </flux:button>
 
                 </div>
-
-            </div>
+            </footer>
 
         </div>
 
     </form>
-
 </flux:modal>

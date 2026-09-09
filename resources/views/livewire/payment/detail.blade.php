@@ -3,11 +3,11 @@
     {{-- Header --}}
     <div>
         <flux:heading size="xl">
-            Detail Pinjaman
+            {{ __('app.payment.detail.title') }}
         </flux:heading>
 
         <flux:text class="mt-1">
-            Informasi pinjaman dan riwayat pembayaran nasabah
+            {{ __('app.payment.detail.subtitle') }}
         </flux:text>
     </div>
 
@@ -21,7 +21,7 @@
 
                 <div>
                     <flux:text size="sm" class="font-medium">
-                        Nomor Pinjaman
+                        {{ __('app.payment.detail.loan_number') }}
                     </flux:text>
 
                     <flux:heading size="lg" class="mt-1">
@@ -48,7 +48,7 @@
 
                     <div>
                         <flux:text size="sm" class="font-medium">
-                            Nasabah
+                            {{ __('app.payment.detail.name') }}
                         </flux:text>
 
                         <div class="mt-1 font-semibold">
@@ -65,7 +65,7 @@
 
                     <div>
                         <flux:text size="sm" class="font-medium">
-                            Waktu
+                            {{ __('app.payment.detail.date') }}
                         </flux:text>
 
                         <div class="mt-1 font-medium">
@@ -82,7 +82,7 @@
 
                     <div>
                         <flux:text size="sm" class="font-medium">
-                            Pokok Pinjaman
+                            {{ __('app.payment.detail.principal') }}
                         </flux:text>
 
                         <div class="mt-1 font-semibold">
@@ -108,7 +108,7 @@
 
                 <div>
                     <flux:text size="sm" class="font-medium">
-                        Total Pinjaman
+                        {{ __('app.payment.detail.amount') }}
                     </flux:text>
 
                     <flux:heading size="lg" class="mt-2">
@@ -129,7 +129,8 @@
 
                 <div>
                     <flux:text size="sm" class="font-medium">
-                        Pembayaran ke-{{ $payment->payment_count }}
+                        {{ __('app.payment.detail.singular') . ' ' . __('app.payment.detail.to') }}-
+                        {{ $payment->payment_count }}
                     </flux:text>
 
                     <flux:heading size="lg" class="mt-2">
@@ -150,7 +151,7 @@
 
                 <div>
                     <flux:text size="sm" class="font-medium">
-                        Sudah Dibayar
+                        {{ __('app.payment.detail.paid') }}
                     </flux:text>
 
                     <flux:heading size="lg" class="mt-2 text-green-600">
@@ -173,7 +174,7 @@
 
             <div>
                 <flux:text size="sm" class="font-medium">
-                    Sisa Hutang
+                    {{ __('app.payment.detail.remaining') }}
                 </flux:text>
 
                 <flux:heading size="xl" class="mt-1 text-red-600">
@@ -197,7 +198,7 @@
                 <flux:icon name="chat-bubble-left" class="size-5 text-zinc-400" />
 
                 <flux:text size="sm" class="font-semibold">
-                    Catatan
+                    {{ __('app.payment.detail.note') }}
                 </flux:text>
 
             </div>

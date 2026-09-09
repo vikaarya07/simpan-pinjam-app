@@ -7,11 +7,11 @@
             {{-- Header --}}
             <div>
                 <flux:heading size="lg">
-                    {{ $isEdit ? 'Edit Transaksi' : 'Tambah Transaksi' }}
+                    {{ $isEdit ? __('app.actions.edit') . ' ' . __('app.saving.singular') : __('app.actions.add') . ' ' . __('app.saving.singular') }}
                 </flux:heading>
 
                 <flux:text class="mt-1">
-                    {{ $isEdit ? 'Perbarui data transaksi kas.' : 'Masukkan transaksi kas baru.' }}
+                    {{ $isEdit ? __('app.saving.form_edit_description') : __('app.saving.form_create_description') }}
                 </flux:text>
             </div>
 
@@ -20,11 +20,11 @@
 
                 <div>
                     <flux:heading size="sm">
-                        Informasi Transaksi
+                        {{ __('app.saving.information') }}
                     </flux:heading>
 
                     <flux:text size="sm" class="mt-1">
-                        Tentukan tanggal, jenis, dan nominal transaksi.
+                        {{ __('app.saving.information_description') }}
                     </flux:text>
                 </div>
 
@@ -33,7 +33,8 @@
                     {{-- Tanggal --}}
                     <flux:field>
 
-                        <flux:input label="Tanggal Transaksi" type="date" wire:model="transaction_date" />
+                        <flux:input label="{{ __('app.saving.transaction_date') }}" type="date"
+                            wire:model="transaction_date" />
 
                         <flux:error name="transaction_date" />
 
@@ -42,9 +43,9 @@
                     {{-- Jenis --}}
                     <flux:field>
 
-                        <flux:select label="Jenis Transaksi" wire:model="type">
+                        <flux:select label="{{ __('app.saving.type') }}" wire:model="type">
 
-                            <option value="" selected disabled>-- Pilih Jenis Transaksi --</option>
+                            <option value="" selected disabled>-- {{ __('app.saving.information') }} --</option>
 
                             @foreach ([\App\Enums\SavingType::Opening, \App\Enums\SavingType::Assistance] as $typeOption)
                                 <option value="{{ $typeOption->value }}">
@@ -79,18 +80,18 @@
 
                 <div>
                     <flux:heading size="sm">
-                        Keterangan
+                        {{ __('app.saving.description') }}
                     </flux:heading>
 
                     <flux:text size="sm" class="mt-1">
-                        Tambahkan catatan jika diperlukan.
+                        {{ __('app.saving.information_value_description') }}
                     </flux:text>
                 </div>
 
                 <flux:field>
 
-                    <flux:textarea label="Keterangan" wire:model="description" rows="auto"
-                        placeholder="Masukkan keterangan..." />
+                    <flux:textarea label="{{ __('app.saving.description') }}" wire:model="description" rows="auto"
+                        placeholder="{{ __('app.saving.description_placeholder') }}" />
 
                     <flux:error name="description" />
 
@@ -102,11 +103,11 @@
             <div class="flex justify-end gap-2 pt-2">
 
                 <flux:button type="button" variant="ghost" wire:click="close">
-                    Batal
+                    {{ __('app.actions.cancel') }}
                 </flux:button>
 
                 <flux:button type="submit" variant="primary">
-                    {{ $isEdit ? 'Perbarui Transaksi' : 'Simpan Transaksi' }}
+                    {{ $isEdit ? __('app.actions.update') . ' ' . __('app.saving.singular') : __('app.actions.save') . ' ' . __('app.saving.singular') }}
                 </flux:button>
 
             </div>

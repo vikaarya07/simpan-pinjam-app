@@ -11,10 +11,9 @@
         </flux:text>
     </div>
 
-    {{-- Informasi Customer --}}
+    {{-- Customer Information --}}
     <flux:card class="border-none!">
-
-        <div class="space-y-4">
+        <div class="space-y-5">
 
             <div>
                 <flux:heading size="sm">
@@ -28,39 +27,42 @@
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
 
-                {{-- NPK --}}
-                <flux:card>
-                    <flux:text size="sm">{{ __('app.customer.npk') }}</flux:text>
+                <div>
+                    <flux:text size="sm">
+                        {{ __('app.customer.npk') }}
+                    </flux:text>
+
                     <div class="mt-1 font-semibold">
                         {{ $customer->npk }}
                     </div>
-                </flux:card>
+                </div>
 
-                {{-- Nama --}}
-                <flux:card>
-                    <flux:text size="sm">{{ __('app.customer.name') }}</flux:text>
+                <div>
+                    <flux:text size="sm">
+                        {{ __('app.customer.name') }}
+                    </flux:text>
+
                     <div class="mt-1 font-semibold">
                         {{ $customer->name }}
                     </div>
-                </flux:card>
+                </div>
 
-                {{-- Telepon --}}
-                <flux:card>
-                    <flux:text size="sm">{{ __('app.customer.phone') }}</flux:text>
+                <div>
+                    <flux:text size="sm">
+                        {{ __('app.customer.phone') }}
+                    </flux:text>
+
                     <div class="mt-1 font-semibold">
-                        {{ $customer->phone ?? '-' }}
+                        {{ $customer->phone ?: '-' }}
                     </div>
-                </flux:card>
+                </div>
 
             </div>
-
         </div>
-
     </flux:card>
 
-    {{-- Riwayat Pinjaman --}}
-    <div class="space-y-4">
-
+    {{-- Loan History --}}
+    <section class="space-y-4">
         <div>
             <flux:heading size="lg">
                 {{ __('app.customer.loan_history') }}
@@ -72,7 +74,6 @@
         </div>
 
         <x-loan-history :customer="$customer" :items="$customer->loans" />
-
-    </div>
+    </section>
 
 </div>

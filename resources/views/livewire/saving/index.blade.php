@@ -5,20 +5,19 @@
 
         <div>
             <flux:heading size="xl">
-                Simpanan
+                {{ __('app.saving.title') }}
             </flux:heading>
 
             <flux:text class="mt-1">
-                Simpanan SATYA MUDA GETAS
+                {{ __('app.saving.subtitle') }}
             </flux:text>
         </div>
 
         <flux:button variant="primary" icon="plus" wire:click="create">
-            Tambah Simpanan
+            {{ __('app.actions.add') . ' ' . __('app.saving.singular') }}
         </flux:button>
 
     </div>
-
 
     {{-- Table --}}
     <flux:card class="overflow-hidden border-none!">
@@ -29,25 +28,25 @@
 
                 <flux:table.column class="w-12">#</flux:table.column>
 
-                <flux:table.column>Waktu</flux:table.column>
+                <flux:table.column>{{ __('app.saving.transaction_date') }}</flux:table.column>
 
-                <flux:table.column>Jenis</flux:table.column>
+                <flux:table.column>{{ __('app.saving.type') }}</flux:table.column>
 
-                <flux:table.column align="center">Debit</flux:table.column>
+                <flux:table.column align="center">{{ __('app.saving.debit') }}</flux:table.column>
 
-                <flux:table.column align="center">Kredit</flux:table.column>
+                <flux:table.column align="center">{{ __('app.saving.credit') }}</flux:table.column>
 
-                <flux:table.column align="center">Jasa</flux:table.column>
+                <flux:table.column align="center">{{ __('app.saving.interest') }}</flux:table.column>
 
-                <flux:table.column align="center">Saldo</flux:table.column>
+                <flux:table.column align="center">{{ __('app.saving.balance') }}</flux:table.column>
 
-                <flux:table.column align="center">Piutang</flux:table.column>
+                <flux:table.column align="center">{{ __('app.saving.receivable') }}</flux:table.column>
 
-                <flux:table.column align="center">Total</flux:table.column>
+                <flux:table.column align="center">{{ __('app.saving.amount') }}</flux:table.column>
 
-                <flux:table.column>Keterangan</flux:table.column>
+                <flux:table.column>{{ __('app.saving.description') }}</flux:table.column>
 
-                <flux:table.column align="center">Aksi</flux:table.column>
+                <flux:table.column align="center">{{ __('app.action') }}</flux:table.column>
 
             </flux:table.columns>
 
@@ -188,11 +187,11 @@
                                         {{-- Header --}}
                                         <div>
                                             <flux:heading size="lg">
-                                                Keterangan
+                                                {{ __('app.saving.modal_title') }}
                                             </flux:heading>
 
                                             <flux:text class="mt-1">
-                                                Detail keterangan transaksi simpanan.
+                                                {{ __('app.saving.modal_subtitle') }}
                                             </flux:text>
                                         </div>
 
@@ -213,7 +212,7 @@
                                             <flux:modal.close>
 
                                                 <flux:button variant="ghost">
-                                                    Tutup
+                                                    {{ __('app.actions.close') }}
                                                 </flux:button>
 
                                             </flux:modal.close>
@@ -240,16 +239,18 @@
                                     <div class="flex gap-1">
 
                                         <flux:button size="sm" variant="ghost" icon="pencil-square"
-                                            wire:click="edit({{ $saving->id }})" tooltip="Edit simpanan" />
+                                            wire:click="edit({{ $saving->id }})"
+                                            tooltip="{{ __('app.actions.edit') . ' ' . __('app.saving.singular') }}" />
 
                                         <flux:button size="sm" variant="ghost" icon="trash"
                                             class="text-red-500 hover:text-red-600"
-                                            wire:click="confirmDelete({{ $saving->id }})" tooltip="Hapus simpanan" />
+                                            wire:click="confirmDelete({{ $saving->id }})"
+                                            tooltip="{{ __('app.actions.delete') . ' ' . __('app.saving.singular') }}" />
 
                                     </div>
                                 @else
-                                    <flux:badge color="zinc" size="sm">
-                                        Otomatis
+                                    <flux:badge color="slate" size="sm">
+                                        {{ __('app.saving.automatic') }}
                                     </flux:badge>
                                 @endif
 
@@ -268,15 +269,15 @@
                                 <flux:icon name="banknotes" class="size-10 text-zinc-400" />
 
                                 <flux:heading size="sm" class="mt-3">
-                                    Belum ada data simpanan
+                                    {{ __('app.saving.empty') }}
                                 </flux:heading>
 
                                 <flux:text class="mt-1">
-                                    Belum terdapat transaksi simpanan.
+                                    {{ __('app.saving.empty_description') }}
                                 </flux:text>
 
                                 <flux:button class="mt-4" variant="primary" icon="plus" wire:click="create">
-                                    Tambah Simpanan
+                                    {{ __('app.saving.create') . ' ' . __('app.saving.singular') }}
                                 </flux:button>
 
                             </div>

@@ -1,23 +1,26 @@
+{{-- Meeting Form --}}
 <flux:modal wire:model="showFormModal" class="w-sm md:w-3xl" :dismissible="false">
-
     <form wire:submit="save">
 
         <div class="space-y-5">
 
             {{-- Header --}}
-            <div>
+            <header>
                 <flux:heading size="lg">
-                    {{ $isEdit ? __('app.actions.edit') . ' ' . __('app.meeting.singular') : __('app.actions.add') . ' ' . __('app.meeting.singular') }}
+                    @if ($isEdit)
+                        {{ __('app.actions.edit') }} {{ __('app.meeting.singular') }}
+                    @else
+                        {{ __('app.actions.add') }} {{ __('app.meeting.singular') }}
+                    @endif
                 </flux:heading>
 
                 <flux:text class="mt-1">
                     {{ $isEdit ? __('app.meeting.form_edit_description') : __('app.meeting.form_create_description') }}
                 </flux:text>
-            </div>
+            </header>
 
-            {{-- Informasi Rapat --}}
-            <div class="space-y-4">
-
+            {{-- Information --}}
+            <section class="space-y-4">
                 <div>
                     <flux:heading size="sm">
                         {{ __('app.meeting.information') }}
@@ -30,39 +33,40 @@
 
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 
-                    {{-- Tempat --}}
                     <flux:field>
-                        <flux:input label="{{ __('app.meeting.place') }}" wire:model="place" placeholder="Contoh: Balai Desa" />
+                        <flux:input :label="__('app.meeting.place')" wire:model="place"
+                            placeholder="Contoh: Balai Desa" />
+
                         <flux:error name="place" />
                     </flux:field>
 
-                    {{-- Waktu --}}
                     <flux:field>
-                        <flux:input type="datetime-local" label="{{ __('app.meeting.date') . ' ' . __('app.meeting.singular') }}" wire:model="meeting_date" />
+                        <flux:input type="datetime-local" :label="__('app.meeting.date')" wire:model="meeting_date" />
+
                         <flux:error name="meeting_date" />
                     </flux:field>
 
                 </div>
-
-            </div>
+            </section>
 
             <flux:separator />
 
             {{-- Footer --}}
-            <div class="flex justify-end gap-2">
-
+            <footer class="flex justify-end gap-2">
                 <flux:button type="button" variant="ghost" wire:click="$set('showFormModal', false)">
                     {{ __('app.actions.cancel') }}
                 </flux:button>
 
                 <flux:button type="submit" variant="primary">
-                    {{ $isEdit ? __('app.actions.update') . ' ' . __('app.meeting.singular') : __('app.actions.save') . ' ' . __('app.meeting.singular') }}
+                    @if ($isEdit)
+                        {{ __('app.actions.update') }} {{ __('app.meeting.singular') }}
+                    @else
+                        {{ __('app.actions.save') }} {{ __('app.meeting.singular') }}
+                    @endif
                 </flux:button>
-
-            </div>
+            </footer>
 
         </div>
 
     </form>
-
 </flux:modal>

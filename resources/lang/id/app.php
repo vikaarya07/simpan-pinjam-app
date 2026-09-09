@@ -38,6 +38,7 @@ return [
         'view' => 'Lihat',
         'download' => 'Unduh',
         'submit' => 'Kirim',
+        'pay' => 'Bayar',
     ],
 
     'action' => 'Aksi',
@@ -52,8 +53,8 @@ return [
         'place' => 'Tempat',
         'date' => 'Tanggal',
 
-        'form_create_description' => 'Lengkapi data untuk membuat pinjaman baru.',
-        'form_edit_description' => 'Perbarui informasi pinjaman anggota.',
+        'form_create_description' => 'Lengkapi data untuk membuat rapat baru.',
+        'form_edit_description' => 'Perbarui informasi rapat.',
 
         'information' => 'Informasi Rapat',
         'information_description' => 'Tentukan tempat dan waktu pelaksanaan rapat.',
@@ -123,7 +124,7 @@ return [
     'loan_history' => [
         'payment_count' => 'Pembayaran',
 
-        'laon_summary' => 'Ringkasan Pinjaman',
+        'loan_summary' => 'Ringkasan Pinjaman',
         'principal' => 'Pokok Pinjaman',
         'interest' => 'Bunga',
         'amount' => 'Total Pinjaman',
@@ -182,37 +183,104 @@ return [
         'empty_description' => 'Belum terdapat pinjaman yang terdaftar.',
     ],
 
-
     'payment' => [
-        'title' => 'Rapat SATYA MUDA GETAS',
-        'subtitle' => 'Daftar rapat dan status angsuran nasabah',
-        'singular' => 'Rapat',
+        'index' => [
+            'title' => 'Rapat SATYA MUDA GETAS',
+            'subtitle' => 'Daftar rapat dan status pembayaran nasabah',
+            'singular' => 'Rapat',
 
-        'search' => 'Cari tempat...',
+            'search' => 'Cari tempat rapat...',
 
-        'place' => 'Tempat',
-        'date' => 'Tanggal',
+            'place' => 'Tempat',
+            'date' => 'Tanggal',
+            'status' => 'Status Pembayaran',
 
-        'form_create_description' => 'Lengkapi data untuk membuat pinjaman baru.',
-        'form_edit_description' => 'Perbarui informasi pinjaman anggota.',
+            'information' => 'Informasi Rapat',
+            'information_description' => 'Tentukan tempat dan waktu pelaksanaan rapat.',
 
-        'information' => 'Informasi Rapat',
-        'information_description' => 'Tentukan tempat dan waktu pelaksanaan rapat.',
+            'empty' => 'Belum ada rapat',
+            'empty_description' => 'Belum ada data rapat yang sesuai dengan pencarian Anda.',
+        ],
 
-        'empty' => 'Belum ada data rapat',
-        'empty_description' => 'Belum terdapat jadwal rapat yang terdaftar.',
+        'show' => [
+            'title' => 'Pembayaran',
+            'subtitle' => 'Daftar pembayaran anggota SATYA MUDA GETAS',
+            'singular' => 'Pembayaran',
+
+            'meet' => 'Pertemuan',
+            'loan' => 'Pinjaman',
+            'to' => 'Ke',
+
+            'information' => 'Daftar Pembayaran',
+            'information_description' => 'Data pembayaran pada pertemuan ini',
+
+            'loan_number' => 'Nomor Pinjaman',
+            'name' => 'Nasabah',
+            'date' => 'Tanggal',
+            'amount' => 'Total Pinjaman',
+            'method' => 'Metode',
+            'remaining' => 'Sisa Hutang',
+            'status' => 'Status',
+            'note' => 'Catatan',
+            'note_value' => 'Masukkan catatan...',
+            'payment_amount' => 'Jumlah Bayar',
+
+            'form_description' => 'Pembayaran angsuran pinjaman',
+            'form_select' => 'Pilih Metode',
+
+            'empty' => 'Belum ada data angsuran',
+            'empty_description' => 'Belum terdapat daftar angsuran untuk pertemuan ini.',
+        ],
+
+        'detail' => [
+            'title' => 'Detail Pinjaman',
+            'subtitle' => 'Informasi pinjaman dan riwayat pembayaran nasabah',
+            'singular' => 'Pembayaran',
+            'to' => 'Ke',
+
+            'loan_number' => 'Nomor Pinjaman',
+            'name' => 'Nasabah',
+            'date' => 'Tanggal',
+            'principal' => 'Pokok Pinjaman',
+            'amount' => 'Total Pinjaman',
+            'paid' => 'Sudah Dibayar',
+            'remaining' => 'Sisa Hutang',
+            'note' => 'Catatan',
+        ],
+
     ],
 
     'saving' => [
         'title' => 'Kas Simpanan',
+        'subtitle' => 'Simpanan SATYA MUDA GETAS',
         'singular' => 'Simpanan',
+
         'transaction_date' => 'Tanggal Transaksi',
         'type' => 'Jenis',
         'debit' => 'Debit',
         'credit' => 'Kredit',
+        'interest' => 'Jasa',
         'balance' => 'Saldo',
         'receivable' => 'Piutang',
-        'amount' => 'Jumlah',
+        'amount' => 'Total',
         'description' => 'Keterangan',
+        'description_placeholder' => 'Masukkan keterangan...',
+        'automatic' => 'Otomatis',
+
+        'modal_title' => 'Keterangan',
+        'modal_subtitle' => 'Detail keterangan transaksi simpanan.',
+
+        'empty' => 'Belum ada data simpanan',
+        'empty_description' => 'Belum terdapat transaksi simpanan.',
+
+        'form_create_description' => 'Masukkan transaksi kas baru.',
+        'form_edit_description' => 'Perbarui data transaksi kas.',
+
+        'information' => 'Informasi Transaksi',
+        'information_description' => 'Tentukan tanggal, jenis, dan nominal transaksi.',
+        'information_value_description' => 'Tambahkan catatan jika diperlukan.',
+
+
+        'form_select' => 'Pilih Jenis Transaksi',
     ],
 ];
