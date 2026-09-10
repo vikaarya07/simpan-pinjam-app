@@ -4,7 +4,7 @@
         {{-- Header --}}
         <div class="shrink-0 pb-5">
             <flux:heading size="lg">
-                {{ $isEdit ? __('app.actions.edit') . ' ' . __('app.payment.show.singular') : __('app.actions.add') . ' ' . __('app.payment.show.singular') }}
+                {{ $isEdit ? __('app.payment.show.form_edit_title') : __('app.payment.show.form_create_title') }}
             </flux:heading>
 
             <flux:text class="mt-1">
@@ -13,7 +13,7 @@
         </div>
 
         {{-- CONTENT --}}
-        <div class="min-h-0 flex-1 space-y-5 overflow-y-auto py-2 px-1">
+        <div class="min-h-0 flex-1 space-y-5 overflow-y-auto px-1 py-2">
 
             {{-- Informasi Pinjaman --}}
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -24,8 +24,8 @@
 
                 <flux:input label="{{ __('app.payment.show.name') }}" :value="$loan?->member?->name" readonly />
 
-                <flux:input label="{{ __('app.payment.show.singular') . ' ' . __('app.payment.show.to') }}"
-                    :value="$isEdit? $payment?->payment_count: $loan?->next_payment_count" readonly />
+                <flux:input label="{{ __('app.payment.show.payment_number') }}"
+                    :value="$isEdit ? $payment?->payment_count : $loan?->next_payment_count" readonly />
 
                 <flux:input label="{{ __('app.payment.show.amount') }}" :value="$loan ? idr($loan->amount) : ''"
                     readonly />

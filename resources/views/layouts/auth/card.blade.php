@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
 
 <head>
@@ -22,39 +23,49 @@
                 </div>
 
                 <a href="{{ route('overview') }}" wire:navigate class="relative inline-flex items-center gap-3">
-                    <span
-                        class="flex size-10 items-center justify-center rounded-xl bg-white text-zinc-900">
+
+                    <span class="flex size-10 items-center justify-center rounded-xl bg-white text-zinc-900">
                         <x-app-logo-icon class="size-6 fill-current" />
                     </span>
 
                     <span class="text-sm font-semibold text-white">
                         {{ config('app.name', 'Laravel') }}
                     </span>
+
                 </a>
 
                 <div class="relative mt-5">
+
                     <p class="text-xs font-medium uppercase tracking-[0.2em] text-white/50">
-                        Welcome
+                        {{ __('app.auth.layout.welcome') }}
                     </p>
 
                     <p class="mt-2 text-2xl font-semibold tracking-tight text-white">
-                        Manage your account with ease.
+                        {{ __('app.auth.layout.manage_account') }}
                     </p>
+
                 </div>
 
             </div>
 
             {{-- Form Area --}}
             <div
-                class="relative -mt-6 rounded-4xl border border-zinc-200 bg-white px-7 py-8 shadow-xl shadow-zinc-300/30 sm:px-10 sm:py-9 dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-black/30">
+                class="relative -mt-6 rounded-4xl border border-zinc-200 bg-white px-7 py-8
+                       shadow-xl shadow-zinc-300/30
+                       sm:px-10 sm:py-9
+                       dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-black/30">
+
                 {{ $slot }}
+
             </div>
 
             {{-- Footer --}}
             <div class="px-6 py-5 text-center">
+
                 <span class="text-[11px] text-zinc-400 dark:text-zinc-600">
                     © {{ date('Y') }} {{ config('app.name', 'Laravel') }}
                 </span>
+
             </div>
 
         </main>

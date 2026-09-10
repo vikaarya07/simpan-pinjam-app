@@ -1,5 +1,6 @@
 {{-- Loan Form Modal --}}
 <flux:modal wire:model="showFormModal" class="w-sm md:w-3xl" :dismissible="false">
+
     <form wire:submit="save">
         <div class="flex max-h-[85vh] flex-col">
 
@@ -60,10 +61,7 @@
                             </flux:field>
 
                             <flux:field>
-                                <flux:select
-                                    :label="__('app.loan.type').
-                                    ' '.__('app.loan.singular')"
-                                    wire:model="type">
+                                <flux:select :label="__('app.loan.type_loan')" wire:model="type">
                                     @foreach (\App\Enums\LoanType::cases() as $typeOption)
                                         <option value="{{ $typeOption->value }}">
                                             {{ $typeOption->label() }}
@@ -75,10 +73,7 @@
                             </flux:field>
 
                             <flux:field>
-                                <flux:input type="date"
-                                    :label="__('app.loan.date').
-                                    ' '.__('app.loan.singular')"
-                                    wire:model="loan_date" />
+                                <flux:input type="date" :label="__('app.loan.date_loan')" wire:model="loan_date" />
 
                                 <flux:error name="loan_date" />
                             </flux:field>
@@ -109,9 +104,8 @@
                                 <flux:error name="principal" />
                             </flux:field>
 
-                            <flux:input :label="__('app.loan.interest')"
-                                :value="$interest_percent.
-                                '%'" readonly />
+                            <flux:input :label="__('app.loan.interest')" :value="$interest_percent.
+                            '%'" readonly />
 
                             <flux:input :label="__('app.loan.interest_amount')" :value="idr($interest_amount)"
                                 readonly />
@@ -147,6 +141,7 @@
 
                         <flux:card>
                             <section class="space-y-4">
+
                                 <div>
                                     <flux:heading size="sm">
                                         {{ __('app.loan.previous_loan') }}
@@ -200,20 +195,19 @@
             {{-- Footer --}}
             <footer class="shrink-0 border-t border-zinc-200 pt-4 dark:border-zinc-700">
                 <div class="flex justify-end gap-2">
+
                     <flux:button type="button" variant="ghost" wire:click="closeModal">
                         {{ __('app.actions.cancel') }}
                     </flux:button>
 
                     <flux:button type="submit" variant="primary">
-                        @if ($isEdit)
-                            {{ __('app.actions.update') }} {{ __('app.loan.singular') }}
-                        @else
-                            {{ __('app.actions.save') }} {{ __('app.loan.singular') }}
-                        @endif
+                        {{ $isEdit ? __('app.actions.update') : __('app.actions.save') }}
                     </flux:button>
+
                 </div>
             </footer>
 
         </div>
     </form>
+
 </flux:modal>

@@ -22,8 +22,8 @@
     {{-- Table --}}
     <flux:card class="overflow-hidden border-none!">
         <flux:table>
-
             <flux:table.columns>
+
                 <flux:table.column class="w-16">
                     #
                 </flux:table.column>
@@ -41,8 +41,9 @@
                 </flux:table.column>
 
                 <flux:table.column class="text-right">
-                    {{ __('app.action') }}
+                    {{ __('app.actions.action') }}
                 </flux:table.column>
+
             </flux:table.columns>
 
             <flux:table.rows>
@@ -53,6 +54,7 @@
 
                     <flux:table.row wire:key="meeting-{{ $meeting->id }}"
                         class="transition hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+
                         {{-- No --}}
                         <flux:table.cell class="text-zinc-500">
                             {{ $meetings->firstItem() + $loop->index }}
@@ -124,10 +126,11 @@
                         </flux:table.cell>
 
                     </flux:table.row>
+
                 @empty
+
                     <flux:table.row>
                         <flux:table.cell colspan="5">
-
                             <div class="flex flex-col items-center justify-center py-12 text-center">
 
                                 <div
@@ -144,12 +147,10 @@
                                 </flux:text>
 
                             </div>
-
                         </flux:table.cell>
                     </flux:table.row>
                 @endforelse
             </flux:table.rows>
-
         </flux:table>
     </flux:card>
 

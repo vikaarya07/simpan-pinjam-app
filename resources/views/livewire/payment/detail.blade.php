@@ -13,12 +13,10 @@
 
     {{-- Loan Information --}}
     <flux:card class="border-none!">
-
         <div class="space-y-6">
 
             {{-- Header Card --}}
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-
                 <div>
                     <flux:text size="sm" class="font-medium">
                         {{ __('app.payment.detail.loan_number') }}
@@ -32,7 +30,6 @@
                 <flux:badge :color="$payment->status->color()" size="sm">
                     {{ $payment->status->label() }}
                 </flux:badge>
-
             </div>
 
             <flux:separator />
@@ -42,7 +39,6 @@
 
                 {{-- Nasabah --}}
                 <div class="flex items-center gap-3">
-
                     <flux:avatar size="sm" :name="$payment->loan->member->name"
                         :initials="$payment->loan->member->initials()" circle color="auto" />
 
@@ -55,12 +51,10 @@
                             {{ $payment->loan->member->name }}
                         </div>
                     </div>
-
                 </div>
 
                 {{-- Waktu --}}
                 <div class="flex items-center gap-3">
-
                     <flux:icon name="calendar-days" class="mt-0.5 size-7 text-slate-500" />
 
                     <div>
@@ -72,12 +66,10 @@
                             {{ $payment->waktu }}
                         </div>
                     </div>
-
                 </div>
 
                 {{-- Pokok --}}
                 <div class="flex items-center gap-3">
-
                     <flux:icon name="banknotes" class="mt-0.5 size-7 text-slate-500" />
 
                     <div>
@@ -89,13 +81,10 @@
                             {{ idr($payment->loan->principal) }}
                         </div>
                     </div>
-
                 </div>
 
             </div>
-
         </div>
-
     </flux:card>
 
     {{-- Payment Summary --}}
@@ -103,9 +92,7 @@
 
         {{-- Total --}}
         <flux:card class="border-none!">
-
             <div class="flex items-start justify-between gap-3">
-
                 <div>
                     <flux:text size="sm" class="font-medium">
                         {{ __('app.payment.detail.amount') }}
@@ -117,20 +104,17 @@
                 </div>
 
                 <flux:icon name="receipt-percent" class="size-7 text-zinc-500" />
-
             </div>
-
         </flux:card>
 
         {{-- Payment --}}
         <flux:card class="border-none!">
-
             <div class="flex items-start justify-between gap-3">
-
                 <div>
                     <flux:text size="sm" class="font-medium">
-                        {{ __('app.payment.detail.singular') . ' ' . __('app.payment.detail.to') }}-
-                        {{ $payment->payment_count }}
+                        {{ __('app.payment.detail.payment_number', [
+                            'count' => $payment->payment_count,
+                        ]) }}
                     </flux:text>
 
                     <flux:heading size="lg" class="mt-2">
@@ -139,16 +123,12 @@
                 </div>
 
                 <flux:icon name="arrow-down-circle" class="size-7 text-zinc-500" />
-
             </div>
-
         </flux:card>
 
         {{-- Paid --}}
         <flux:card class="border-none!">
-
             <div class="flex items-start justify-between gap-3">
-
                 <div>
                     <flux:text size="sm" class="font-medium">
                         {{ __('app.payment.detail.paid') }}
@@ -160,18 +140,14 @@
                 </div>
 
                 <flux:icon name="check-circle" class="size-7 text-green-600" />
-
             </div>
-
         </flux:card>
 
     </div>
 
     {{-- Remaining --}}
     <flux:card class="border-none!">
-
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-
             <div>
                 <flux:text size="sm" class="font-medium">
                     {{ __('app.payment.detail.remaining') }}
@@ -183,24 +159,19 @@
             </div>
 
             <flux:icon name="exclamation-circle" class="hidden size-12 text-red-500 sm:block" />
-
         </div>
-
     </flux:card>
 
     {{-- Note --}}
     <flux:card class="border-none!">
-
         <div class="space-y-2">
 
             <div class="flex items-center gap-2">
-
                 <flux:icon name="chat-bubble-left" class="size-5 text-zinc-400" />
 
                 <flux:text size="sm" class="font-semibold">
                     {{ __('app.payment.detail.note') }}
                 </flux:text>
-
             </div>
 
             <flux:text class="leading-relaxed">
@@ -208,7 +179,6 @@
             </flux:text>
 
         </div>
-
     </flux:card>
 
 </div>

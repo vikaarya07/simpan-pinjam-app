@@ -10,37 +10,34 @@
             <flux:text
                 class="text-xs font-semibold uppercase tracking-wider
                        text-zinc-400 dark:text-zinc-500">
-                {{ __('Settings') }}
+                {{ __('app.profile.settings') }}
             </flux:text>
         </div>
 
-        <flux:navlist aria-label="{{ __('Settings') }}" class="space-y-1">
+        <flux:navlist :aria-label="__('app.profile.settings')" class="space-y-1">
 
             <flux:navlist.item :href="route('profile.edit')" wire:navigate icon="user"
                 :current="request()->routeIs('profile.*')">
-                {{ __('Profile') }}
+                {{ __('app.profile.title') }}
             </flux:navlist.item>
 
             <flux:navlist.item :href="route('security.edit')" wire:navigate icon="shield-check"
                 :current="request()->routeIs('security.*')">
-                {{ __('Security') }}
+                {{ __('app.security.title') }}
             </flux:navlist.item>
 
             <flux:navlist.item :href="route('appearance.edit')" wire:navigate icon="swatch"
                 :current="request()->routeIs('appearance.*')">
-                {{ __('Appearance') }}
+                {{ __('app.appearance.title') }}
             </flux:navlist.item>
 
         </flux:navlist>
-
     </div>
-
 
     <flux:separator class="md:hidden" />
 
-
     {{-- Content --}}
-    <div class="flex-1 max-md:pt-6 max-w-xl">
+    <div class="max-w-xl flex-1 max-md:pt-6">
 
         <flux:heading>
             {{ $heading ?? '' }}

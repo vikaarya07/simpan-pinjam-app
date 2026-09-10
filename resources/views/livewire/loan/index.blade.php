@@ -13,7 +13,8 @@
         </div>
 
         <flux:button variant="primary" icon="plus" wire:click="create">
-            {{ __('app.actions.create') }} {{ __('app.loan.singular') }}
+            {{ __('app.actions.create') }}
+            {{ __('app.loan.singular') }}
         </flux:button>
     </div>
 
@@ -29,132 +30,179 @@
     <flux:card class="overflow-hidden border-none!">
         <flux:table>
 
+            {{-- Columns --}}
             <flux:table.columns>
+
                 <flux:table.column class="w-12">
                     #
                 </flux:table.column>
 
+                {{-- Loan Number --}}
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('loan_number')">
                     <div class="flex items-center gap-1">
                         {{ __('app.loan.loan_number') }}
-                        @include('components.sort-icon', ['field' => 'loan_number'])
+
+                        @include('components.sort-icon', [
+                            'field' => 'loan_number',
+                        ])
                     </div>
                 </flux:table.column>
 
+                {{-- Customer --}}
                 <flux:table.column>
                     {{ __('app.loan.name') }}
                 </flux:table.column>
 
+                {{-- Date --}}
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('loan_date')">
                     <div class="flex items-center gap-1">
                         {{ __('app.loan.date') }}
-                        @include('components.sort-icon', ['field' => 'loan_date'])
+
+                        @include('components.sort-icon', [
+                            'field' => 'loan_date',
+                        ])
                     </div>
                 </flux:table.column>
 
+                {{-- Type --}}
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('type')">
                     <div class="flex items-center gap-1">
                         {{ __('app.loan.type') }}
-                        @include('components.sort-icon', ['field' => 'type'])
+
+                        @include('components.sort-icon', [
+                            'field' => 'type',
+                        ])
                     </div>
                 </flux:table.column>
 
+                {{-- Principal --}}
                 <flux:table.column class="cursor-pointer text-right" wire:click="sortBy('principal')">
                     <div class="flex items-center justify-end gap-1">
                         {{ __('app.loan.principal') }}
-                        @include('components.sort-icon', ['field' => 'principal'])
+
+                        @include('components.sort-icon', [
+                            'field' => 'principal',
+                        ])
                     </div>
                 </flux:table.column>
 
+                {{-- Interest --}}
                 <flux:table.column class="text-right">
                     {{ __('app.loan.interest') }}
                 </flux:table.column>
 
+                {{-- Interest Amount --}}
                 <flux:table.column class="text-right">
                     {{ __('app.loan.interest_amount') }}
                 </flux:table.column>
 
+                {{-- Total Amount --}}
                 <flux:table.column class="text-right">
                     {{ __('app.loan.amount') }}
                 </flux:table.column>
 
+                {{-- Remaining --}}
                 <flux:table.column class="cursor-pointer text-right" wire:click="sortBy('remaining')">
                     <div class="flex items-center justify-end gap-1">
                         {{ __('app.loan.remaining') }}
-                        @include('components.sort-icon', ['field' => 'remaining'])
+
+                        @include('components.sort-icon', [
+                            'field' => 'remaining',
+                        ])
                     </div>
                 </flux:table.column>
 
+                {{-- Status --}}
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('status')">
                     <div class="flex items-center gap-1">
                         {{ __('app.loan.status') }}
-                        @include('components.sort-icon', ['field' => 'status'])
+
+                        @include('components.sort-icon', [
+                            'field' => 'status',
+                        ])
                     </div>
                 </flux:table.column>
 
+                {{-- Actions --}}
                 <flux:table.column class="text-right">
-                    {{ __('app.action') }}
+                    {{ __('app.actions.action') }}
                 </flux:table.column>
+
             </flux:table.columns>
 
+            {{-- Rows --}}
             <flux:table.rows>
+
                 @forelse ($loans as $loan)
                     <flux:table.row wire:key="loan-{{ $loan->id }}"
                         class="transition hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+
+                        {{-- No --}}
                         <flux:table.cell class="text-zinc-500">
                             {{ $loans->firstItem() + $loop->index }}
                         </flux:table.cell>
 
+                        {{-- Loan Number --}}
                         <flux:table.cell>
                             <span class="font-medium whitespace-nowrap">
                                 {{ $loan->loan_number }}
                             </span>
                         </flux:table.cell>
 
+                        {{-- Customer --}}
                         <flux:table.cell>
                             <span class="font-medium whitespace-nowrap">
                                 {{ $loan->member->name }}
                             </span>
                         </flux:table.cell>
 
+                        {{-- Date --}}
                         <flux:table.cell>
                             <div class="flex items-center gap-2 whitespace-nowrap">
                                 <flux:icon name="calendar-days" class="size-4 text-zinc-400" />
 
-                                <span>{{ $loan->waktu }}</span>
+                                <span>
+                                    {{ $loan->waktu }}
+                                </span>
                             </div>
                         </flux:table.cell>
 
+                        {{-- Type --}}
                         <flux:table.cell>
                             <flux:badge :color="$loan->type->color()" size="sm">
                                 {{ $loan->type->label() }}
                             </flux:badge>
                         </flux:table.cell>
 
+                        {{-- Principal --}}
                         <flux:table.cell class="text-right">
                             <span class="font-medium tabular-nums whitespace-nowrap">
                                 {{ idr($loan->principal) }}
                             </span>
                         </flux:table.cell>
 
+                        {{-- Interest --}}
                         <flux:table.cell class="text-right">
                             <span class="font-medium tabular-nums whitespace-nowrap">
                                 {{ $loan->interest_percent }}%
                             </span>
                         </flux:table.cell>
 
+                        {{-- Interest Amount --}}
                         <flux:table.cell class="text-right">
                             <span class="tabular-nums whitespace-nowrap">
                                 {{ idr($loan->interest_amount) }}
                             </span>
                         </flux:table.cell>
 
+                        {{-- Total Amount --}}
                         <flux:table.cell class="text-right">
                             <span class="font-semibold tabular-nums whitespace-nowrap">
                                 {{ idr($loan->amount) }}
                             </span>
                         </flux:table.cell>
 
+                        {{-- Remaining --}}
                         <flux:table.cell class="text-right">
                             <span @class([
                                 'font-semibold tabular-nums whitespace-nowrap',
@@ -165,31 +213,45 @@
                             </span>
                         </flux:table.cell>
 
+                        {{-- Status --}}
                         <flux:table.cell>
                             <flux:badge :color="$loan->status->color()" size="sm">
                                 {{ $loan->status->label() }}
                             </flux:badge>
                         </flux:table.cell>
 
-                        <flux:table.cell class="text-right">
+                        {{-- Actions --}}
+                        <flux:table.cell>
                             <div class="flex justify-end gap-1">
+
+                                {{-- Edit --}}
                                 <flux:button size="sm" variant="ghost" icon="pencil-square"
                                     wire:click="edit('{{ $loan->id }}')"
-                                    :tooltip="__('app.actions.edit').
-                                    ' '.__('app.loan.singular')" />
+                                    :tooltip="__('app.loan.tooltip_edit', [
+                                        'name' => __('app.loan.singular'),
+                                    ])" />
 
+                                {{-- Delete --}}
                                 <flux:button size="sm" variant="ghost" icon="trash"
                                     class="text-red-500 hover:text-red-600"
                                     wire:click="confirmDelete('{{ $loan->id }}')"
-                                    :tooltip="__('app.actions.delete').
-                                    ' '.__('app.loan.singular')" />
+                                    :tooltip="__('app.loan.tooltip_delete', [
+                                        'name' => __('app.loan.singular'),
+                                    ])" />
+
                             </div>
                         </flux:table.cell>
+
                     </flux:table.row>
+
                 @empty
+
+                    {{-- Empty State --}}
                     <flux:table.row>
                         <flux:table.cell colspan="12">
+
                             <div class="flex flex-col items-center justify-center py-12 text-center">
+
                                 <flux:icon name="banknotes" class="size-10 text-zinc-400" />
 
                                 <flux:heading size="sm" class="mt-3">
@@ -201,12 +263,16 @@
                                 </flux:text>
 
                                 <flux:button class="mt-4" variant="primary" icon="plus" wire:click="create">
-                                    {{ __('app.actions.create') }} {{ __('app.loan.singular') }}
+                                    {{ __('app.actions.create') }}
+                                    {{ __('app.loan.singular') }}
                                 </flux:button>
+
                             </div>
+
                         </flux:table.cell>
                     </flux:table.row>
                 @endforelse
+
             </flux:table.rows>
 
         </flux:table>

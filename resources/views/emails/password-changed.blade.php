@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 
-<html lang="id">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Password Berhasil Diubah</title>
-
+    <title>{{ __('app.mail.password_changed.subject') }}</title>
 </head>
 
 <body
@@ -30,12 +28,12 @@
 
                             <div
                                 style="margin-top: 16px; color: #ffffff; font-size: 22px; line-height: 1.3; font-weight: 700; letter-spacing: 0.3px;">
-                                {{ __('SATYA MUDA GETAS') }}
+                                SATYA MUDA GETAS
                             </div>
 
                             <div
                                 style="margin-top: 6px; color: #d1fae5; font-size: 14px; line-height: 1.4; font-weight: 600; letter-spacing: 1.5px;">
-                                {{ __('SIMPAN PINJAM') }}
+                                SIMPAN PINJAM
                             </div>
 
                         </td>
@@ -54,21 +52,27 @@
 
                             <h1
                                 style="margin: 0 0 12px; text-align: center; font-size: 25px; line-height: 1.3; color: #18181b;">
-                                Password Berhasil Diubah
+                                {{ __('app.mail.password_changed.title') }}
                             </h1>
 
                             <p
                                 style="margin: 0 0 18px; text-align: center; font-size: 15px; line-height: 1.7; color: #71717a;">
-                                Halo
+
+                                {{ __('app.mail.password_changed.greeting') }}
+
                                 <strong style="color: #27272a;">
                                     {{ $user->name }}
                                 </strong>,
+
                             </p>
 
                             <p
                                 style="margin: 0 0 28px; text-align: center; font-size: 15px; line-height: 1.7; color: #71717a;">
-                                Password akun {{ config('app.name') }} Anda
-                                telah berhasil diubah.
+
+                                {{ __('app.mail.password_changed.changed_description', [
+                                    'app' => config('app.name'),
+                                ]) }}
+
                             </p>
 
                             <div
@@ -76,9 +80,9 @@
 
                                 <p
                                     style="margin: 0; text-align: center; font-size: 13px; line-height: 1.6; color: #047857;">
-                                    Perubahan password berhasil dilakukan.
-                                    Jika Anda yang melakukan perubahan ini,
-                                    tidak ada tindakan lebih lanjut yang diperlukan.
+
+                                    {{ __('app.mail.password_changed.success_message') }}
+
                                 </p>
 
                             </div>
@@ -95,13 +99,16 @@
 
                                 <p
                                     style="margin: 0 0 8px; text-align: center; font-size: 12px; font-weight: 700; color: #52525b;">
-                                    Bukan Anda?
+
+                                    {{ __('app.mail.password_changed.not_you') }}
+
                                 </p>
 
                                 <p
                                     style="margin: 0; text-align: center; font-size: 12px; line-height: 1.6; color: #71717a;">
-                                    Jika Anda tidak melakukan perubahan password ini,
-                                    segera amankan akun Anda dan lakukan reset password.
+
+                                    {{ __('app.mail.password_changed.security_warning') }}
+
                                 </p>
 
                             </div>
@@ -115,9 +122,11 @@
                             style="padding: 22px 32px; background: #fafafa; border-top: 1px solid #f4f4f5; text-align: center;">
 
                             <p style="margin: 0; font-size: 12px; color: #a1a1aa;">
+
                                 © {{ date('Y') }}
                                 {{ config('app.name') }}.
-                                All rights reserved.
+                                {{ __('app.mail.password_changed.all_rights_reserved') }}
+
                             </p>
 
                         </td>

@@ -1,11 +1,12 @@
 {{-- Member Form --}}
 <flux:modal wire:model="showFormModal" class="w-sm md:w-3xl" :dismissible="false">
-    <form wire:submit="save">
 
+    <form wire:submit="save">
         <div class="flex max-h-[85vh] flex-col">
 
             {{-- Header --}}
             <header class="shrink-0 border-b border-zinc-200 pb-4 dark:border-zinc-700">
+
                 <flux:heading size="lg">
                     @if ($isEdit)
                         {{ __('app.actions.edit') }} {{ __('app.member.singular') }}
@@ -17,6 +18,7 @@
                 <flux:text class="mt-1">
                     {{ $isEdit ? __('app.member.form_edit_description') : __('app.member.form_create_description') }}
                 </flux:text>
+
             </header>
 
             {{-- Content --}}
@@ -26,6 +28,7 @@
 
                     {{-- Personal Information --}}
                     <section class="space-y-4">
+
                         <div>
                             <flux:heading size="sm">
                                 {{ __('app.member.information') }}
@@ -49,7 +52,7 @@
                             {{-- Email --}}
                             <flux:field>
                                 <flux:input type="email" :label="__('app.member.email')" wire:model="email"
-                                    placeholder="email@katasama.or.id" />
+                                    :placeholder="__('app.member.email_placeholder')" />
 
                                 <flux:error name="email" />
                             </flux:field>
@@ -57,7 +60,7 @@
                             {{-- Phone --}}
                             <flux:field>
                                 <flux:input :label="__('app.member.phone')" wire:model="phone"
-                                    placeholder="08xxxxxxxxxx" />
+                                    :placeholder="__('app.member.phone_placeholder')" />
 
                                 <flux:error name="phone" />
                             </flux:field>
@@ -101,6 +104,7 @@
 
                     {{-- Membership --}}
                     <section class="space-y-4">
+
                         <div>
                             <flux:heading size="sm">
                                 {{ __('app.member.information_status') }}
@@ -122,6 +126,7 @@
 
                             <flux:error name="status" />
                         </flux:field>
+
                     </section>
 
                 </div>
@@ -129,6 +134,7 @@
 
             {{-- Footer --}}
             <footer class="shrink-0 border-t border-zinc-200 pt-4 dark:border-zinc-700">
+
                 <div class="flex justify-end gap-2">
 
                     <flux:button type="button" variant="ghost" wire:click="closeModal">
@@ -136,17 +142,14 @@
                     </flux:button>
 
                     <flux:button type="submit" variant="primary">
-                        @if ($isEdit)
-                            {{ __('app.actions.update') }} {{ __('app.member.singular') }}
-                        @else
-                            {{ __('app.actions.save') }} {{ __('app.member.singular') }}
-                        @endif
+                        {{ $isEdit ? __('app.actions.update') : __('app.actions.save') }}
                     </flux:button>
 
                 </div>
+
             </footer>
 
         </div>
-
     </form>
+
 </flux:modal>

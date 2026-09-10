@@ -15,7 +15,6 @@
 
         {{-- Meeting Info --}}
         <flux:card class="flex items-center gap-3 border-none! px-4 py-3">
-
             <div
                 class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-500 dark:bg-zinc-800">
                 <flux:icon name="calendar-days" class="size-5" />
@@ -32,18 +31,16 @@
                     <span>{{ $meeting->waktu }}</span>
                 </div>
             </div>
-
         </flux:card>
 
     </div>
 
     {{-- Payment Table --}}
-    <flux:card class="overflow-hidden border-none! p-0">
+    <flux:card class="overflow-hidden border-none!">
 
         {{-- Table Header --}}
         <div
-            class="flex flex-col gap-3 border-b border-zinc-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-700">
-
+            class="mb-4 flex flex-col gap-3 border-b border-zinc-200 pb-2 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-700">
             <div>
                 <flux:heading size="sm">
                     {{ __('app.payment.show.information') }}
@@ -57,7 +54,6 @@
             <flux:badge color="zinc" size="sm">
                 {{ $loans->total() }} {{ __('app.payment.show.loan') }}
             </flux:badge>
-
         </div>
 
         <flux:table>
@@ -87,7 +83,7 @@
 
                 {{-- Payment --}}
                 <flux:table.column>
-                    {{ __('app.payment.show.to') }}
+                    {{ __('app.payment.show.payment_number') }}
                 </flux:table.column>
 
                 {{-- Amount --}}
@@ -123,7 +119,7 @@
 
                 {{-- Action --}}
                 <flux:table.column class="text-right">
-                    {{ __('app.action') }}
+                    {{ __('app.actions.action') }}
                 </flux:table.column>
 
             </flux:table.columns>
@@ -141,7 +137,6 @@
 
                         {{-- Loan Number --}}
                         <flux:table.cell>
-
                             <div class="space-y-1">
 
                                 <div class="font-medium whitespace-nowrap">
@@ -153,12 +148,10 @@
                                 </flux:badge>
 
                             </div>
-
                         </flux:table.cell>
 
                         {{-- Customer --}}
                         <flux:table.cell>
-
                             <div class="flex items-center gap-3">
 
                                 <flux:avatar size="sm" :name="$loan->member->name"
@@ -179,48 +172,38 @@
                                 </div>
 
                             </div>
-
                         </flux:table.cell>
 
                         {{-- Payment Progress --}}
                         <flux:table.cell>
-
                             <flux:badge color="zinc" size="sm">
                                 {{ $loan->payment_progress }}
                             </flux:badge>
-
                         </flux:table.cell>
 
                         {{-- Amount --}}
                         <flux:table.cell>
-
                             <span class="font-medium tabular-nums whitespace-nowrap">
                                 {{ idr($loan->amount) }}
                             </span>
-
                         </flux:table.cell>
 
                         {{-- Date --}}
                         <flux:table.cell>
-
                             <flux:text class="whitespace-nowrap">
                                 {{ $loan->tanggal }}
                             </flux:text>
-
                         </flux:table.cell>
 
                         {{-- Payment Method --}}
                         <flux:table.cell>
-
                             <flux:badge size="sm" :color="$loan->current_payment?->method?->color() ?? 'zinc'">
                                 {{ $loan->current_payment?->method?->label() ?? '-' }}
                             </flux:badge>
-
                         </flux:table.cell>
 
                         {{-- Remaining --}}
                         <flux:table.cell>
-
                             <span @class([
                                 'font-semibold tabular-nums whitespace-nowrap',
                                 'text-red-600 dark:text-red-400' => $loan->remaining > 0,
@@ -228,39 +211,41 @@
                             ])>
                                 {{ idr($loan->remaining) }}
                             </span>
-
                         </flux:table.cell>
 
                         {{-- Status --}}
                         <flux:table.cell>
-
                             <flux:badge size="sm" :color="$loan->payment_status?->color() ?? 'red'">
-                                {{ $loan->payment_status?->label() ?? 'Unpaid' }}
+                                {{ $loan->payment_status?->label() ?? __('app.payment.show.unpaid') }}
                             </flux:badge>
-
                         </flux:table.cell>
 
                         {{-- Actions --}}
                         <flux:table.cell>
-
-                            <div class="flex justify-end gap-1">
+                            <div class="flex gap-1">
 
                                 @if ($loan->current_payment)
                                     {{-- Detail --}}
                                     <flux:button size="sm" variant="ghost" icon="eye"
                                         :href="route('payment.detail', $loan->current_payment)"
-                                        tooltip="{{ __('app.actions.view') . ' ' . __('app.payment.show.singular') }}" />
+                                        :tooltip="__('app.payment.show.tooltip_view', [
+                                            'name' => __('app.payment.show.singular'),
+                                        ])" />
 
                                     {{-- Edit --}}
                                     <flux:button size="sm" variant="ghost" icon="pencil-square"
                                         wire:click="edit({{ $loan->current_payment->id }})"
-                                        tooltip="{{ __('app.actions.edit') . ' ' . __('app.payment.show.singular') }}" />
+                                        :tooltip="__('app.payment.show.tooltip_edit', [
+                                            'name' => __('app.payment.show.singular'),
+                                        ])" />
 
                                     {{-- Reset --}}
                                     <flux:button size="sm" variant="ghost" icon="arrow-uturn-left"
                                         class="text-red-500 hover:text-red-600"
                                         wire:click="confirmResetPayment({{ $loan->current_payment->id }})"
-                                        tooltip="{{ __('app.actions.reset') . ' ' . __('app.payment.show.singular') }}" />
+                                        :tooltip="__('app.payment.show.tooltip_reset', [
+                                            'name' => __('app.payment.show.singular'),
+                                        ])" />
                                 @else
                                     <flux:button size="sm" variant="primary" icon="banknotes"
                                         wire:click="create({{ $loan->id }})">
@@ -269,7 +254,6 @@
                                 @endif
 
                             </div>
-
                         </flux:table.cell>
 
                     </flux:table.row>

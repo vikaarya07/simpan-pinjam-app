@@ -13,10 +13,12 @@
 
         {{-- Header --}}
         <flux:sidebar.header class="mb-2">
+
             <x-app-logo :sidebar="true" href="{{ route('overview') }}" wire:navigate />
 
             <flux:sidebar.collapse
                 class="in-data-flux-sidebar-on-desktop:not-in-data-flux-sidebar-collapsed-desktop:-mr-2" />
+
         </flux:sidebar.header>
 
         {{-- OVERVIEW --}}
@@ -27,23 +29,19 @@
                 wire:navigate
                 class="
                     text-slate-600!
-
                     hover:bg-emerald-400!
                     hover:text-emerald-50!
-
                     data-current:bg-emerald-400!
                     data-current:text-emerald-50!
-
                     dark:text-slate-600!
                     dark:hover:bg-emerald-400!
                     dark:hover:text-emerald-50!
-
                     dark:data-current:bg-emerald-400!
                     dark:data-current:text-emerald-50!
                     dark:data-current:hover:bg-emerald-400!
                     dark:data-current:hover:text-emerald-50!
                 ">
-                {{ __('Overview') }}
+                {{ __('app.sidebar.overview') }}
             </flux:sidebar.item>
 
         </flux:sidebar.nav>
@@ -56,7 +54,7 @@
                 class="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider
                        text-slate-400 dark:text-slate-500
                        in-data-flux-sidebar-collapsed-desktop:hidden">
-                Meeting
+                {{ __('app.sidebar.sections.meeting') }}
             </div>
 
             {{-- Meeting --}}
@@ -64,25 +62,22 @@
                 :current="request()->routeIs('meeting.*')" wire:navigate
                 class="
                     text-slate-600!
-
                     hover:bg-emerald-400!
                     hover:text-emerald-50!
-
                     data-current:bg-emerald-400!
                     data-current:text-emerald-50!
-
                     dark:text-slate-600!
                     dark:hover:bg-emerald-400!
                     dark:hover:text-emerald-50!
-
                     dark:data-current:bg-emerald-400!
                     dark:data-current:text-emerald-50!
                     dark:data-current:hover:bg-emerald-400!
                     dark:data-current:hover:text-emerald-50!
                 ">
-                {{ __('Pertemuan') }}
+                {{ __('app.sidebar.meeting') }}
+
                 <flux:badge size="sm" color="pink" variant="solid" class="shrink-0 px-1.5! py-0.5!">
-                    Admin
+                    {{ __('app.sidebar.admin') }}
                 </flux:badge>
             </flux:sidebar.item>
 
@@ -96,7 +91,7 @@
                 class="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider
                        text-slate-400 dark:text-slate-500
                        in-data-flux-sidebar-collapsed-desktop:hidden">
-                Data Master
+                {{ __('app.sidebar.sections.master_data') }}
             </div>
 
             {{-- Data Anggota --}}
@@ -104,26 +99,22 @@
                 :current="request()->routeIs('member.index')" wire:navigate
                 class="
                     text-slate-600!
-
                     hover:bg-emerald-400!
                     hover:text-emerald-50!
-
                     data-current:bg-emerald-400!
                     data-current:text-emerald-50!
-
                     dark:text-slate-600!
                     dark:hover:bg-emerald-400!
                     dark:hover:text-emerald-50!
-
                     dark:data-current:bg-emerald-400!
                     dark:data-current:text-emerald-50!
                     dark:data-current:hover:bg-emerald-400!
                     dark:data-current:hover:text-emerald-50!
                 ">
-                {{ __('Data Anggota') }}
+                {{ __('app.sidebar.members') }}
 
                 <flux:badge size="sm" color="pink" variant="solid" class="shrink-0 px-1.5! py-0.5!">
-                    Admin
+                    {{ __('app.sidebar.admin') }}
                 </flux:badge>
             </flux:sidebar.item>
 
@@ -132,23 +123,19 @@
                 :current="request()->routeIs('customer.*')" wire:navigate
                 class="
                     text-slate-600!
-
                     hover:bg-emerald-400!
                     hover:text-emerald-50!
-
                     data-current:bg-emerald-400!
                     data-current:text-emerald-50!
-
                     dark:text-slate-600!
                     dark:hover:bg-emerald-400!
                     dark:hover:text-emerald-50!
-
                     dark:data-current:bg-emerald-400!
                     dark:data-current:text-emerald-50!
                     dark:data-current:hover:bg-emerald-400!
                     dark:data-current:hover:text-emerald-50!
                 ">
-                {{ __('Data Nasabah') }}
+                {{ __('app.sidebar.customers') }}
             </flux:sidebar.item>
 
         </flux:sidebar.nav>
@@ -161,7 +148,7 @@
                 class="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider
                        text-slate-400 dark:text-slate-500
                        in-data-flux-sidebar-collapsed-desktop:hidden">
-                Transaksi
+                {{ __('app.sidebar.sections.transactions') }}
             </div>
 
             {{-- Simpanan --}}
@@ -169,23 +156,19 @@
                 :current="request()->routeIs('saving.index')" wire:navigate
                 class="
                     text-slate-600!
-
                     hover:bg-emerald-400!
                     hover:text-emerald-50!
-
                     data-current:bg-emerald-400!
                     data-current:text-emerald-50!
-
                     dark:text-slate-600!
                     dark:hover:bg-emerald-400!
                     dark:hover:text-emerald-50!
-
                     dark:data-current:bg-emerald-400!
                     dark:data-current:text-emerald-50!
                     dark:data-current:hover:bg-emerald-400!
                     dark:data-current:hover:text-emerald-50!
                 ">
-                {{ __('Simpanan') }}
+                {{ __('app.sidebar.savings') }}
             </flux:sidebar.item>
 
             {{-- Pinjaman --}}
@@ -193,23 +176,19 @@
                 :current="request()->routeIs('loan.index')" wire:navigate
                 class="
                     text-slate-600!
-
                     hover:bg-emerald-400!
                     hover:text-emerald-50!
-
                     data-current:bg-emerald-400!
                     data-current:text-emerald-50!
-
                     dark:text-slate-600!
                     dark:hover:bg-emerald-400!
                     dark:hover:text-emerald-50!
-
                     dark:data-current:bg-emerald-400!
                     dark:data-current:text-emerald-50!
                     dark:data-current:hover:bg-emerald-400!
                     dark:data-current:hover:text-emerald-50!
                 ">
-                {{ __('Pinjaman') }}
+                {{ __('app.sidebar.loans') }}
             </flux:sidebar.item>
 
             {{-- Angsuran --}}
@@ -217,23 +196,19 @@
                 :current="request()->routeIs('payment.*')" wire:navigate
                 class="
                     text-slate-600!
-
                     hover:bg-emerald-400!
                     hover:text-emerald-50!
-
                     data-current:bg-emerald-400!
                     data-current:text-emerald-50!
-
                     dark:text-slate-600!
                     dark:hover:bg-emerald-400!
                     dark:hover:text-emerald-50!
-
                     dark:data-current:bg-emerald-400!
                     dark:data-current:text-emerald-50!
                     dark:data-current:hover:bg-emerald-400!
                     dark:data-current:hover:text-emerald-50!
                 ">
-                {{ __('Angsuran') }}
+                {{ __('app.sidebar.payments') }}
             </flux:sidebar.item>
 
         </flux:sidebar.nav>
@@ -246,7 +221,7 @@
                 class="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider
                        text-slate-400 dark:text-slate-500
                        in-data-flux-sidebar-collapsed-desktop:hidden">
-                Laporan
+                {{ __('app.sidebar.sections.reports') }}
             </div>
 
             {{-- Laporan Bulanan --}}
@@ -254,23 +229,19 @@
                 :current="request()->routeIs('report.monthly*')" wire:navigate
                 class="
                     text-slate-600!
-
                     hover:bg-emerald-400!
                     hover:text-emerald-50!
-
                     data-current:bg-emerald-400!
                     data-current:text-emerald-50!
-
                     dark:text-slate-600!
                     dark:hover:bg-emerald-400!
                     dark:hover:text-emerald-50!
-
                     dark:data-current:bg-emerald-400!
                     dark:data-current:text-emerald-50!
                     dark:data-current:hover:bg-emerald-400!
                     dark:data-current:hover:text-emerald-50!
                 ">
-                {{ __('Laporan Bulanan') }}
+                {{ __('app.sidebar.monthly_report') }}
             </flux:sidebar.item>
 
             {{-- Laporan Nasabah --}}
@@ -278,23 +249,19 @@
                 :current="request()->routeIs('report.customer*')" wire:navigate
                 class="
                     text-slate-600!
-
                     hover:bg-emerald-400!
                     hover:text-emerald-50!
-
                     data-current:bg-emerald-400!
                     data-current:text-emerald-50!
-
                     dark:text-slate-600!
                     dark:hover:bg-emerald-400!
                     dark:hover:text-emerald-50!
-
                     dark:data-current:bg-emerald-400!
                     dark:data-current:text-emerald-50!
                     dark:data-current:hover:bg-emerald-400!
                     dark:data-current:hover:text-emerald-50!
                 ">
-                {{ __('Laporan Nasabah') }}
+                {{ __('app.sidebar.customer_report') }}
             </flux:sidebar.item>
 
             <livewire:language-switcher />
@@ -336,13 +303,19 @@
                                 color="auto" circle badge badge:circle badge:color="green" />
 
                             <div class="min-w-0 flex-1">
-                                <div class="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
+
+                                <div
+                                    class="truncate text-sm font-semibold
+                                           text-slate-800 dark:text-slate-100">
                                     {{ auth()->user()->name }}
                                 </div>
 
-                                <div class="truncate text-xs text-slate-500 dark:text-slate-400">
+                                <div
+                                    class="truncate text-xs
+                                           text-slate-500 dark:text-slate-400">
                                     {{ auth()->user()->email }}
                                 </div>
+
                             </div>
 
                         </div>
@@ -357,7 +330,7 @@
                 <flux:menu.radio.group>
 
                     <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
-                        {{ __('Settings') }}
+                        {{ __('app.sidebar.settings') }}
                     </flux:menu.item>
 
                 </flux:menu.radio.group>
@@ -370,7 +343,7 @@
 
                     <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle"
                         class="w-full cursor-pointer" data-test="logout-button">
-                        {{ __('Log out') }}
+                        {{ __('app.sidebar.logout') }}
                     </flux:menu.item>
 
                 </form>

@@ -1,9 +1,9 @@
-<x-layouts::auth :title="__('Log in')">
+<x-layouts::auth :title="__('app.auth.login.title')">
 
     <div class="flex flex-col gap-4">
 
         {{-- Header --}}
-        <x-auth-header :title="__('Log in to your account')" :description="__('Enter your email and password below to log in')" />
+        <x-auth-header :title="__('app.auth.login.heading')" :description="__('app.auth.login.description')" />
 
         {{-- Session Status --}}
         <x-auth-session-status class="text-center" :status="session('status')" />
@@ -16,13 +16,14 @@
             @csrf
 
             {{-- Email --}}
-            <flux:input name="email" :label="__('Email address')" :value="old('email')" type="email" required
+            <flux:input name="email" :label="__('app.auth.login.email')" :value="old('email')" type="email" required
                 autofocus autocomplete="email" placeholder="email@katasama.or.id" icon="envelope" />
 
             {{-- Password --}}
             <div class="relative">
-                <flux:input name="password" :label="__('Password')" type="password" required icon="lock-closed"
-                    autocomplete="current-password" :placeholder="__('Password')" viewable />
+                <flux:input name="password" :label="__('app.auth.login.password')" type="password" required
+                    icon="lock-closed" autocomplete="current-password"
+                    :placeholder="__('app.auth.login.password_placeholder')" viewable />
 
                 @if (Route::has('password.request'))
                     <flux:link
@@ -30,34 +31,40 @@
                                text-emerald-600 hover:text-emerald-700
                                dark:text-emerald-400 dark:hover:text-emerald-300"
                         :href="route('password.request')" wire:navigate>
-                        {{ __('Forgot your password?') }}
+                        {{ __('app.auth.login.forgot_password') }}
                     </flux:link>
                 @endif
             </div>
 
             {{-- Remember --}}
-            <flux:checkbox name="remember" :label="__('Remember me')" :checked="old('remember')" />
+            <flux:checkbox name="remember" :label="__('app.auth.login.remember_me')" :checked="old('remember')" />
 
             {{-- Submit --}}
-            <x-loading-button target="login" loading-text="{{ __('Logging in...') }}" variant="primary" color="emerald"
+            <x-loading-button target="login" :loading-text="__('app.auth.login.logging_in')" variant="primary" color="emerald"
                 class="w-full justify-center" data-test="login-button">
-                {{ __('Log in') }}
+                {{ __('app.auth.login.login') }}
             </x-loading-button>
         </form>
 
         {{-- Register --}}
-        {{-- <div class="text-center text-sm text-slate-600
-                   dark:text-slate-400">
-            <span>{{ __('Don\'t have an account?') }}</span>
+        {{--
+        <div class="text-center text-sm text-slate-600 dark:text-slate-400">
+            <span>
+                {{ __('app.auth.login.dont_have_account') }}
+            </span>
 
-            <flux:link :href="route('register')" wire:navigate
+            <flux:link
+                :href="route('register')"
+                wire:navigate
                 class="font-medium text-emerald-600
                        hover:text-emerald-700
                        dark:text-emerald-400
-                       dark:hover:text-emerald-300">
-                {{ __('Sign up') }}
+                       dark:hover:text-emerald-300"
+            >
+                {{ __('app.auth.login.sign_up') }}
             </flux:link>
-        </div> --}}
+        </div>
+        --}}
 
     </div>
 

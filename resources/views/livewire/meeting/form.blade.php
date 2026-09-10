@@ -1,7 +1,7 @@
 {{-- Meeting Form --}}
 <flux:modal wire:model="showFormModal" class="w-sm md:w-3xl" :dismissible="false">
-    <form wire:submit="save">
 
+    <form wire:submit="save">
         <div class="space-y-5">
 
             {{-- Header --}}
@@ -35,7 +35,7 @@
 
                     <flux:field>
                         <flux:input :label="__('app.meeting.place')" wire:model="place"
-                            placeholder="Contoh: Balai Desa" />
+                            :placeholder="__('app.meeting.place_placeholder')" />
 
                         <flux:error name="place" />
                     </flux:field>
@@ -53,20 +53,18 @@
 
             {{-- Footer --}}
             <footer class="flex justify-end gap-2">
+
                 <flux:button type="button" variant="ghost" wire:click="$set('showFormModal', false)">
                     {{ __('app.actions.cancel') }}
                 </flux:button>
 
                 <flux:button type="submit" variant="primary">
-                    @if ($isEdit)
-                        {{ __('app.actions.update') }} {{ __('app.meeting.singular') }}
-                    @else
-                        {{ __('app.actions.save') }} {{ __('app.meeting.singular') }}
-                    @endif
+                    {{ $isEdit ? __('app.actions.update') : __('app.actions.save') }}
                 </flux:button>
+
             </footer>
 
         </div>
-
     </form>
+
 </flux:modal>

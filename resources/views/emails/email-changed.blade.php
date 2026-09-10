@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 
-<html lang="id">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Email Akun Diubah</title>
-
+    <title>{{ __('app.mail.email_changed.title') }}</title>
 </head>
 
 <body
@@ -30,12 +29,12 @@
 
                             <div
                                 style="margin-top: 16px; color: #ffffff; font-size: 22px; line-height: 1.3; font-weight: 700; letter-spacing: 0.3px;">
-                                {{ __('SATYA MUDA GETAS') }}
+                                SATYA MUDA GETAS
                             </div>
 
                             <div
                                 style="margin-top: 6px; color: #d1fae5; font-size: 14px; line-height: 1.4; font-weight: 600; letter-spacing: 1.5px;">
-                                {{ __('SIMPAN PINJAM') }}
+                                SIMPAN PINJAM
                             </div>
 
                         </td>
@@ -54,12 +53,13 @@
 
                             <h1
                                 style="margin: 0 0 12px; text-align: center; font-size: 25px; line-height: 1.3; color: #18181b;">
-                                Email Akun Diubah
+                                {{ __('app.mail.email_changed.title') }}
                             </h1>
 
                             <p
                                 style="margin: 0 0 18px; text-align: center; font-size: 15px; line-height: 1.7; color: #71717a;">
-                                Halo
+                                {{ __('app.mail.email_changed.greeting') }}
+
                                 <strong style="color: #27272a;">
                                     {{ $user->name }}
                                 </strong>,
@@ -68,21 +68,21 @@
                             @if ($isOldEmail)
                                 <p
                                     style="margin: 0 0 28px; text-align: center; font-size: 15px; line-height: 1.7; color: #71717a;">
-                                    Alamat email yang terhubung dengan akun
-                                    {{ config('app.name') }} Anda telah diubah.
+                                    {{ __('app.mail.email_changed.changed_description', [
+                                        'app' => config('app.name'),
+                                    ]) }}
                                 </p>
 
                                 {{-- Email Information --}}
                                 <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
                                     style="margin-bottom: 24px;">
-
                                     <tr>
                                         <td
                                             style="padding: 14px 16px; background: #f4f4f5; border-radius: 10px 10px 0 0;">
 
                                             <div
                                                 style="font-size: 11px; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px;">
-                                                Email Lama
+                                                {{ __('app.mail.email_changed.old_email') }}
                                             </div>
 
                                             <div
@@ -99,7 +99,7 @@
 
                                             <div
                                                 style="font-size: 11px; font-weight: 700; color: #047857; text-transform: uppercase; letter-spacing: 0.5px;">
-                                                Email Baru
+                                                {{ __('app.mail.email_changed.new_email') }}
                                             </div>
 
                                             <div
@@ -109,13 +109,13 @@
 
                                         </td>
                                     </tr>
-
                                 </table>
                             @else
                                 <p
                                     style="margin: 0 0 28px; text-align: center; font-size: 15px; line-height: 1.7; color: #71717a;">
-                                    Alamat email akun {{ config('app.name') }} Anda
-                                    telah berhasil diperbarui menjadi:
+                                    {{ __('app.mail.email_changed.updated_description', [
+                                        'app' => config('app.name'),
+                                    ]) }}
                                 </p>
 
                                 <div
@@ -142,23 +142,19 @@
                                 <p
                                     style="margin: 0 0 8px; text-align: center; font-size: 12px; font-weight: 700; color: #c2410c;">
                                     @if ($isOldEmail)
-                                        Bukan Anda?
+                                        {{ __('app.mail.email_changed.not_you') }}
                                     @else
-                                        Pemberitahuan Keamanan
+                                        {{ __('app.mail.email_changed.security_notice') }}
                                     @endif
                                 </p>
 
                                 <p
                                     style="margin: 0; text-align: center; font-size: 12px; line-height: 1.6; color: #78716c;">
-
                                     @if ($isOldEmail)
-                                        Jika Anda tidak melakukan perubahan email ini,
-                                        segera hubungi administrator untuk mengamankan akun Anda.
+                                        {{ __('app.mail.email_changed.not_you_description') }}
                                     @else
-                                        Jika Anda yang melakukan perubahan ini,
-                                        tidak ada tindakan lebih lanjut yang diperlukan.
+                                        {{ __('app.mail.email_changed.security_description') }}
                                     @endif
-
                                 </p>
 
                             </div>
@@ -174,7 +170,7 @@
                             <p style="margin: 0; font-size: 12px; color: #a1a1aa;">
                                 © {{ date('Y') }}
                                 {{ config('app.name') }}.
-                                All rights reserved.
+                                {{ __('app.mail.email_changed.all_rights_reserved') }}
                             </p>
 
                         </td>

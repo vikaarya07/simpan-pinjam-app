@@ -27,6 +27,7 @@
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
 
+                {{-- NPK --}}
                 <div>
                     <flux:text size="sm">
                         {{ __('app.customer.npk') }}
@@ -37,6 +38,7 @@
                     </div>
                 </div>
 
+                {{-- Name --}}
                 <div>
                     <flux:text size="sm">
                         {{ __('app.customer.name') }}
@@ -47,6 +49,7 @@
                     </div>
                 </div>
 
+                {{-- Phone --}}
                 <div>
                     <flux:text size="sm">
                         {{ __('app.customer.phone') }}
@@ -63,6 +66,7 @@
 
     {{-- Loan History --}}
     <section class="space-y-4">
+
         <div>
             <flux:heading size="lg">
                 {{ __('app.customer.loan_history') }}
@@ -74,6 +78,7 @@
         </div>
 
         <x-loan-history :customer="$customer" :items="$customer->loans" />
+
     </section>
 
 </div>

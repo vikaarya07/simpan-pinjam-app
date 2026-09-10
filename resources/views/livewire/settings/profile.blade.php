@@ -1,14 +1,14 @@
 <section class="w-full">
+
     @include('partials.settings-heading')
 
     <flux:heading class="sr-only">
-        {{ __('Profile settings') }}
+        {{ __('app.profile.settings') }}
     </flux:heading>
 
-    <x-settings.layout :heading="__('Profile')" :subheading="__('Kelola informasi profil dan alamat email Anda.')">
+    <x-settings.layout :heading="__('app.profile.title')" :subheading="__('app.profile.subtitle')">
         <div
             class="mt-6 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
-
             {{-- Header --}}
             <div class="border-b border-zinc-200 px-6 py-5 dark:border-zinc-700">
                 <div class="flex items-center gap-4">
@@ -19,11 +19,11 @@
 
                     <div>
                         <flux:heading size="lg">
-                            {{ __('Informasi Profil') }}
+                            {{ __('app.profile.information') }}
                         </flux:heading>
 
                         <flux:text class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                            {{ __('Perbarui nama dan alamat email akun Anda.') }}
+                            {{ __('app.profile.information_description') }}
                         </flux:text>
                     </div>
                 </div>
@@ -34,13 +34,13 @@
                 <div class="grid gap-6 sm:grid-cols-2">
 
                     {{-- Name --}}
-                    <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus
-                        autocomplete="name" placeholder="Masukkan nama Anda" />
+                    <flux:input wire:model="name" :label="__('app.profile.name')" type="text" required autofocus
+                        autocomplete="name" :placeholder="__('app.profile.name_placeholder')" />
 
                     {{-- Email --}}
                     <div>
-                        <flux:input wire:model="email" :label="__('Email')" type="email" required
-                            autocomplete="email" placeholder="nama@email.com" />
+                        <flux:input wire:model="email" :label="__('app.profile.email')" type="email" required
+                            autocomplete="email" :placeholder="__('app.profile.email_placeholder')" />
 
                         @if ($this->hasUnverifiedEmail)
                             <div
@@ -50,17 +50,17 @@
 
                                 <div class="min-w-0">
                                     <flux:text class="text-sm font-medium text-amber-800 dark:text-amber-300">
-                                        {{ __('Alamat email belum diverifikasi.') }}
+                                        {{ __('app.profile.email_unverified') }}
                                     </flux:text>
 
                                     <flux:text class="mt-1 text-xs text-amber-700 dark:text-amber-400">
-                                        {{ __('Silakan periksa inbox Anda atau kirim ulang email verifikasi.') }}
+                                        {{ __('app.profile.email_unverified_description') }}
                                     </flux:text>
 
                                     <flux:link
                                         class="mt-2 inline-block text-xs font-semibold text-amber-700 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300"
                                         wire:click.prevent="resendVerificationNotification">
-                                        {{ __('Kirim ulang email verifikasi') }}
+                                        {{ __('app.profile.resend_verification') }}
                                     </flux:link>
                                 </div>
                             </div>
@@ -73,11 +73,11 @@
                     class="flex flex-col-reverse gap-3 border-t border-zinc-200 pt-5 sm:flex-row sm:items-center sm:justify-end dark:border-zinc-700">
                     <flux:button variant="primary" type="submit" wire:loading.attr="disabled">
                         <span wire:loading.remove wire:target="updateProfileInformation">
-                            {{ __('Save changes') }}
+                            {{ __('app.profile.save_changes') }}
                         </span>
 
                         <span wire:loading wire:target="updateProfileInformation">
-                            {{ __('Saving...') }}
+                            {{ __('app.profile.saving') }}
                         </span>
                     </flux:button>
                 </div>
@@ -90,6 +90,7 @@
                 <livewire:settings.delete-user-form />
             </div>
         @endif
+
     </x-settings.layout>
 
 </section>

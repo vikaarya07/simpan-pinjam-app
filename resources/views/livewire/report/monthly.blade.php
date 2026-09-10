@@ -6,11 +6,11 @@
         <div class="space-y-3">
             <div>
                 <flux:heading size="xl">
-                    Laporan Bulanan
+                    {{ __('app.monthly_report.title') }}
                 </flux:heading>
 
                 <flux:text class="mt-1">
-                    Ringkasan aktivitas, pinjaman, pembayaran, dan posisi keuangan.
+                    {{ __('app.monthly_report.subtitle') }}
                 </flux:text>
             </div>
 
@@ -22,30 +22,28 @@
         <div class="flex flex-col gap-2 sm:flex-row">
             <flux:button variant="primary" color="rose" icon="document-arrow-down" wire:click="confirmDownloadPdf"
                 class="w-full sm:w-auto">
-                Download PDF
+                {{ __('app.monthly_report.download_pdf') }}
             </flux:button>
         </div>
-
     </div>
 
     {{-- Filter --}}
-    <flux:card class="overflow-visible p-4 border-none!">
-
+    <flux:card class="overflow-visible border-none! p-4">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 
             <div>
                 <flux:heading size="base">
-                    Ringkasan Laporan Keuangan
+                    {{ __('app.monthly_report.filter.title') }}
                 </flux:heading>
 
                 <flux:text class="mt-1">
-                    Ringkasan posisi dan pergerakan keuangan selama periode laporan.
+                    {{ __('app.monthly_report.filter.description') }}
                 </flux:text>
             </div>
 
             <div class="grid grid-cols-2 gap-3 sm:min-w-[320px]">
 
-                <flux:select wire:model.live="month">
+                <flux:select wire:model.live="month" aria-label="{{ __('app.monthly_report.filter.month') }}">
                     @foreach (range(1, 12) as $month)
                         <flux:select.option value="{{ $month }}">
                             {{ \Carbon\Carbon::create()->month($month)->translatedFormat('F') }}
@@ -53,7 +51,7 @@
                     @endforeach
                 </flux:select>
 
-                <flux:select wire:model.live="year">
+                <flux:select wire:model.live="year" aria-label="{{ __('app.monthly_report.filter.year') }}">
                     @foreach (range(now()->year - 4, now()->year + 4) as $year)
                         <flux:select.option value="{{ $year }}">
                             {{ $year }}
@@ -62,9 +60,7 @@
                 </flux:select>
 
             </div>
-
         </div>
-
     </flux:card>
 
     {{-- Financial Summary --}}
@@ -72,12 +68,11 @@
 
         {{-- Opening Balance --}}
         <flux:card class="border border-teal-200! bg-teal-50 p-4">
-
             <div class="flex items-start justify-between gap-3">
 
                 <div>
                     <flux:text class="text-sm font-medium">
-                        Saldo Bulan Lalu
+                        {{ __('app.monthly_report.opening.balance') }}
                     </flux:text>
 
                     <flux:heading size="lg" class="mt-2 text-teal-600">
@@ -90,17 +85,15 @@
                 </div>
 
             </div>
-
         </flux:card>
 
         {{-- Opening Receivable --}}
         <flux:card class="border border-amber-200! bg-amber-50 p-4">
-
             <div class="flex items-start justify-between gap-3">
 
                 <div>
                     <flux:text class="text-sm font-medium">
-                        Piutang Bulan Lalu
+                        {{ __('app.monthly_report.opening.receivable') }}
                     </flux:text>
 
                     <flux:heading size="lg" class="mt-2 text-amber-600">
@@ -113,17 +106,15 @@
                 </div>
 
             </div>
-
         </flux:card>
 
         {{-- Opening Amount --}}
         <flux:card class="border border-indigo-300! bg-indigo-100 p-4">
-
             <div class="flex items-start justify-between gap-3">
 
                 <div>
                     <flux:text class="text-sm font-medium">
-                        Total Bulan Lalu
+                        {{ __('app.monthly_report.opening.amount') }}
                     </flux:text>
 
                     <flux:heading size="lg" class="mt-2 text-indigo-700">
@@ -136,21 +127,20 @@
                 </div>
 
             </div>
-
         </flux:card>
 
     </div>
 
     {{-- Cash Flow --}}
-    <flux:card class="p-4 border-none!">
+    <flux:card class="border-none! p-4">
 
         <div>
             <flux:heading size="lg">
-                Pergerakan Keuangan
+                {{ __('app.monthly_report.cash_flow.title') }}
             </flux:heading>
 
             <flux:text class="mt-1">
-                Perbandingan debit dan credit selama periode laporan.
+                {{ __('app.monthly_report.cash_flow.description') }}
             </flux:text>
         </div>
 
@@ -158,7 +148,6 @@
 
             {{-- Debit --}}
             <div class="rounded-2xl border border-emerald-200 bg-emerald-50/60 p-5">
-
                 <div class="flex items-center justify-between">
 
                     <div class="flex items-center gap-3">
@@ -169,18 +158,19 @@
 
                         <div>
                             <flux:text class="font-semibold text-emerald-900">
-                                Debit
+                                {{ __('app.monthly_report.cash_flow.debit') }}
                             </flux:text>
 
                             <flux:text class="text-xs text-emerald-700">
-                                Total pemasukan
+                                {{ __('app.monthly_report.cash_flow.debit_description') }}
                             </flux:text>
                         </div>
 
                     </div>
 
                     <flux:badge color="emerald">
-                        {{ $report['summary']['loan_count'] }} Transaksi
+                        {{ $report['summary']['loan_count'] }}
+                        {{ __('app.monthly_report.cash_flow.transaction') }}
                     </flux:badge>
 
                 </div>
@@ -188,12 +178,10 @@
                 <flux:heading size="xl" class="mt-4 text-emerald-700">
                     {{ idr($report['summary']['debit']) }}
                 </flux:heading>
-
             </div>
 
             {{-- Credit --}}
             <div class="rounded-2xl border border-rose-200 bg-rose-50/60 p-5">
-
                 <div class="flex items-center justify-between">
 
                     <div class="flex items-center gap-3">
@@ -204,18 +192,19 @@
 
                         <div>
                             <flux:text class="font-semibold text-rose-900">
-                                Credit
+                                {{ __('app.monthly_report.cash_flow.credit') }}
                             </flux:text>
 
                             <flux:text class="text-xs text-rose-700">
-                                Total pengeluaran
+                                {{ __('app.monthly_report.cash_flow.credit_description') }}
                             </flux:text>
                         </div>
 
                     </div>
 
                     <flux:badge color="rose">
-                        {{ $report['summary']['payment_count'] }} Transaksi
+                        {{ $report['summary']['payment_count'] }}
+                        {{ __('app.monthly_report.cash_flow.transaction') }}
                     </flux:badge>
 
                 </div>
@@ -223,23 +212,21 @@
                 <flux:heading size="xl" class="mt-4 text-rose-700">
                     {{ idr($report['summary']['credit']) }}
                 </flux:heading>
-
             </div>
 
         </div>
-
     </flux:card>
 
     {{-- Financial Position --}}
-    <flux:card class="p-4 border-none!">
+    <flux:card class="border-none! p-4">
 
         <div>
             <flux:heading size="lg">
-                Posisi Keuangan
+                {{ __('app.monthly_report.position.title') }}
             </flux:heading>
 
             <flux:text class="mt-1">
-                Ringkasan kondisi keuangan pada akhir periode.
+                {{ __('app.monthly_report.position.description') }}
             </flux:text>
         </div>
 
@@ -247,78 +234,77 @@
 
             {{-- Balance --}}
             <flux:card class="border border-teal-200! bg-teal-50/60 p-4">
-
                 <div class="flex items-center gap-3">
+
                     <div class="flex size-9 items-center justify-center rounded-lg bg-white shadow-sm">
                         <flux:icon.banknotes class="size-4 text-teal-600" />
                     </div>
 
                     <flux:text class="font-medium text-teal-900">
-                        Saldo Saat Ini
+                        {{ __('app.monthly_report.position.balance') }}
                     </flux:text>
+
                 </div>
 
                 <flux:heading size="lg" class="mt-3 text-teal-700">
                     {{ idr($report['summary']['closing_balance']) }}
                 </flux:heading>
-
             </flux:card>
 
             {{-- Receivable --}}
             <flux:card class="border border-amber-200! bg-amber-50/60 p-4">
-
                 <div class="flex items-center gap-3">
+
                     <div class="flex size-9 items-center justify-center rounded-lg bg-white shadow-sm">
                         <flux:icon.receipt-percent class="size-4 text-amber-600" />
                     </div>
 
                     <flux:text class="font-medium text-amber-900">
-                        Piutang Saat Ini
+                        {{ __('app.monthly_report.position.receivable') }}
                     </flux:text>
+
                 </div>
 
                 <flux:heading size="lg" class="mt-3 text-amber-700">
                     {{ idr($report['summary']['closing_receivable']) }}
                 </flux:heading>
-
             </flux:card>
 
             {{-- Total --}}
             <flux:card class="border border-indigo-200! bg-indigo-50/60 p-4">
-
                 <div class="flex items-center gap-3">
+
                     <div class="flex size-9 items-center justify-center rounded-lg bg-white shadow-sm">
                         <flux:icon.calculator class="size-4 text-indigo-600" />
                     </div>
 
                     <flux:text class="font-medium text-indigo-900">
-                        Total Saat Ini
+                        {{ __('app.monthly_report.position.amount') }}
                     </flux:text>
+
                 </div>
 
                 <flux:heading size="lg" class="mt-3 text-indigo-700">
                     {{ idr($report['summary']['closing_amount']) }}
                 </flux:heading>
-
             </flux:card>
 
         </div>
-
     </flux:card>
 
     {{-- Summary --}}
-    <flux:card class="overflow-hidden p-0 border-none!">
+    <flux:card class="overflow-hidden border-none! p-0">
 
         <div
             class="flex flex-col gap-2 border-b border-slate-200 p-4 pb-3 sm:flex-row sm:items-center sm:justify-between">
 
             <div>
                 <flux:heading size="lg">
-                    Detail Summary
+                    {{ __('app.monthly_report.summary.title') }}
                 </flux:heading>
 
                 <flux:text class="mt-1">
-                    Seluruh nilai utama dalam laporan keuangan.
+                    {{ __('app.monthly_report.summary.description') }}
                 </flux:text>
             </div>
 
@@ -332,7 +318,7 @@
 
             <div class="flex items-center justify-between gap-4 px-4 py-3">
                 <flux:text class="font-medium text-slate-500">
-                    Debit
+                    {{ __('app.monthly_report.summary.debit') }}
                 </flux:text>
 
                 <flux:text class="font-semibold text-slate-600">
@@ -342,7 +328,7 @@
 
             <div class="flex items-center justify-between gap-4 px-4 py-3">
                 <flux:text class="font-medium text-slate-500">
-                    Credit
+                    {{ __('app.monthly_report.summary.credit') }}
                 </flux:text>
 
                 <flux:text class="font-semibold text-slate-600">
@@ -352,7 +338,7 @@
 
             <div class="flex items-center justify-between gap-4 px-4 py-3">
                 <flux:text class="font-medium text-slate-500">
-                    Saldo
+                    {{ __('app.monthly_report.summary.balance') }}
                 </flux:text>
 
                 <flux:text class="font-semibold text-slate-600">
@@ -362,7 +348,7 @@
 
             <div class="flex items-center justify-between gap-4 px-4 py-3">
                 <flux:text class="font-medium text-slate-500">
-                    Piutang
+                    {{ __('app.monthly_report.summary.receivable') }}
                 </flux:text>
 
                 <flux:text class="font-semibold text-slate-600">
@@ -372,7 +358,7 @@
 
             <div class="flex items-center justify-between gap-4 bg-indigo-100 px-4 py-4">
                 <flux:text class="text-lg font-bold text-indigo-700">
-                    Total Posisi
+                    {{ __('app.monthly_report.summary.total_position') }}
                 </flux:text>
 
                 <flux:text class="text-lg font-bold text-indigo-700">
@@ -381,26 +367,26 @@
             </div>
 
         </div>
-
     </flux:card>
 
     {{-- Loans --}}
-    <flux:card class="overflow-hidden p-4 border-none!">
+    <flux:card class="overflow-hidden border-none! p-4">
 
         <div class="flex flex-col gap-2 border-b border-slate-100 pb-3 sm:flex-row sm:items-center sm:justify-between">
 
             <div>
                 <flux:heading size="lg">
-                    Pinjaman
+                    {{ __('app.monthly_report.loan.title') }}
                 </flux:heading>
 
                 <flux:text class="mt-1">
-                    Daftar pinjaman yang tercatat pada periode ini.
+                    {{ __('app.monthly_report.loan.description') }}
                 </flux:text>
             </div>
 
             <flux:badge color="rose">
-                {{ $report['summary']['loan_count'] }} Transaksi
+                {{ $report['summary']['loan_count'] }}
+                {{ __('app.monthly_report.cash_flow.transaction') }}
             </flux:badge>
 
         </div>
@@ -411,15 +397,25 @@
 
                 <flux:table.columns>
 
-                    <flux:table.column>Nasabah</flux:table.column>
+                    <flux:table.column>
+                        {{ __('app.monthly_report.loan.customer') }}
+                    </flux:table.column>
 
-                    <flux:table.column>Pokok Pinjaman</flux:table.column>
+                    <flux:table.column>
+                        {{ __('app.monthly_report.loan.principal') }}
+                    </flux:table.column>
 
-                    <flux:table.column>Jasa</flux:table.column>
+                    <flux:table.column>
+                        {{ __('app.monthly_report.loan.interest') }}
+                    </flux:table.column>
 
-                    <flux:table.column>Total</flux:table.column>
+                    <flux:table.column>
+                        {{ __('app.monthly_report.loan.total') }}
+                    </flux:table.column>
 
-                    <flux:table.column>Status</flux:table.column>
+                    <flux:table.column>
+                        {{ __('app.monthly_report.loan.status') }}
+                    </flux:table.column>
 
                 </flux:table.columns>
 
@@ -446,8 +442,9 @@
                             </flux:table.cell>
 
                             <flux:table.cell>
-                                <div class="flex gap-1 items-center">
+                                <div class="flex items-center gap-1">
                                     {{ idr($loan->interest_amount) }}
+
                                     <flux:text class="text-xs">
                                         {{ '(' . $loan->interest_percent . '%)' }}
                                     </flux:text>
@@ -461,11 +458,9 @@
                             </flux:table.cell>
 
                             <flux:table.cell>
-
                                 <flux:badge :color="$loan->status?->color() ?? 'zinc'">
                                     {{ $loan->status?->label() ?? '-' }}
                                 </flux:badge>
-
                             </flux:table.cell>
 
                         </flux:table.row>
@@ -473,7 +468,6 @@
                     @empty
 
                         <flux:table.row>
-
                             <flux:table.cell colspan="5">
 
                                 <div class="py-12 text-center">
@@ -481,17 +475,16 @@
                                     <flux:icon.banknotes class="mx-auto size-6 text-zinc-400" />
 
                                     <flux:heading size="sm" class="mt-3">
-                                        Belum ada pinjaman
+                                        {{ __('app.monthly_report.loan.empty_title') }}
                                     </flux:heading>
 
                                     <flux:text class="mt-1">
-                                        Tidak ada pinjaman pada periode ini.
+                                        {{ __('app.monthly_report.loan.empty_description') }}
                                     </flux:text>
 
                                 </div>
 
                             </flux:table.cell>
-
                         </flux:table.row>
                     @endforelse
 
@@ -500,26 +493,26 @@
             </flux:table>
 
         </div>
-
     </flux:card>
 
     {{-- Payments --}}
-    <flux:card class="overflow-hidden p-4 border-none!">
+    <flux:card class="overflow-hidden border-none! p-4">
 
         <div class="flex flex-col gap-2 border-b border-slate-100 pb-3 sm:flex-row sm:items-center sm:justify-between">
 
             <div>
                 <flux:heading size="lg">
-                    Pembayaran
+                    {{ __('app.monthly_report.payment.title') }}
                 </flux:heading>
 
                 <flux:text class="mt-1">
-                    Riwayat pembayaran angsuran pada periode ini.
+                    {{ __('app.monthly_report.payment.description') }}
                 </flux:text>
             </div>
 
             <flux:badge color="emerald">
-                {{ $report['summary']['payment_count'] }} Transaksi
+                {{ $report['summary']['payment_count'] }}
+                {{ __('app.monthly_report.cash_flow.transaction') }}
             </flux:badge>
 
         </div>
@@ -530,15 +523,25 @@
 
                 <flux:table.columns>
 
-                    <flux:table.column>Nasabah</flux:table.column>
+                    <flux:table.column>
+                        {{ __('app.monthly_report.payment.customer') }}
+                    </flux:table.column>
 
-                    <flux:table.column>Tanggal</flux:table.column>
+                    <flux:table.column>
+                        {{ __('app.monthly_report.payment.date') }}
+                    </flux:table.column>
 
-                    <flux:table.column>Rapat</flux:table.column>
+                    <flux:table.column>
+                        {{ __('app.monthly_report.payment.meeting') }}
+                    </flux:table.column>
 
-                    <flux:table.column>Angsuran</flux:table.column>
+                    <flux:table.column>
+                        {{ __('app.monthly_report.payment.installment') }}
+                    </flux:table.column>
 
-                    <flux:table.column>Metode Bayar</flux:table.column>
+                    <flux:table.column>
+                        {{ __('app.monthly_report.payment.method') }}
+                    </flux:table.column>
 
                 </flux:table.columns>
 
@@ -548,7 +551,6 @@
                         <flux:table.row>
 
                             <flux:table.cell>
-
                                 <div class="flex items-center gap-3">
 
                                     <flux:avatar size="sm" :name="$payment->loan->member->name"
@@ -559,7 +561,6 @@
                                     </flux:text>
 
                                 </div>
-
                             </flux:table.cell>
 
                             <flux:table.cell>
@@ -577,11 +578,9 @@
                             </flux:table.cell>
 
                             <flux:table.cell>
-
                                 <flux:badge :color="$payment->method?->color() ?? 'zinc'">
                                     {{ $payment->method?->label() ?? '-' }}
                                 </flux:badge>
-
                             </flux:table.cell>
 
                         </flux:table.row>
@@ -589,7 +588,6 @@
                     @empty
 
                         <flux:table.row>
-
                             <flux:table.cell colspan="5">
 
                                 <div class="py-12 text-center">
@@ -597,17 +595,16 @@
                                     <flux:icon.banknotes class="mx-auto size-6 text-zinc-400" />
 
                                     <flux:heading size="sm" class="mt-3">
-                                        Belum ada pembayaran
+                                        {{ __('app.monthly_report.payment.empty_title') }}
                                     </flux:heading>
 
                                     <flux:text class="mt-1">
-                                        Tidak ada pembayaran pada periode ini.
+                                        {{ __('app.monthly_report.payment.empty_description') }}
                                     </flux:text>
 
                                 </div>
 
                             </flux:table.cell>
-
                         </flux:table.row>
                     @endforelse
 
@@ -616,7 +613,6 @@
             </flux:table>
 
         </div>
-
     </flux:card>
 
 </div>

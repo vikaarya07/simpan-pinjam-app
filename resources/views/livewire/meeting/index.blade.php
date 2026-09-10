@@ -41,6 +41,7 @@
                 <flux:table.column class="cursor-pointer" wire:click="sortBy('meeting_date')">
                     <div class="flex items-center gap-1">
                         {{ __('app.meeting.date') }}
+
                         @include('components.sort-icon', [
                             'field' => 'meeting_date',
                         ])
@@ -48,7 +49,7 @@
                 </flux:table.column>
 
                 <flux:table.column class="text-right">
-                    {{ __('app.action') }}
+                    {{ __('app.actions.action') }}
                 </flux:table.column>
             </flux:table.columns>
 
@@ -56,10 +57,13 @@
                 @forelse ($meetings as $meeting)
                     <flux:table.row wire:key="meeting-{{ $meeting->id }}"
                         class="transition hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+
+                        {{-- Number --}}
                         <flux:table.cell class="text-zinc-500">
                             {{ $meetings->firstItem() + $loop->index }}
                         </flux:table.cell>
 
+                        {{-- Place --}}
                         <flux:table.cell>
                             <div class="flex items-center gap-3">
                                 <div
@@ -73,6 +77,7 @@
                             </div>
                         </flux:table.cell>
 
+                        {{-- Date --}}
                         <flux:table.cell>
                             <div class="flex items-center gap-3">
                                 <div
@@ -92,25 +97,35 @@
                             </div>
                         </flux:table.cell>
 
+                        {{-- Actions --}}
                         <flux:table.cell>
                             <div class="flex gap-1">
+
                                 <flux:button size="sm" variant="ghost" icon="pencil-square"
                                     wire:click="edit('{{ $meeting->id }}')"
-                                    :tooltip="__('app.actions.edit').
-                                    ' '.__('app.meeting.singular')" />
+                                    :tooltip="__('app.meeting.tooltip_edit', [
+                                        'name' => __('app.meeting.singular'),
+                                    ])" />
 
                                 <flux:button size="sm" variant="ghost" icon="trash"
                                     class="text-red-500 hover:text-red-600"
                                     wire:click="confirmDelete('{{ $meeting->id }}')"
-                                    :tooltip="__('app.actions.delete').
-                                    ' '.__('app.meeting.singular')" />
+                                    :tooltip="__('app.meeting.tooltip_delete', [
+                                        'name' => __('app.meeting.singular'),
+                                    ])" />
+
                             </div>
                         </flux:table.cell>
+
                     </flux:table.row>
+
                 @empty
+
                     <flux:table.row>
                         <flux:table.cell colspan="4">
+
                             <div class="flex flex-col items-center justify-center py-12 text-center">
+
                                 <flux:icon name="calendar-days" class="size-10 text-zinc-400" />
 
                                 <flux:heading size="sm" class="mt-3">
@@ -122,9 +137,12 @@
                                 </flux:text>
 
                                 <flux:button class="mt-4" variant="primary" icon="plus" wire:click="create">
-                                    {{ __('app.actions.add') }} {{ __('app.meeting.singular') }}
+                                    {{ __('app.actions.create') }}
+                                    {{ __('app.meeting.singular') }}
                                 </flux:button>
+
                             </div>
+
                         </flux:table.cell>
                     </flux:table.row>
                 @endforelse

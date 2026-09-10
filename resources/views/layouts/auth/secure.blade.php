@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark w-full overflow-hidden">
 
 <head>
@@ -28,6 +29,7 @@
             <header class="relative flex items-center justify-between px-7 pt-7">
 
                 <a href="{{ route('overview') }}" wire:navigate class="flex items-center gap-3">
+
                     <span
                         class="p-1 flex size-10 items-center justify-center
                                rounded-xl shadow">
@@ -39,6 +41,7 @@
                                text-zinc-900 dark:text-white">
                         {{ config('app.name', 'Laravel') }}
                     </span>
+
                 </a>
 
                 <span
@@ -47,16 +50,14 @@
                            text-zinc-500
                            dark:border-zinc-700 dark:bg-zinc-800
                            dark:text-zinc-400">
-                    Secure
+                    {{ __('app.auth.layout.secure') }}
                 </span>
 
             </header>
 
             {{-- Main Content --}}
             <div class="relative flex flex-1 flex-col justify-center p-7 sm:px-10">
-
                 {{ $slot }}
-
             </div>
 
             {{-- Bottom Information --}}
@@ -64,24 +65,31 @@
                 class="border-t border-zinc-100 bg-zinc-50/80
                        px-7 py-5
                        dark:border-zinc-800 dark:bg-zinc-950/40">
+
                 <div class="flex items-center justify-between gap-4">
 
                     <div>
+
                         <p class="text-xs font-medium text-zinc-700 dark:text-zinc-300">
                             {{ config('app.name', 'Laravel') }}
                         </p>
 
                         <p class="mt-0.5 text-[11px] text-zinc-400 dark:text-zinc-500">
-                            Secure account access
+                            {{ __('app.auth.layout.secure_account_access') }}
                         </p>
+
                     </div>
 
                     <div class="flex items-center gap-1.5 text-[11px] text-zinc-400">
+
                         <span class="size-1.5 rounded-full bg-emerald-500"></span>
-                        Secure
+
+                        {{ __('app.auth.layout.secure') }}
+
                     </div>
 
                 </div>
+
             </footer>
 
         </main>
