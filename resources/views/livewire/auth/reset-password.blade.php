@@ -1,4 +1,4 @@
-<x-layouts::auth.secure :title="__('app.auth.reset_password.title')">
+<x-layouts::auth.secure :title="__('auth.reset_password.title')">
 
     <div class="mx-auto w-full max-w-md">
 
@@ -14,11 +14,11 @@
             </div>
 
             <flux:heading size="xl" class="font-semibold tracking-tight">
-                {{ __('app.auth.reset_password.heading') }}
+                {{ __('auth.reset_password.heading') }}
             </flux:heading>
 
             <flux:text class="mx-auto mt-2 max-w-sm text-pretty">
-                {{ __('app.auth.reset_password.description') }}
+                {{ __('auth.reset_password.description') }}
             </flux:text>
         </div>
 
@@ -35,7 +35,7 @@
             {{-- Email --}}
             <flux:field>
                 <flux:label>
-                    {{ __('app.auth.reset_password.email') }}
+                    {{ __('auth.reset_password.email') }}
                 </flux:label>
 
                 <flux:input name="email" value="{{ request('email') }}" type="email" required autocomplete="email"
@@ -47,11 +47,11 @@
             {{-- Password --}}
             <flux:field>
                 <flux:label>
-                    {{ __('app.auth.reset_password.new_password') }}
+                    {{ __('auth.reset_password.new_password') }}
                 </flux:label>
 
                 <flux:input name="password" type="password" required autocomplete="new-password"
-                    :placeholder="__('app.auth.reset_password.new_password_placeholder')" icon="lock-closed"
+                    :placeholder="__('auth.reset_password.new_password_placeholder')" icon="lock-closed"
                     passwordrules="{{ \Illuminate\Validation\Rules\Password::defaults()->toPasswordRulesString() }}"
                     viewable />
 
@@ -61,11 +61,11 @@
             {{-- Confirm Password --}}
             <flux:field>
                 <flux:label>
-                    {{ __('app.auth.reset_password.confirm_password') }}
+                    {{ __('auth.reset_password.confirm_password') }}
                 </flux:label>
 
                 <flux:input name="password_confirmation" type="password" required autocomplete="new-password"
-                    :placeholder="__('app.auth.reset_password.confirm_password_placeholder')" icon="lock-closed"
+                    :placeholder="__('auth.reset_password.confirm_password_placeholder')" icon="lock-closed"
                     passwordrules="{{ \Illuminate\Validation\Rules\Password::defaults()->toPasswordRulesString() }}"
                     viewable />
 
@@ -74,7 +74,7 @@
 
             {{-- Submit --}}
             <flux:button type="submit" variant="primary" class="mt-2 w-full" data-test="reset-password-button">
-                {{ __('app.auth.reset_password.reset_password') }}
+                {{ __('auth.reset_password.reset_password') }}
             </flux:button>
         </form>
 
@@ -83,7 +83,7 @@
             class="mt-3 rounded-xl border border-zinc-200/80 bg-zinc-50/70
                    px-4 py-3 text-center text-xs text-zinc-500
                    dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">
-            {{ __('app.auth.reset_password.security_hint') }}
+            {{ __('auth.reset_password.security_hint') }}
         </div>
 
     </div>

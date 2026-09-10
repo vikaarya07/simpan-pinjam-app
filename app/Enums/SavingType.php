@@ -37,11 +37,11 @@ enum SavingType: string
     public function label(): string
     {
         return match ($this) {
-            self::Opening => 'Pembukaan',
-            self::Assistance => 'Bantuan',
-            self::Loan => 'Pinjaman',
-            self::LoanOverdue => 'Pinjaman Telat',
-            self::Installment => 'Angsuran',
+            self::Opening => __('app.saving.saving_type.opening'),
+            self::Assistance => __('app.saving.saving_type.assistance'),
+            self::Loan => __('app.saving.saving_type.loan'),
+            self::LoanOverdue => __('app.saving.saving_type.loan_overdue'),
+            self::Installment => __('app.saving.saving_type.installment'),
         };
     }
 

@@ -50,7 +50,7 @@
                            text-zinc-500
                            dark:border-zinc-700 dark:bg-zinc-800
                            dark:text-zinc-400">
-                    {{ __('app.auth.layout.secure') }}
+                    {{ __('auth.layout.secure') }}
                 </span>
 
             </header>
@@ -75,7 +75,7 @@
                         </p>
 
                         <p class="mt-0.5 text-[11px] text-zinc-400 dark:text-zinc-500">
-                            {{ __('app.auth.layout.secure_account_access') }}
+                            {{ __('auth.layout.secure_account_access') }}
                         </p>
 
                     </div>
@@ -84,7 +84,7 @@
 
                         <span class="size-1.5 rounded-full bg-emerald-500"></span>
 
-                        {{ __('app.auth.layout.secure') }}
+                        {{ __('auth.layout.secure') }}
 
                     </div>
 

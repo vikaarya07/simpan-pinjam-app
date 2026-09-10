@@ -11,9 +11,9 @@ enum LoanStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Running => 'Berjalan',
-            self::Finish => 'Lunas',
-            self::Overdue => 'Telat',
+            self::Running => __('app.loan.loan_status.running'),
+            self::Finish => __('app.loan.loan_status.finish'),
+            self::Overdue => __('app.loan.loan_status.overdue'),
         };
     }
 

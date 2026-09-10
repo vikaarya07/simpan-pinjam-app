@@ -37,11 +37,11 @@
                 <div class="relative mt-5">
 
                     <p class="text-xs font-medium uppercase tracking-[0.2em] text-white/50">
-                        {{ __('app.auth.layout.welcome') }}
+                        {{ __('auth.layout.welcome') }}
                     </p>
 
                     <p class="mt-2 text-2xl font-semibold tracking-tight text-white">
-                        {{ __('app.auth.layout.manage_account') }}
+                        {{ __('auth.layout.manage_account') }}
                     </p>
 
                 </div>

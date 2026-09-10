@@ -1,4 +1,4 @@
-<x-layouts::auth.secure :title="__('app.auth.confirm_password.title')">
+<x-layouts::auth.secure :title="__('auth.confirm_password.title')">
 
     <div class="mx-auto w-full max-w-md">
 
@@ -14,11 +14,11 @@
             </div>
 
             <flux:heading size="xl" class="font-semibold tracking-tight">
-                {{ __('app.auth.confirm_password.heading') }}
+                {{ __('auth.confirm_password.heading') }}
             </flux:heading>
 
             <flux:text class="mx-auto mt-2 max-w-sm text-pretty">
-                {{ __('app.auth.confirm_password.description') }}
+                {{ __('auth.confirm_password.description') }}
             </flux:text>
         </div>
 
@@ -29,8 +29,8 @@
         <div class="space-y-5">
 
             {{-- Passkey --}}
-            <x-passkey-verify options-route="passkey.confirm-options" submit-route="passkey.confirm" :label="__('app.auth.confirm_password.confirm_with_passkey')"
-                :loading-label="__('app.auth.confirm_password.confirming')" :separator="__('app.auth.confirm_password.or_confirm_with_password')" />
+            <x-passkey-verify options-route="passkey.confirm-options" submit-route="passkey.confirm" :label="__('auth.confirm_password.confirm_with_passkey')"
+                :loading-label="__('auth.confirm_password.confirming')" :separator="__('auth.confirm_password.or_confirm_with_password')" />
 
             {{-- Password Confirmation --}}
             <form method="POST" action="{{ route('password.confirm.store') }}" class="space-y-5">
@@ -38,17 +38,17 @@
 
                 <flux:field>
                     <flux:label>
-                        {{ __('app.auth.confirm_password.password') }}
+                        {{ __('auth.confirm_password.password') }}
                     </flux:label>
 
                     <flux:input name="password" type="password" required autofocus autocomplete="current-password"
-                        :placeholder="__('app.auth.confirm_password.password_placeholder')" viewable />
+                        :placeholder="__('auth.confirm_password.password_placeholder')" viewable />
 
                     <flux:error name="password" />
                 </flux:field>
 
                 <flux:button variant="primary" type="submit" class="w-full" data-test="confirm-password-button">
-                    {{ __('app.auth.confirm_password.confirm') }}
+                    {{ __('auth.confirm_password.confirm') }}
                 </flux:button>
             </form>
 

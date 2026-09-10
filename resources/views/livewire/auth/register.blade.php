@@ -1,15 +1,15 @@
-<x-layouts::auth.card :title="__('app.auth.register.title')">
+<x-layouts::auth.card :title="__('auth.register.title')">
 
     <div class="mx-auto w-full max-w-md">
 
         {{-- Header --}}
         <div class="mb-8">
             <flux:heading size="xl" class="font-semibold tracking-tight">
-                {{ __('app.auth.register.heading') }}
+                {{ __('auth.register.heading') }}
             </flux:heading>
 
             <flux:text class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-                {{ __('app.auth.register.description') }}
+                {{ __('auth.register.description') }}
             </flux:text>
         </div>
 
@@ -21,31 +21,31 @@
             @csrf
 
             {{-- Name --}}
-            <flux:input name="name" :label="__('app.auth.register.name')" :value="old('name')" type="text"
-                required autofocus autocomplete="name" :placeholder="__('app.auth.register.name_placeholder')"
+            <flux:input name="name" :label="__('auth.register.name')" :value="old('name')" type="text"
+                required autofocus autocomplete="name" :placeholder="__('auth.register.name_placeholder')"
                 class="w-full" icon="user" />
 
             {{-- Email --}}
-            <flux:input name="email" :label="__('app.auth.register.email')" :value="old('email')" type="email"
+            <flux:input name="email" :label="__('auth.register.email')" :value="old('email')" type="email"
                 required autocomplete="email" placeholder="email@katasama.or.id" class="w-full" icon="envelope" />
 
             {{-- Password --}}
-            <flux:input name="password" :label="__('app.auth.register.password')" type="password" required
-                autocomplete="new-password" :placeholder="__('app.auth.register.password_placeholder')"
+            <flux:input name="password" :label="__('auth.register.password')" type="password" required
+                autocomplete="new-password" :placeholder="__('auth.register.password_placeholder')"
                 passwordrules="{{ \Illuminate\Validation\Rules\Password::defaults()->toPasswordRulesString() }}"
                 viewable class="w-full" icon="lock-closed" />
 
             {{-- Confirm Password --}}
-            <flux:input name="password_confirmation" :label="__('app.auth.register.confirm_password')" type="password"
-                required autocomplete="new-password" :placeholder="__('app.auth.register.confirm_password_placeholder')"
+            <flux:input name="password_confirmation" :label="__('auth.register.confirm_password')" type="password"
+                required autocomplete="new-password" :placeholder="__('auth.register.confirm_password_placeholder')"
                 passwordrules="{{ \Illuminate\Validation\Rules\Password::defaults()->toPasswordRulesString() }}"
                 viewable class="w-full" icon="lock-closed" />
 
             {{-- Submit --}}
             <div class="pt-2">
-                <x-loading-button target="register" :loading-text="__('app.auth.register.creating_account')" variant="primary" color="emerald"
+                <x-loading-button target="register" :loading-text="__('auth.register.creating_account')" variant="primary" color="emerald"
                     class="w-full justify-center" data-test="register-user-button">
-                    {{ __('app.auth.register.create_account') }}
+                    {{ __('auth.register.create_account') }}
                 </x-loading-button>
             </div>
         </form>
@@ -54,7 +54,7 @@
         {{-- 
         <div class="mt-7 text-center text-sm">
             <span class="text-zinc-500 dark:text-zinc-400">
-                {{ __('app.auth.register.already_have_account') }}
+                {{ __('auth.register.already_have_account') }}
             </span>
 
             <flux:link
@@ -63,7 +63,7 @@
                 class="font-medium text-emerald-600 hover:text-emerald-700
                        dark:text-emerald-400 dark:hover:text-emerald-300"
             >
-                {{ __('app.auth.register.login') }}
+                {{ __('auth.register.login') }}
             </flux:link>
         </div>
         --}}

@@ -1,4 +1,4 @@
-<x-layouts::auth.secure :title="__('app.auth.email_verification.title')">
+<x-layouts::auth.secure :title="__('auth.email_verification.title')">
 
     <div class="mx-auto w-full max-w-md">
 
@@ -20,11 +20,11 @@
         {{-- Header --}}
         <div class="mb-5 text-center">
             <flux:heading size="xl" class="font-semibold tracking-tight">
-                {{ __('app.auth.email_verification.heading') }}
+                {{ __('auth.email_verification.heading') }}
             </flux:heading>
 
             <flux:text class="mx-auto mt-2 max-w-sm text-pretty">
-                {{ __('app.auth.email_verification.description') }}
+                {{ __('auth.email_verification.description') }}
             </flux:text>
         </div>
 
@@ -42,7 +42,7 @@
                 </div>
 
                 <flux:text class="text-sm text-green-700 dark:text-green-400">
-                    {{ __('app.auth.email_verification.verification_link_sent') }}
+                    {{ __('auth.email_verification.verification_link_sent') }}
                 </flux:text>
             </div>
         @endif
@@ -55,7 +55,7 @@
                 @csrf
 
                 <flux:button type="submit" variant="primary" class="w-full">
-                    {{ __('app.auth.email_verification.resend_verification') }}
+                    {{ __('auth.email_verification.resend_verification') }}
                 </flux:button>
             </form>
 
@@ -64,7 +64,7 @@
                 @csrf
 
                 <flux:button variant="ghost" type="submit" class="w-full" data-test="logout-button">
-                    {{ __('app.auth.email_verification.logout') }}
+                    {{ __('auth.email_verification.logout') }}
                 </flux:button>
             </form>
 
@@ -75,7 +75,7 @@
             class="mt-5 rounded-xl border border-zinc-200/80 bg-zinc-50/70
                    px-4 py-3 text-center text-xs leading-relaxed text-zinc-500
                    dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">
-            {{ __('app.auth.email_verification.help') }}
+            {{ __('auth.email_verification.help') }}
         </div>
 
     </div>

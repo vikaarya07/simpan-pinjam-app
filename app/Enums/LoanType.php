@@ -18,8 +18,8 @@ enum LoanType: string
     public function label(): string
     {
         return match ($this) {
-            self::Loan => 'Pinjaman',
-            self::LoanOverdue => 'Pinjaman Telat',
+            self::Loan => __('app.loan.loan_type.loan'),
+            self::LoanOverdue => __('app.loan.loan_type.loan_overdue'),
         };
     }
 

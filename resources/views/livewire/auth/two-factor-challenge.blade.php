@@ -1,4 +1,4 @@
-<x-layouts::auth.secure :title="__('app.auth.two_factor.title')">
+<x-layouts::auth.secure :title="__('auth.two_factor.title')">
 
     <div class="mx-auto w-full max-w-md">
 
@@ -64,22 +64,22 @@
             {{-- Authentication Code Header --}}
             <div x-show="!showRecoveryInput" x-transition.opacity.duration.200ms class="mb-8 text-center">
                 <flux:heading size="xl" class="font-semibold tracking-tight">
-                    {{ __('app.auth.two_factor.authentication_code') }}
+                    {{ __('auth.two_factor.authentication_code') }}
                 </flux:heading>
 
                 <flux:text class="mx-auto mt-2 max-w-sm text-pretty">
-                    {{ __('app.auth.two_factor.authentication_code_description') }}
+                    {{ __('auth.two_factor.authentication_code_description') }}
                 </flux:text>
             </div>
 
             {{-- Recovery Code Header --}}
             <div x-show="showRecoveryInput" x-transition.opacity.duration.200ms class="mb-8 text-center">
                 <flux:heading size="xl" class="font-semibold tracking-tight">
-                    {{ __('app.auth.two_factor.recovery_code') }}
+                    {{ __('auth.two_factor.recovery_code') }}
                 </flux:heading>
 
                 <flux:text class="mx-auto mt-2 max-w-sm text-pretty">
-                    {{ __('app.auth.two_factor.recovery_code_description') }}
+                    {{ __('auth.two_factor.recovery_code_description') }}
                 </flux:text>
             </div>
 
@@ -91,7 +91,7 @@
                 <div x-show="!showRecoveryInput" x-transition.opacity.duration.200ms>
                     <div x-ref="otp" class="flex justify-center">
                         <flux:otp x-model="code" length="6" name="code"
-                            :label="__('app.auth.two_factor.otp_code')" label:sr-only class="mx-auto" />
+                            :label="__('auth.two_factor.otp_code')" label:sr-only class="mx-auto" />
                     </div>
 
                     @error('code')
@@ -107,12 +107,12 @@
                 <div x-show="showRecoveryInput" x-transition.opacity.duration.200ms>
                     <flux:field>
                         <flux:label class="sr-only">
-                            {{ __('app.auth.two_factor.recovery_code') }}
+                            {{ __('auth.two_factor.recovery_code') }}
                         </flux:label>
 
                         <flux:input type="text" name="recovery_code" x-ref="recovery_code"
                             x-bind:required="showRecoveryInput" autocomplete="one-time-code" x-model="recovery_code"
-                            :placeholder="__('app.auth.two_factor.recovery_code_placeholder')" autofocus />
+                            :placeholder="__('auth.two_factor.recovery_code_placeholder')" autofocus />
 
                         <flux:error name="recovery_code" />
                     </flux:field>
@@ -120,7 +120,7 @@
 
                 {{-- Continue --}}
                 <flux:button variant="primary" type="submit" class="mt-6 w-full">
-                    {{ __('app.auth.two_factor.continue') }}
+                    {{ __('auth.two_factor.continue') }}
                 </flux:button>
             </form>
 
@@ -132,7 +132,7 @@
                     <span
                         class="mx-4 shrink-0 text-xs font-medium uppercase tracking-wider
                                text-zinc-400 dark:text-zinc-500">
-                        {{ __('app.auth.two_factor.or') }}
+                        {{ __('auth.two_factor.or') }}
                     </span>
 
                     <div class="grow border-t border-zinc-200 dark:border-white/10"></div>
@@ -143,11 +143,11 @@
                            text-zinc-600 transition hover:text-zinc-900
                            dark:text-zinc-400 dark:hover:text-white">
                     <span x-show="!showRecoveryInput">
-                        {{ __('app.auth.two_factor.use_recovery_code') }}
+                        {{ __('auth.two_factor.use_recovery_code') }}
                     </span>
 
                     <span x-show="showRecoveryInput">
-                        {{ __('app.auth.two_factor.use_authentication_code') }}
+                        {{ __('auth.two_factor.use_authentication_code') }}
                     </span>
                 </button>
             </div>
@@ -158,11 +158,11 @@
                        px-4 py-3 text-center text-xs leading-relaxed text-zinc-500
                        dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">
                 <span x-show="!showRecoveryInput">
-                    {{ __('app.auth.two_factor.authentication_hint') }}
+                    {{ __('auth.two_factor.authentication_hint') }}
                 </span>
 
                 <span x-show="showRecoveryInput">
-                    {{ __('app.auth.two_factor.recovery_hint') }}
+                    {{ __('auth.two_factor.recovery_hint') }}
                 </span>
             </div>
 

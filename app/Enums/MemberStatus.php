@@ -11,8 +11,8 @@ enum MemberStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Active => 'Aktif',
-            self::Inactive => 'Tidak Aktif',
+            self::Active => __('app.member.member_status.active'),
+            self::Inactive => __('app.member.member_status.inactive'),
         };
     }
 

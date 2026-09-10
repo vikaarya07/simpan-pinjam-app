@@ -257,7 +257,7 @@ class OverviewService
             ->map(function (Loan $loan) use ($sort) {
                 return [
                     'type' => 'loan',
-                    'title' => 'Pinjaman baru',
+                    'title' => __('app.overview.activity.loan_created'),
                     'description' => $loan->member?->name
                         . ' - '
                         . $loan->loan_number,
@@ -284,7 +284,7 @@ class OverviewService
             ->map(function (Payment $payment) use ($sort) {
                 return [
                     'type' => 'payment',
-                    'title' => 'Pembayaran angsuran',
+                    'title' => __('app.overview.activity.payment_created'),
                     'description' => $payment->loan?->member?->name ?? '-',
                     'time' => $sort === 'created'
                         ? $payment->created_at

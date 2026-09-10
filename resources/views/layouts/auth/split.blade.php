@@ -41,7 +41,7 @@
 
                     {{-- Illustration --}}
                     <div class="absolute inset-0 flex items-center justify-center">
-                        <img src="{{ asset('storage/login.png') }}" :alt="__('app.auth.layout.logo')"
+                        <img src="{{ asset('storage/login.png') }}" :alt="__('auth.layout.logo')"
                             class="h-auto w-auto max-h-[55%] -translate-y-28 object-contain" />
                     </div>
 
@@ -74,7 +74,7 @@
                             class="flex size-12 items-center justify-center rounded-xl
                                    border border-white/20 bg-white/10 text-white
                                    backdrop-blur-sm">
-                            <img src="{{ asset('storage/logo.png') }}" :alt="__('app.auth.layout.logo')"
+                            <img src="{{ asset('storage/logo.png') }}" :alt="__('auth.layout.logo')"
                                 class="size-9 object-contain">
                         </div>
 
@@ -84,7 +84,7 @@
                             </div>
 
                             <div class="text-xs font-medium tracking-wide text-emerald-100/60">
-                                {{ __('app.auth.layout.savings') }}
+                                {{ __('auth.layout.savings') }}
                             </div>
                         </div>
                     </a>
@@ -100,18 +100,18 @@
                                    backdrop-blur-sm">
                             <span class="size-1.5 rounded-full bg-emerald-300"></span>
 
-                            {{ __('app.auth.layout.secure_simple_management') }}
+                            {{ __('auth.layout.secure_simple_management') }}
                         </div>
 
                         {{-- Heading --}}
                         <h1
                             class="max-w-md text-3xl font-bold tracking-tight text-white
                                    xl:text-4xl">
-                            {{ __('app.auth.layout.welcome_back') }}
+                            {{ __('auth.layout.welcome_back') }}
                         </h1>
 
                         <p class="mt-2 max-w-md text-sm leading-6 text-emerald-50/75">
-                            {{ __('app.auth.layout.management_description') }}
+                            {{ __('auth.layout.management_description') }}
                         </p>
 
                         {{-- Features --}}
@@ -124,11 +124,11 @@
                                        backdrop-blur-sm">
                                 <div class="space-y-0">
                                     <div class="text-xs font-semibold text-white">
-                                        {{ __('app.auth.layout.savings') }}
+                                        {{ __('auth.layout.savings') }}
                                     </div>
 
                                     <p class="text-[10px] leading-4 text-emerald-50/50">
-                                        {{ __('app.auth.layout.manage_savings') }}
+                                        {{ __('auth.layout.manage_savings') }}
                                     </p>
                                 </div>
 
@@ -146,11 +146,11 @@
                                        backdrop-blur-sm">
                                 <div class="space-y-0">
                                     <div class="text-xs font-semibold text-white">
-                                        {{ __('app.auth.layout.loan') }}
+                                        {{ __('auth.layout.loan') }}
                                     </div>
 
                                     <p class="text-[10px] leading-4 text-emerald-50/50">
-                                        {{ __('app.auth.layout.manage_loans') }}
+                                        {{ __('auth.layout.manage_loans') }}
                                     </p>
                                 </div>
 
@@ -168,11 +168,11 @@
                                        backdrop-blur-sm">
                                 <div class="space-y-0">
                                     <div class="text-xs font-semibold text-white">
-                                        {{ __('app.auth.layout.payment') }}
+                                        {{ __('auth.layout.payment') }}
                                     </div>
 
                                     <p class="text-[10px] leading-4 text-emerald-50/50">
-                                        {{ __('app.auth.layout.track_payments') }}
+                                        {{ __('auth.layout.track_payments') }}
                                     </p>
                                 </div>
 
@@ -225,7 +225,7 @@
                                dark:border-slate-800">
                         <p class="text-[11px] text-slate-400 dark:text-slate-500">
                             © {{ date('Y') }} {{ config('app.name') }}.
-                            {{ __('app.auth.layout.all_rights_reserved') }}
+                            {{ __('auth.layout.all_rights_reserved') }}
                         </p>
                     </div>
 

@@ -146,7 +146,7 @@
                         {{-- Age --}}
                         <flux:table.cell>
                             <span class="tabular-nums">
-                                {{ $member->age }}
+                                {{ __('app.member.age_value', ['count' => $member->age]) }}
                             </span>
                         </flux:table.cell>
 

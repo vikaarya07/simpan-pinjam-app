@@ -1,4 +1,4 @@
-<x-layouts::auth.card :title="__('app.auth.forgot_password.title')">
+<x-layouts::auth.card :title="__('auth.forgot_password.title')">
 
     <div class="mx-auto w-full max-w-md">
 
@@ -14,11 +14,11 @@
             </div>
 
             <flux:heading size="xl" class="font-semibold tracking-tight">
-                {{ __('app.auth.forgot_password.heading') }}
+                {{ __('auth.forgot_password.heading') }}
             </flux:heading>
 
             <flux:text class="mx-auto mt-2 max-w-sm text-pretty">
-                {{ __('app.auth.forgot_password.description') }}
+                {{ __('auth.forgot_password.description') }}
             </flux:text>
         </div>
 
@@ -31,7 +31,7 @@
 
             <flux:field>
                 <flux:label>
-                    {{ __('app.auth.forgot_password.email') }}
+                    {{ __('auth.forgot_password.email') }}
                 </flux:label>
 
                 <flux:input name="email" type="email" required autofocus autocomplete="email"
@@ -41,18 +41,18 @@
             </flux:field>
 
             <flux:button variant="primary" type="submit" class="w-full" data-test="email-password-reset-link-button">
-                {{ __('app.auth.forgot_password.send_reset_link') }}
+                {{ __('auth.forgot_password.send_reset_link') }}
             </flux:button>
         </form>
 
         {{-- Back to Login --}}
         <div class="mt-8 flex items-center justify-center gap-1.5 text-sm">
             <flux:text>
-                {{ __('app.auth.forgot_password.remember_password') }}
+                {{ __('auth.forgot_password.remember_password') }}
             </flux:text>
 
             <flux:link :href="route('login')" wire:navigate class="font-medium">
-                {{ __('app.auth.forgot_password.login') }}
+                {{ __('auth.forgot_password.login') }}
             </flux:link>
         </div>
 

@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     'name' => 'Simpan Pinjam',
 
     'language' => 'Bahasa',
@@ -8,157 +9,6 @@ return [
     'languages' => [
         'en' => 'Inggris',
         'id' => 'Indonesia',
-    ],
-
-    'auth' => [
-        'layout' => [
-            'logo' => 'Logo',
-            'savings' => 'Simpanan',
-            'loan' => 'Pinjaman',
-            'payment' => 'Pembayaran',
-
-            'secure_simple_management' => 'Pengelolaan keuangan yang aman dan sederhana',
-            'welcome_back' => 'Selamat datang kembali!',
-            'management_description' => 'Kelola anggota, simpanan, pinjaman, dan pembayaran dengan aman dalam satu tempat.',
-
-            'manage_savings' => 'Kelola simpanan',
-            'manage_loans' => 'Kelola pinjaman',
-            'track_payments' => 'Pantau pembayaran',
-
-            'secure' => 'Aman',
-            'secure_account_access' => 'Akses akun yang aman',
-
-            'all_rights_reserved' => 'Hak cipta dilindungi.',
-
-            'welcome' => 'Selamat Datang',
-            'manage_account' => 'Kelola akun Anda dengan mudah.',
-        ],
-
-        'register' => [
-            'title' => 'Daftar',
-            'heading' => 'Buat akun',
-            'description' => 'Masukkan data Anda di bawah ini untuk membuat akun.',
-
-            'name' => 'Nama',
-            'name_placeholder' => 'Nama lengkap',
-
-            'email' => 'Alamat email',
-
-            'password' => 'Password',
-            'password_placeholder' => 'Masukkan password Anda',
-
-            'confirm_password' => 'Konfirmasi password',
-            'confirm_password_placeholder' => 'Masukkan kembali password Anda',
-
-            'create_account' => 'Buat akun',
-            'creating_account' => 'Membuat akun...',
-
-            'already_have_account' => 'Sudah memiliki akun?',
-            'login' => 'Masuk',
-        ],
-
-        'login' => [
-            'title' => 'Masuk',
-            'heading' => 'Masuk ke akun Anda',
-            'description' => 'Masukkan email dan password Anda di bawah ini untuk masuk.',
-
-            'email' => 'Alamat email',
-
-            'password' => 'Password',
-            'password_placeholder' => 'Masukkan password Anda',
-
-            'forgot_password' => 'Lupa password Anda?',
-
-            'remember_me' => 'Ingat saya',
-
-            'login' => 'Masuk',
-            'logging_in' => 'Sedang masuk...',
-
-            'dont_have_account' => 'Belum memiliki akun?',
-            'sign_up' => 'Daftar',
-        ],
-
-        'forgot_password' => [
-            'title' => 'Lupa Password',
-            'heading' => 'Lupa password?',
-            'description' => 'Tidak masalah. Masukkan alamat email Anda dan kami akan mengirimkan tautan untuk mengatur ulang password Anda.',
-
-            'email' => 'Alamat email',
-
-            'send_reset_link' => 'Kirim tautan reset password',
-
-            'remember_password' => 'Ingat password Anda?',
-            'login' => 'Masuk',
-        ],
-
-        'confirm_password' => [
-            'title' => 'Konfirmasi Password',
-            'heading' => 'Konfirmasi identitas Anda',
-            'description' => 'Ini adalah area aman aplikasi. Silakan konfirmasi identitas Anda sebelum melanjutkan.',
-
-            'confirm_with_passkey' => 'Konfirmasi dengan passkey',
-            'confirming' => 'Mengonfirmasi...',
-            'or_confirm_with_password' => 'Atau konfirmasi dengan password',
-
-            'password' => 'Password',
-            'password_placeholder' => 'Masukkan password Anda',
-
-            'confirm' => 'Konfirmasi password',
-        ],
-
-        'reset_password' => [
-            'title' => 'Reset Password',
-            'heading' => 'Buat password baru',
-            'description' => 'Masukkan password baru Anda di bawah ini. Pastikan password kuat dan aman.',
-
-            'email' => 'Alamat email',
-
-            'new_password' => 'Password baru',
-            'new_password_placeholder' => 'Masukkan password baru Anda',
-
-            'confirm_password' => 'Konfirmasi password baru',
-            'confirm_password_placeholder' => 'Masukkan kembali password baru Anda',
-
-            'reset_password' => 'Reset password',
-            'resetting' => 'Mereset password...',
-
-            'security_hint' => 'Setelah password direset, Anda dapat menggunakannya untuk masuk ke akun Anda.',
-        ],
-
-        'two_factor' => [
-            'title' => 'Autentikasi dua faktor',
-
-            'authentication_code' => 'Kode autentikasi',
-            'authentication_code_description' => 'Masukkan kode 6 digit dari aplikasi autentikator Anda untuk melanjutkan.',
-
-            'recovery_code' => 'Kode pemulihan',
-            'recovery_code_description' => 'Masukkan salah satu kode pemulihan darurat Anda untuk mengakses akun.',
-
-            'otp_code' => 'Kode OTP',
-            'recovery_code_placeholder' => 'Masukkan kode pemulihan Anda',
-
-            'continue' => 'Lanjutkan',
-            'or' => 'atau',
-
-            'use_recovery_code' => 'Gunakan kode pemulihan',
-            'use_authentication_code' => 'Gunakan kode autentikasi',
-
-            'authentication_hint' => 'Gunakan kode yang dihasilkan oleh aplikasi autentikator Anda.',
-            'recovery_hint' => 'Setiap kode pemulihan hanya dapat digunakan satu kali.',
-        ],
-
-        'email_verification' => [
-            'title' => 'Verifikasi Email',
-            'heading' => 'Verifikasi alamat email Anda',
-            'description' => 'Silakan verifikasi alamat email Anda dengan mengeklik tautan yang baru saja kami kirim ke kotak masuk Anda.',
-
-            'verification_link_sent' => 'Tautan verifikasi baru telah dikirim ke alamat email yang Anda gunakan saat pendaftaran.',
-
-            'resend_verification' => 'Kirim ulang email verifikasi',
-            'logout' => 'Keluar',
-
-            'help' => 'Periksa folder spam atau junk jika Anda tidak melihat email tersebut di kotak masuk.',
-        ],
     ],
 
     'sidebar' => [
@@ -177,7 +27,7 @@ return [
         'customers' => 'Data Nasabah',
         'savings' => 'Simpanan',
         'loans' => 'Pinjaman',
-        'payments' => 'Angsuran',
+        'payments' => 'Pembayaran',
         'monthly_report' => 'Laporan Bulanan',
         'customer_report' => 'Laporan Nasabah',
 
@@ -267,6 +117,8 @@ return [
             'sort_date' => 'Tanggal Transaksi',
             'sort_created' => 'Baru Dibuat',
             'empty' => 'Belum ada aktivitas.',
+            'loan_created' => 'Pinjaman',
+            'payment_created' => 'Angsuran',
         ],
 
         'quick_action' => [
@@ -316,7 +168,6 @@ return [
         'phone' => 'No. HP',
         'phone_placeholder' => '08xxxxxxxxxx',
         'age' => 'Umur',
-        'year' => 'tahun',
         'age_value' => ':count tahun',
         'gender' => 'Jenis Kelamin',
         'date_birth' => 'Tanggal Lahir',
@@ -325,7 +176,7 @@ return [
 
         'form_create_description' => 'Buat data anggota baru.',
         'form_edit_description' => 'Perbarui informasi anggota.',
-        'form_select' => 'Pilih anggota',
+        'form_select' => 'Pilih Jenis Kelamin',
 
         'information' => 'Informasi Anggota',
         'information_description' => 'Informasi dasar anggota yang terdaftar dalam sistem.',
@@ -338,6 +189,14 @@ return [
 
         'tooltip_edit' => 'Edit :name',
         'tooltip_delete' => 'Hapus :name',
+        'gender_value' => [
+            'male' => '♂ Laki-laki',
+            'female' => '♀ Perempuan',
+        ],
+        'member_status' => [
+            'active' => 'Aktif',
+            'inactive' => 'Tidak Aktif',
+        ],
     ],
 
     'customer' => [
@@ -352,7 +211,6 @@ return [
         'full_name' => 'Nama Lengkap',
         'phone' => 'No. HP',
         'age' => 'Umur',
-        'year' => 'tahun',
         'age_value' => ':count tahun',
         'gender' => 'Jenis Kelamin',
         'loan_count' => 'Pinjaman',
@@ -417,7 +275,7 @@ return [
 
         'form_create_description' => 'Buat data pinjaman baru untuk nasabah.',
         'form_edit_description' => 'Perbarui informasi pinjaman nasabah.',
-        'form_select' => 'Pilih nasabah',
+        'form_select' => 'Pilih Nasabah',
 
         'information' => 'Informasi Pinjaman',
         'information_description' => 'Informasi dasar mengenai pinjaman nasabah.',
@@ -433,6 +291,15 @@ return [
 
         'tooltip_edit' => 'Edit :name',
         'tooltip_delete' => 'Hapus :name',
+        'loan_type' => [
+            'loan' => 'Pinjaman',
+            'loan_overdue' => 'Pinjaman Telat',
+        ],
+        'loan_status' => [
+            'running' => 'Berjalan',
+            'finish' => 'Lunas',
+            'overdue' => 'Telat',
+        ],
     ],
 
     'payment' => [
@@ -467,6 +334,9 @@ return [
             'payment_amount' => 'Nominal Pembayaran',
             'note' => 'Catatan',
             'note_value' => 'Tambahkan catatan pembayaran...',
+
+            'information' => 'Daftar Pembayaran',
+            'information_description' => 'Data pembayaran pada pertemuan ini',
 
             'form_description' => 'Masukkan informasi pembayaran angsuran nasabah.',
             'form_select' => 'Pilih metode pembayaran',
@@ -536,6 +406,13 @@ return [
 
         'tooltip_edit' => 'Edit :name',
         'tooltip_delete' => 'Hapus :name',
+        'saving_type' => [
+            'opening' => 'Pembukaan',
+            'assistance' => 'Bantuan',
+            'loan' => 'Pinjaman',
+            'loan_overdue' => 'Pinjaman Telat',
+            'installment' => 'Angsuran',
+        ],
     ],
 
     'monthly_report' => [
@@ -642,6 +519,7 @@ return [
         'summary' => [
             'total_loan' => 'Total Pinjaman',
             'total_paid' => 'Total Dibayar',
+            'total_payment' => 'Total Pembayaran',
             'remaining' => 'Sisa Pinjaman',
             'outstanding' => 'Outstanding',
             'status' => 'Status',
