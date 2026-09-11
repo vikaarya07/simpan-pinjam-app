@@ -40,7 +40,7 @@
 
                 <div>
                     <flux:input label="{{ __('app.payment.show.payment_amount') }}" wire:model.live="amountFormatted"
-                        placeholder="0" inputmode="numeric" />
+                        placeholder="0" inputmode="integer" />
 
                     @error('amount')
                         <flux:error name="amount">
@@ -71,8 +71,6 @@
             <flux:field>
                 <flux:textarea label="{{ __('app.payment.show.note') }}" wire:model="note" rows="auto"
                     placeholder="{{ __('app.payment.show.note_value') }}" />
-
-                <flux:error name="note" />
             </flux:field>
 
         </div>

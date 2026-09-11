@@ -36,8 +36,6 @@
                     <flux:field>
                         <flux:input label="{{ __('app.saving.transaction_date') }}" type="date"
                             wire:model="transaction_date" />
-
-                        <flux:error name="transaction_date" />
                     </flux:field>
 
                     {{-- Jenis --}}
@@ -53,16 +51,13 @@
                                 </option>
                             @endforeach
                         </flux:select>
-
-                        <flux:error name="type" />
                     </flux:field>
 
                     {{-- Nominal --}}
                     <flux:field class="sm:col-span-2">
                         <flux:input label="{{ __('app.saving.amount_input') }}" wire:model.live="amountFormatted"
-                            inputmode="numeric" placeholder="0" />
-
-                        <flux:error name="amount" />
+                            inputmode="integer" placeholder="0" />
+                        <flux:error name="principal" />
                     </flux:field>
 
                 </div>
@@ -85,8 +80,6 @@
                 <flux:field>
                     <flux:textarea label="{{ __('app.saving.description') }}" wire:model="description" rows="auto"
                         placeholder="{{ __('app.saving.description_placeholder') }}" />
-
-                    <flux:error name="description" />
                 </flux:field>
             </div>
 

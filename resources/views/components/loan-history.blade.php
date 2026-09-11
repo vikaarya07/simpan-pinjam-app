@@ -179,6 +179,10 @@
                             </flux:table.column>
 
                             <flux:table.column>
+                                {{ __('app.loan_history.amount') }}
+                            </flux:table.column>
+
+                            <flux:table.column>
                                 {{ __('app.loan_history.payment') }}
                             </flux:table.column>
 
@@ -188,6 +192,10 @@
 
                             <flux:table.column>
                                 {{ __('app.loan_history.status') }}
+                            </flux:table.column>
+
+                            <flux:table.column>
+                                {{ __('app.loan_history.remaining') }}
                             </flux:table.column>
 
                             <flux:table.column>
@@ -227,6 +235,13 @@
 
                                     {{-- Amount --}}
                                     <flux:table.cell>
+                                        <span class="font-medium tabular-nums whitespace-nowrap">
+                                            {{ idr($payment?->remaining_loan_history ?? $loan->remaining) }}
+                                        </span>
+                                    </flux:table.cell>
+
+                                    {{-- Installment --}}
+                                    <flux:table.cell>
                                         @if ($payment)
                                             <span class="font-medium tabular-nums whitespace-nowrap">
                                                 {{ idr($payment->amount) }}
@@ -250,6 +265,13 @@
                                         <flux:badge :color="$payment?->status?->color() ?? 'zinc'" size="sm">
                                             {{ $payment?->status?->label() ?? '-' }}
                                         </flux:badge>
+                                    </flux:table.cell>
+
+                                    {{-- Remaining --}}
+                                    <flux:table.cell>
+                                        <span class="font-medium tabular-nums whitespace-nowrap">
+                                            {{ idr($payment?->remaining_after_payment ?? '-') }}
+                                        </span>
                                     </flux:table.cell>
 
                                     {{-- Note --}}

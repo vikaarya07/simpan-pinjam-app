@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\LoanType;
 use App\Models\CustomerNotification;
 use App\Models\Loan;
 use App\Models\Member;
@@ -67,9 +68,10 @@ class ReportService
         $closingReceivable = $closingSaving?->receivable ?? $openingReceivable;
 
         // Saving Summary
-        $debit = $savings->sum('debit');
+        $debit = $payments->sum('amount');
 
-        $credit = $savings->sum('credit');
+        $credit = $loans->where('type', LoanType::Loan)->sum('principal');
+
 
         // Report
         return [
@@ -115,7 +117,7 @@ class ReportService
             'savings' => $savings,
         ];
     }
-    
+
     public function customer(Member $customer): array
     {
         $loans = $customer->loans()

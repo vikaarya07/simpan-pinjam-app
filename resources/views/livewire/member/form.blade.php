@@ -45,24 +45,18 @@
                             <flux:field>
                                 <flux:input :label="__('app.member.full_name')" wire:model="name"
                                     :placeholder="__('app.member.full_name')" />
-
-                                <flux:error name="name" />
                             </flux:field>
 
                             {{-- Email --}}
                             <flux:field>
                                 <flux:input type="email" :label="__('app.member.email')" wire:model="email"
                                     :placeholder="__('app.member.email_placeholder')" />
-
-                                <flux:error name="email" />
                             </flux:field>
 
                             {{-- Phone --}}
                             <flux:field>
                                 <flux:input :label="__('app.member.phone')" wire:model="phone"
                                     :placeholder="__('app.member.phone_placeholder')" />
-
-                                <flux:error name="phone" />
                             </flux:field>
 
                             {{-- Gender --}}
@@ -78,23 +72,17 @@
                                         </option>
                                     @endforeach
                                 </flux:select>
-
-                                <flux:error name="gender" />
                             </flux:field>
 
                             {{-- Date of Birth --}}
                             <flux:field>
                                 <flux:input type="date" :label="__('app.member.date_birth')"
                                     wire:model="date_birth" />
-
-                                <flux:error name="date_birth" />
                             </flux:field>
 
                             {{-- Date Joined --}}
                             <flux:field>
                                 <flux:input type="date" :label="__('app.member.date_join')" wire:model="date_join" />
-
-                                <flux:error name="date_join" />
                             </flux:field>
 
                         </div>
@@ -123,8 +111,6 @@
                                     </option>
                                 @endforeach
                             </flux:select>
-
-                            <flux:error name="status" />
                         </flux:field>
 
                     </section>

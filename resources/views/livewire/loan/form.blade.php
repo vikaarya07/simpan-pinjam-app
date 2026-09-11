@@ -50,14 +50,10 @@
                                         </option>
                                     @endforeach
                                 </flux:select>
-
-                                <flux:error name="member_id" />
                             </flux:field>
 
                             <flux:field>
                                 <flux:input :label="__('app.loan.loan_number')" wire:model="loan_number" readonly />
-
-                                <flux:error name="loan_number" />
                             </flux:field>
 
                             <flux:field>
@@ -68,14 +64,10 @@
                                         </option>
                                     @endforeach
                                 </flux:select>
-
-                                <flux:error name="type" />
                             </flux:field>
 
                             <flux:field>
                                 <flux:input type="date" :label="__('app.loan.date_loan')" wire:model="loan_date" />
-
-                                <flux:error name="loan_date" />
                             </flux:field>
 
                         </div>
@@ -99,13 +91,13 @@
 
                             <flux:field class="sm:col-span-2">
                                 <flux:input :label="__('app.loan.principal')" wire:model.live="principalFormatted"
-                                    inputmode="numeric" placeholder="0" />
-
+                                    inputmode="integer" placeholder="0" />
                                 <flux:error name="principal" />
                             </flux:field>
 
-                            <flux:input :label="__('app.loan.interest')" :value="$interest_percent.
-                            '%'" readonly />
+                            <flux:input :label="__('app.loan.interest')"
+                                :value="$interest_percent.
+                                '%'" readonly />
 
                             <flux:input :label="__('app.loan.interest_amount')" :value="idr($interest_amount)"
                                 readonly />

@@ -104,8 +104,8 @@ class Form extends Component
 
             'amount' => [
                 'required',
-                'numeric',
-                'min:1',
+                'integer',
+                'min:1000',
             ],
 
             'description' => [

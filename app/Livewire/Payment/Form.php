@@ -37,7 +37,7 @@ class Form extends Component
         return [
             'loan_id' => ['required', 'exists:loans,id'],
             'meeting_id' => ['required', 'exists:meetings,id'],
-            'amount' => ['required', 'numeric'],
+            'amount' => ['required', 'integer'],
             'payment_date' => ['required', 'date'],
             'method' => [
                 Rule::requiredIf($this->amount > 0),

@@ -73,8 +73,8 @@ class Form extends Component
 
             'principal' => [
                 'required',
-                'numeric',
-                'min:1',
+                'integer',
+                'min:10000',
             ],
         ];
 

@@ -36,14 +36,10 @@
                     <flux:field>
                         <flux:input :label="__('app.meeting.place')" wire:model="place"
                             :placeholder="__('app.meeting.place_placeholder')" />
-
-                        <flux:error name="place" />
                     </flux:field>
 
                     <flux:field>
                         <flux:input type="datetime-local" :label="__('app.meeting.date')" wire:model="meeting_date" />
-
-                        <flux:error name="meeting_date" />
                     </flux:field>
 
                 </div>

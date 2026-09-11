@@ -137,4 +137,27 @@ class Payment extends Model
             );
         });
     }
+
+    protected function remainingLoanHistory(): Attribute
+    {
+        return Attribute::get(function (): float {
+            $totalPaid = $this->loan
+                ->payments()
+                ->where(function ($query) {
+                    $query
+                        ->whereDate('payment_date', '<', $this->payment_date)
+                        ->orWhere(function ($query) {
+                            $query
+                                ->whereDate('payment_date', $this->payment_date)
+                                ->where('id', '<', $this->id);
+                        });
+                })
+                ->sum('amount');
+
+            return max(
+                0,
+                $this->loan->amount - $totalPaid
+            );
+        });
+    }
 }

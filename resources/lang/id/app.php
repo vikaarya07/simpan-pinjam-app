@@ -235,7 +235,7 @@ return [
 
         'loan_summary' => 'Ringkasan Pinjaman',
         'principal' => 'Pokok Pinjaman',
-        'interest' => 'Bunga',
+        'interest' => 'Jasa',
         'amount' => 'Total Pinjaman',
         'remaining' => 'Sisa Pinjaman',
 
@@ -267,8 +267,8 @@ return [
         'type' => 'Jenis',
         'type_loan' => 'Jenis Pinjaman',
         'principal' => 'Pokok',
-        'interest' => 'Bunga',
-        'interest_amount' => 'Nominal Bunga',
+        'interest' => 'Jasa',
+        'interest_amount' => 'Nominal Jasa',
         'amount' => 'Total Pinjaman',
         'remaining' => 'Sisa',
         'status' => 'Status',
@@ -280,7 +280,7 @@ return [
         'information' => 'Informasi Pinjaman',
         'information_description' => 'Informasi dasar mengenai pinjaman nasabah.',
         'information_value' => 'Nilai Pinjaman',
-        'information_value_description' => 'Rincian nilai pokok, bunga, dan total pinjaman.',
+        'information_value_description' => 'Rincian nilai pokok, jasa, dan total pinjaman.',
 
         'previous_loan' => 'Pinjaman Sebelumnya',
         'previous_loan_description' => 'Pinjaman berjalan yang akan digunakan sebagai acuan.',
@@ -339,7 +339,7 @@ return [
             'information_description' => 'Data pembayaran pada pertemuan ini',
 
             'form_description' => 'Masukkan informasi pembayaran angsuran nasabah.',
-            'form_select' => 'Pilih metode pembayaran',
+            'form_select' => 'Pilih Metode Pembayaran',
 
             'form_create_title' => 'Tambah Pembayaran',
             'form_edit_title' => 'Edit Pembayaran',
