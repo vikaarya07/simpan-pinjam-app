@@ -5,6 +5,7 @@ namespace App\Livewire\Report;
 use App\Enums\NotificationType;
 use App\Models\CustomerNotification;
 use App\Models\Member;
+use App\Services\NotificationService;
 use App\Services\ReportService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Computed;
@@ -16,30 +17,24 @@ class Customer extends Component
 {
     use WithPagination;
 
-    #[Url]
-    public int|string $customerId = '';
+    #[Url] public int|string $customerId = '';
 
-    #[Url]
-    public string $tab = 'summary';
+    #[Url] public int|string $loanId = '';
 
-    #[Url]
-    public string $search = '';
+    #[Url] public string $tab = 'summary';
 
-    #[Url]
-    public string $type = '';
+    #[Url] public string $search = '';
+
+    #[Url] public string $type = '';
 
     public bool $showNotificationModal = false;
 
     public ?CustomerNotification $selectedNotification = null;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Customers
-    |--------------------------------------------------------------------------
-    */
+    public ?string $selectedNotificationMessage = null;
 
-    #[Computed]
-    public function customers()
+    // Customers 
+    #[Computed] public function customers()
     {
         return Member::query()
             ->whereHas(
@@ -50,63 +45,67 @@ class Customer extends Component
             ->get();
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Current Customer
-    |--------------------------------------------------------------------------
-    */
-
-    #[Computed]
-    public function customer(): ?Member
+    // Current Customer 
+    #[Computed] public function customer(): ?Member
     {
         if (! $this->customerId) {
             return null;
         }
-
         return Member::query()
             ->find($this->customerId);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Customer Report
-    |--------------------------------------------------------------------------
-    */
+    // Customer Loans 
+    #[Computed] public function loans()
+    {
+        if (! $this->customer) {
+            return collect();
+        }
+        return $this->customer
+            ->loans()
+            ->isCustomer()
+            ->latest('loan_date')
+            ->get();
+    }
 
-    #[Computed]
-    public function report()
+    // Selected Loan 
+    #[Computed] public function loan()
+    {
+        if (! $this->customer || ! $this->loanId) {
+            return null;
+        }
+        return $this->customer
+            ->loans()
+            ->isCustomer()
+            ->find($this->loanId);
+    }
+
+    // Customer Report 
+    #[Computed] public function report()
     {
         if (! $this->customer) {
             return null;
         }
-
         return app(ReportService::class)
             ->customer($this->customer);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Notifications
-    |--------------------------------------------------------------------------
-    */
-
-    #[Computed]
-    public function notifications(): LengthAwarePaginator
+    // Notifications 
+    #[Computed] public function notifications(): LengthAwarePaginator
     {
-        if (! $this->customer) {
+        if (! $this->customer || ! $this->loanId) {
             return new LengthAwarePaginator(
                 collect(),
                 0,
                 10,
                 $this->getPage(),
-                [
-                    'path' => request()->url(),
-                ]
+                ['path' => request()->url(),]
             );
         }
 
         return CustomerNotification::query()
             ->where('member_id', $this->customer->id)
+            ->where('loan_id', $this->loanId)
             ->when(
                 filled($this->search),
                 function ($query) {
@@ -118,72 +117,52 @@ class Customer extends Component
                             ->orWhere('message', 'like', "%{$search}%");
                     });
                 }
-            )
-            ->when(
+            )->when(
                 filled($this->type),
-                fn($query) => $query->where('type', $this->type)
+                fn($query) => $query
+                    ->where('type', $this->type)
             )
             ->latest()
             ->paginate(10);
     }
 
-    /*
-|--------------------------------------------------------------------------
-| Notification Count
-|--------------------------------------------------------------------------
-*/
-
-    #[Computed]
-    public function notificationCount(): int
+    // Notification Count 
+    #[Computed] public function notificationCount(): int
     {
-        if (! $this->customer) {
+        if (! $this->customer || ! $this->loanId) {
             return 0;
         }
-
         return CustomerNotification::query()
             ->where('member_id', $this->customer->id)
+            ->where('loan_id', $this->loanId)
             ->count();
     }
 
-    /*
-|--------------------------------------------------------------------------
-| Unread Notification Count
-|--------------------------------------------------------------------------
-*/
-
-    #[Computed]
-    public function unreadNotificationCount(): int
+    // Unread Notification Count 
+    #[Computed] public function unreadNotificationCount(): int
     {
-        if (! $this->customer) {
+        if (! $this->customer || ! $this->loanId) {
             return 0;
         }
 
         return CustomerNotification::query()
             ->where('member_id', $this->customer->id)
+            ->where('loan_id', $this->loanId)
             ->whereNull('read_at')
             ->count();
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Notification Types
-    |--------------------------------------------------------------------------
-    */
-
-    #[Computed]
-    public function notificationTypes(): array
+    // Notification Types 
+    #[Computed] public function notificationTypes(): array
     {
         return NotificationType::cases();
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Customer Changed
-    |--------------------------------------------------------------------------
-    */
-
+    // Customer Changed 
     public function updatedCustomerId(): void
     {
+        $this->loanId = $this->loans->first()?->id ?? '';
+
         $this->resetPage();
 
         $this->tab = 'summary';
@@ -193,28 +172,46 @@ class Customer extends Component
         $this->closeNotification();
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Notification Filters
-    |--------------------------------------------------------------------------
-    */
+    // Loan Changed 
+    public function updatedLoanId(): void
+    {
+        $this->resetPage();
+        $this->search = '';
+        $this->type = '';
+        $this->closeNotification();
+    }
 
+    // Select Loan 
+    public function selectLoan(int $loanId): void
+    {
+        $loan = $this->customer
+            ->loans()
+            ->isCustomer()
+            ->whereKey($loanId)
+            ->firstOrFail();
+
+        $this->loanId = $loan->id;
+        $this->tab = 'notification';
+
+        $this->resetPage();
+
+        $this->search = '';
+        $this->type = '';
+
+        $this->closeNotification();
+    }
+
+    // Notification Filters 
     public function updatedSearch(): void
     {
         $this->resetPage();
     }
-
     public function updatedType(): void
     {
         $this->resetPage();
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Tab
-    |--------------------------------------------------------------------------
-    */
-
+    // Tab 
     public function selectTab(string $tab): void
     {
         if (! in_array($tab, [
@@ -232,62 +229,55 @@ class Customer extends Component
         }
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Open Notification
-    |--------------------------------------------------------------------------
-    */
-
+    // Open Notification 
     public function openNotification(int $id): void
     {
-        if (! $this->customer) {
+        if (! $this->customer || ! $this->loanId) {
             return;
         }
 
         $notification = CustomerNotification::query()
             ->where('member_id', $this->customer->id)
-            ->with(['member'])
+            ->where('loan_id', $this->loanId)
+            ->with([
+                'loan.member',
+                'loan.payments',
+                'payment.loan.member',
+                'payment.meeting',
+                'meeting',
+            ])
             ->findOrFail($id);
 
-        $notification->markAsRead();
+        $this->selectedNotificationMessage = app(NotificationService::class)
+            ->previewMessage($notification);
 
-        $this->selectedNotification = $notification->fresh([
-            'member',
-            'loan',
-            'payment',
-            'meeting',
-        ]);
+        if (! $notification->read_at) {
+            $notification->update([
+                'read_at' => now(),
+            ]);
+        }
 
+        $this->selectedNotification = $notification;
         $this->showNotificationModal = true;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Close Notification
-    |--------------------------------------------------------------------------
-    */
-
+    // Close Notification 
     public function closeNotification(): void
     {
         $this->showNotificationModal = false;
-
         $this->selectedNotification = null;
+        $this->selectedNotificationMessage = null;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Send Notification
-    |--------------------------------------------------------------------------
-    */
-
+    // Send Notification 
     public function sendNotification(int $id): void
     {
-        if (! $this->customer) {
+        if (! $this->customer || ! $this->loanId) {
             return;
         }
-
         $notification = CustomerNotification::query()
             ->where('member_id', $this->customer->id)
+            ->where('loan_id', $this->loanId)
             ->findOrFail($id);
 
         if ($notification->sent_at) {
@@ -297,17 +287,10 @@ class Customer extends Component
                 title: 'Sudah Terkirim',
                 text: 'Notifikasi ini sudah pernah dikirim.',
             );
-
             return;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Sementara
-        |--------------------------------------------------------------------------
-        | WhatsApp gateway belum diaktifkan.
-        */
-
+        // Sementara | WhatsApp gateway belum diaktifkan. */
         $this->dispatch(
             'swal',
             icon: 'info',
@@ -316,12 +299,7 @@ class Customer extends Component
         );
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Download PDF
-    |--------------------------------------------------------------------------
-    */
-
+    // Download PDF 
     public function downloadPdf()
     {
         if (! $this->customer) {
@@ -331,10 +309,8 @@ class Customer extends Component
                 title: 'Pilih Nasabah',
                 text: 'Silakan pilih nasabah terlebih dahulu.',
             );
-
             return;
         }
-
         $this->dispatch(
             'swal',
             icon: 'info',
@@ -343,12 +319,7 @@ class Customer extends Component
         );
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Send Report WhatsApp
-    |--------------------------------------------------------------------------
-    */
-
+    // Send Report WhatsApp 
     public function sendWhatsApp(): void
     {
         if (! $this->customer) {
@@ -358,10 +329,8 @@ class Customer extends Component
                 title: 'Pilih Nasabah',
                 text: 'Silakan pilih nasabah terlebih dahulu.',
             );
-
             return;
         }
-
         $this->dispatch(
             'swal',
             icon: 'info',
@@ -370,17 +339,14 @@ class Customer extends Component
         );
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Render
-    |--------------------------------------------------------------------------
-    */
-
+    // Render 
     public function render()
     {
         return view('livewire.report.customer', [
             'report' => $this->report,
             'customers' => $this->customers,
+            'loans' => $this->loans,
+            'loan' => $this->loan,
             'notifications' => $this->notifications,
             'notificationTypes' => $this->notificationTypes,
         ]);

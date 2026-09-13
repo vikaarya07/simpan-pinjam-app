@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Enums\LoanType;
-use App\Models\CustomerNotification;
 use App\Models\Loan;
 use App\Models\Member;
 use App\Models\Payment;
@@ -12,24 +11,25 @@ use Carbon\Carbon;
 
 class ReportService
 {
+    //  Monthly Report
     public function monthly(int $year, int $month): array
     {
         $start = Carbon::create($year, $month, 1)->startOfMonth();
         $end = $start->copy()->endOfMonth();
 
-        // Anggota
+        //  Anggota
         $members = Member::query()
             ->where('status', 'Active')
             ->count();
 
-        // Loan
+        //  Loan
         $loans = Loan::query()
             ->with('member')
             ->whereBetween('loan_date', [$start, $end])
             ->orderBy('loan_date')
             ->get();
 
-        // Payment
+        //  Payment
         $payments = Payment::query()
             ->with([
                 'loan.member',
@@ -39,15 +39,14 @@ class ReportService
             ->orderBy('payment_date')
             ->get();
 
-        // Saving
+        //  Saving
         $savings = Saving::query()
             ->whereBetween('transaction_date', [$start, $end])
             ->orderBy('transaction_date')
             ->orderBy('id')
             ->get();
 
-        // Saldo Awal
-        // Ambil transaksi terakhir sebelum periode report.
+        //  Saldo Awal
         $openingSaving = Saving::query()
             ->where('transaction_date', '<', $start)
             ->orderByDesc('transaction_date')
@@ -57,7 +56,7 @@ class ReportService
         $openingBalance = $openingSaving?->balance ?? 0;
         $openingReceivable = $openingSaving?->receivable ?? 0;
 
-        // Saldo Akhir
+        //  Saldo Akhir
         $closingSaving = Saving::query()
             ->where('transaction_date', '<=', $end)
             ->orderByDesc('transaction_date')
@@ -67,13 +66,14 @@ class ReportService
         $closingBalance = $closingSaving?->balance ?? $openingBalance;
         $closingReceivable = $closingSaving?->receivable ?? $openingReceivable;
 
-        // Saving Summary
+        //  Saving Summary
         $debit = $payments->sum('amount');
 
-        $credit = $loans->where('type', LoanType::Loan)->sum('principal');
+        $credit = $loans
+            ->where('type', LoanType::Loan)
+            ->sum('principal');
 
-
-        // Report
+        //  Report
         return [
             'period' => [
                 'start' => $start,
@@ -84,17 +84,17 @@ class ReportService
             'summary' => [
                 'members' => $members,
 
-                // Loan
+                //  Loan
                 'loan_count' => $loans->count(),
                 'loan_principal' => $loans->sum('principal'),
                 'loan_interest' => $loans->sum('interest_amount'),
                 'loan_amount' => $loans->sum('amount'),
 
-                // Payment
+                //  Payment                                
                 'payment_count' => $payments->count(),
                 'payment_amount' => $payments->sum('amount'),
 
-                // Saving
+                //  Saving
                 'opening_balance' => $openingBalance,
                 'opening_receivable' => $openingReceivable,
 
@@ -104,20 +104,21 @@ class ReportService
                 'closing_balance' => $closingBalance,
                 'closing_receivable' => $closingReceivable,
 
-
-                // Amount = Balance + Receivable
+                //  Amount = Balance + Receivable
                 'opening_amount' =>
                 $openingBalance + $openingReceivable,
 
                 'closing_amount' =>
                 $closingBalance + $closingReceivable,
             ],
+
             'loans' => $loans,
             'payments' => $payments,
             'savings' => $savings,
         ];
     }
 
+    //  Customer Report
     public function customer(Member $customer): array
     {
         $loans = $customer->loans()
@@ -126,86 +127,80 @@ class ReportService
             ->orderByDesc('id')
             ->get();
 
-        $overdueLoans = $loans->where('type', 'loan_overdue');
-        $normalLoans = $loans->where('type', 'loan');
+        $overdueLoans = $loans->where('type', LoanType::LoanOverdue);
+
+        $normalLoans = $loans->where('type', LoanType::Loan);
 
         $summary = [
             'loan_count' => $loans->count(),
+
             'loan_amount' => $normalLoans->sum('amount'),
+
             'payment_amount' => $loans
                 ->flatMap->payments
                 ->sum('amount'),
+
+            //  Remaining
+            //  Jika terdapat Loan Overdue, gunakan remaining dari
+            //  Loan Overdue sebagai piutang aktif customer.
             'remaining' => $overdueLoans->isNotEmpty()
                 ? $overdueLoans->sum('remaining')
                 : $normalLoans->sum('remaining'),
         ];
 
-        $notifications = CustomerNotification::query()
-            ->where('member_id', $customer->id)
-            ->latest()
-            ->get();
-
         return [
             'customer' => $customer,
             'summary' => $summary,
             'loans' => $loans,
-            'notifications' => $notifications,
         ];
     }
 
+    // Create Notification From Payment
     public function createNotification(Payment $payment): void
     {
         $notificationService = app(NotificationService::class);
 
-        $notificationService->paymentReceived($payment);
+        $payment->loadMissing([
+            'loan.member',
+            'meeting',
+        ]);
 
-        if ($payment->loan->remaining <= 0) {
+        $loan = $payment->loan;
+
+        if (! $loan) {
+            return;
+        }
+
+        // Pembayaran membuat pinjaman menjadi lunas.
+        if ((float) $loan->remaining <= 0) {
             $notificationService->paidOff($payment);
 
             return;
         }
 
-        if ((int) $payment->payment_count === 5) {
-            $notificationService->almostPaidOff($payment);
+        // Pembayaran ke-6 tetapi masih memiliki sisa.
+        if ((int) $payment->payment_count === 6) {
+            // Bukti pembayaran pinjaman lama.
+            $notificationService->paymentReceived($payment);
+
+            // Cari Loan Overdue yang baru dibuat.
+            $overdueLoan = Loan::query()
+                ->where('previous_loan_id', $loan->id)
+                ->where('type', LoanType::LoanOverdue)
+                ->latest('id')
+                ->first();
+
+            if ($overdueLoan) {
+                $notificationService->loanOverdueCreated(
+                    loan: $overdueLoan,
+                    meetingId: $payment->meeting_id,
+                );
+            }
+
+            return;
         }
+
+        // Pembayaran biasa.
+        $notificationService->paymentReceived($payment);
     }
-
-    // public function monthlyWhatsApp(int $year, int $month): string
-    // {
-    //     $report = $this->monthly($year, $month);
-
-    //     $summary = $report['summary'];
-
-    //     $money = fn($value) =>
-    //     'Rp ' . number_format($value, 0, ',', '.');
-
-    //     return implode("\n", [
-    //         '📊 *Laporan Simpan Pinjam SATYA MUDA GETAS*',
-    //         '* Bulan '  . $report['period']['label'] . '*',
-    //         '',
-    //         '👥 *ANGGOTA AKTIF*',
-    //         number_format($summary['members'], 0, ',', '.') . ' anggota',
-    //         '',
-    //         '💰 *PINJAMAN*',
-    //         'Transaksi : ' . number_format($summary['loan_count'], 0, ',', '.'),
-    //         'Pokok     : ' . $money($summary['loan_principal']),
-    //         'Jasa      : ' . $money($summary['loan_interest']),
-    //         'Total     : ' . $money($summary['loan_amount']),
-    //         '',
-    //         '💵 *PEMBAYARAN*',
-    //         'Transaksi : ' . number_format($summary['payment_count'], 0, ',', '.'),
-    //         'Total     : ' . $money($summary['payment_amount']),
-    //         '',
-    //         '🏦 *KEUANGAN*',
-    //         'Debit    : ' . $money($summary['debit']),
-    //         'Credit   : ' . $money($summary['credit']),
-    //         'Piutang  : ' . $money($summary['closing_receivable']),
-    //         '',
-    //         '📌 *SALDO*',
-    //         $money($summary['closing_balance']),
-    //         '',
-    //         '💼 *TOTAL KESELURUHAN*',
-    //         $money($summary['closing_amount']),
-    //     ]);
-    // }
 }

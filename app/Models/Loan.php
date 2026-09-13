@@ -284,6 +284,10 @@ class Loan extends Model
                 $loan->disbursement = $loan->principal;
             }
         });
+
+        static::deleting(function (Loan $loan) {
+            $loan->notifications()->delete();
+        });
     }
 
     /*

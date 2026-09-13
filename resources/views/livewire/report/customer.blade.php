@@ -380,15 +380,13 @@
 
         {{-- NOTIFICATION TAB --}}
         @if ($tab === 'notification')
-
-            <div class="space-y-4">
+            <div class="space-y-5">
 
                 {{-- HEADER --}}
                 <div class="flex flex-col gap-4">
 
                     <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-
-                        <div>
+                        <div class="min-w-0">
                             <flux:heading size="lg">
                                 {{ __('app.customer_report.notification.title') }}
                             </flux:heading>
@@ -398,26 +396,23 @@
                             </flux:text>
                         </div>
 
-                        <flux:badge color="zinc">
+                        <flux:badge color="zinc" class="shrink-0">
                             {{ $this->notificationCount }}
                             {{ __('app.customer_report.information.notification_count') }}
                         </flux:badge>
-
                     </div>
 
 
                     {{-- FILTER --}}
                     <div class="flex flex-col gap-3 sm:flex-row">
 
-                        <div class="flex-1">
+                        <div class="min-w-0 flex-1">
                             <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass"
                                 placeholder="{{ __('app.customer_report.notification.search_placeholder') }}" />
                         </div>
 
                         <div class="sm:w-56">
-
                             <flux:select wire:model.live="type">
-
                                 <flux:select.option value="">
                                     {{ __('app.customer_report.notification.all_types') }}
                                 </flux:select.option>
@@ -427,238 +422,166 @@
                                         {{ $notificationType->label() }}
                                     </flux:select.option>
                                 @endforeach
-
                             </flux:select>
-
                         </div>
 
                     </div>
-
                 </div>
 
-                {{-- NOTIFICATION GRID --}}
+                {{-- NOTIFICATION LIST --}}
                 <div class="grid gap-3 md:grid-cols-2">
 
                     @forelse ($notifications as $notification)
                         @php
                             $isSent = filled($notification->sent_at);
+                            $isRead = filled($notification->read_at);
                         @endphp
 
-                        <details wire:key="notification-{{ $notification->id }}"
-                            class="group overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition hover:shadow-md dark:border-zinc-700 dark:bg-zinc-900">
+                        <div wire:key="notification-{{ $notification->id }}"
+                            class="group overflow-hidden rounded-xl border border-zinc-200 bg-white
+                                shadow-sm transition
+                                hover:border-emerald-300 hover:shadow-md
+                                dark:border-zinc-700 dark:bg-zinc-900
+                                dark:hover:border-emerald-700">
 
-                            {{-- NOTIFICATION HEADER --}}
-                            <summary
-                                class="flex cursor-pointer list-none items-center gap-3 px-4 py-3.5 transition hover:bg-zinc-50 dark:hover:bg-zinc-800">
+                            {{-- MAIN CONTENT --}}
+                            <div class="p-4">
 
-                                {{-- ICON --}}
-                                <div
-                                    class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
-                                    <flux:icon :name="$notification->type->icon()" class="size-5 text-zinc-500" />
-                                </div>
+                                <div class="flex items-start gap-3">
 
-
-                                {{-- INFORMATION --}}
-                                <div class="min-w-0 flex-1">
-
-                                    <div class="flex flex-wrap items-center gap-2">
-
-                                        <flux:badge :color="$notification->type->color()" size="sm">
-                                            {{ $notification->type->label() }}
-                                        </flux:badge>
-
-                                        @if ($isSent)
-                                            <flux:badge color="green" size="sm">
-                                                {{ __('app.customer_report.notification.sent') }}
-                                            </flux:badge>
-                                        @else
-                                            <flux:badge color="amber" size="sm">
-                                                {{ __('app.customer_report.notification.not_sent') }}
-                                            </flux:badge>
-                                        @endif
-
+                                    {{-- ICON --}}
+                                    <div
+                                        class="flex size-10 shrink-0 items-center justify-center rounded-xl
+                                            bg-zinc-100 text-zinc-500 transition
+                                            group-hover:bg-emerald-50 group-hover:text-emerald-600
+                                            dark:bg-zinc-800 dark:text-zinc-400
+                                            dark:group-hover:bg-emerald-950/40
+                                            dark:group-hover:text-emerald-400">
+                                        <flux:icon :name="$notification->type?->icon() ?? 'bell'" class="size-5" />
                                     </div>
 
-                                    <flux:text class="mt-0.5 text-sm font-medium">
-                                        {{ $notification->title }}
-                                    </flux:text>
 
-                                    <flux:text class="mt-0.5 text-xs">
-                                        {{ $notification->created_at->format('d M Y, H:i') }}
-                                    </flux:text>
+                                    {{-- CONTENT --}}
+                                    <div class="min-w-0 flex-1">
 
-                                </div>
+                                        {{-- BADGES --}}
+                                        <div class="flex flex-wrap items-center gap-1.5">
 
+                                            @if ($notification->type)
+                                                <flux:badge :color="$notification->type->color()" size="sm">
+                                                    {{ $notification->type->label() }}
+                                                </flux:badge>
+                                            @endif
 
-                                {{-- ACTIONS --}}
-                                <div class="flex shrink-0 items-center gap-1" @click.stop>
-
-                                    {{-- DETAIL --}}
-                                    <flux:button size="sm" variant="ghost" icon="eye"
-                                        wire:click="openNotification({{ $notification->id }})">
-                                        <span class="hidden sm:inline">
-                                            {{ __('app.customer_report.notification.detail') }}
-                                        </span>
-                                    </flux:button>
-
-
-                                    {{-- SEND --}}
-                                    @if (!$isSent)
-                                        <flux:button size="sm" variant="primary" icon="paper-airplane"
-                                            wire:click="sendNotification({{ $notification->id }})">
-                                            <span class="hidden sm:inline">
-                                                {{ __('app.customer_report.notification.send') }}
-                                            </span>
-                                        </flux:button>
-                                    @endif
-
-
-                                    {{-- CHEVRON --}}
-                                    <flux:icon name="chevron-down"
-                                        class="ml-1 size-4 text-zinc-400 transition-transform duration-200 group-open:rotate-180" />
-
-                                </div>
-
-                            </summary>
-
-
-                            {{-- NOTIFICATION CONTENT --}}
-                            <div class="border-t border-zinc-200 dark:border-zinc-700">
-
-                                <div class="space-y-4 p-4">
-
-                                    {{-- TRANSACTION INFO --}}
-                                    <div class="grid gap-3 sm:grid-cols-2">
-
-                                        @if ($notification->loan)
-                                            <div class="rounded-lg bg-zinc-50 p-3 dark:bg-zinc-800">
-
-                                                <flux:text class="text-xs text-zinc-500">
-                                                    {{ __('app.customer_report.notification.loan') }}
-                                                </flux:text>
-
-                                                <flux:text class="mt-1 text-sm font-medium">
-                                                    {{ $notification->loan->loan_number }}
-                                                </flux:text>
-
-                                            </div>
-                                        @endif
-
-
-                                        @if ($notification->payment)
-                                            <div class="rounded-lg bg-zinc-50 p-3 dark:bg-zinc-800">
-
-                                                <flux:text class="text-xs text-zinc-500">
-                                                    {{ __('app.customer_report.notification.payment') }}
-                                                </flux:text>
-
-                                                <flux:text class="mt-1 text-sm font-medium">
-                                                    Ke-{{ $notification->payment->payment_count ?? '-' }}
-                                                </flux:text>
-
-                                            </div>
-                                        @endif
-
-
-                                        @if ($notification->meeting)
-                                            <div class="rounded-lg bg-zinc-50 p-3 dark:bg-zinc-800">
-
-                                                <flux:text class="text-xs text-zinc-500">
-                                                    {{ __('app.customer_report.notification.meeting') }}
-                                                </flux:text>
-
-                                                <flux:text class="mt-1 text-sm font-medium">
-                                                    {{ $notification->meeting->meeting_date?->format('d M Y') ?? '-' }}
-                                                </flux:text>
-
-                                            </div>
-                                        @endif
-
-
-                                        <div class="rounded-lg bg-zinc-50 p-3 dark:bg-zinc-800">
-
-                                            <flux:text class="text-xs text-zinc-500">
-                                                {{ __('app.customer_report.notification.created') }}
-                                            </flux:text>
-
-                                            <flux:text class="mt-1 text-sm font-medium">
-                                                {{ $notification->created_at->format('d M Y H:i') }}
-                                            </flux:text>
+                                            @if (!$isRead)
+                                                <flux:badge color="blue" size="sm">
+                                                    {{ __('app.customer_report.notification.unread') }}
+                                                </flux:badge>
+                                            @endif
 
                                         </div>
 
-                                    </div>
-
-
-                                    {{-- MESSAGE --}}
-                                    <div>
-
-                                        <flux:text class="mb-2 text-xs font-medium text-zinc-500">
-                                            {{ __('app.customer_report.notification.message') }}
+                                        {{-- TITLE --}}
+                                        <flux:text class="mt-1.5 font-semibold">
+                                            {!! preg_replace('/\*(.*?)\*/', '<strong>$1</strong>', e($notification->title)) !!}
                                         </flux:text>
 
-                                        <div
-                                            class="rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-800">
+                                        {{-- META --}}
+                                        <div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1">
 
-                                            <flux:text class="whitespace-pre-line text-sm leading-relaxed">
-                                                {{ $notification->message }}
+                                            <flux:text class="text-xs text-zinc-500 dark:text-zinc-500">
+                                                <span class="inline-flex items-center gap-1">
+                                                    <flux:icon name="clock" class="size-3.5" />
+                                                    {{ $notification->created_at?->format('d M Y, H:i') ?? '-' }}
+                                                </span>
                                             </flux:text>
+
+                                            @if ($notification->payment)
+                                                <flux:text class="text-xs text-zinc-500 dark:text-zinc-500">
+                                                    <span class="inline-flex items-center gap-1">
+                                                        <flux:icon name="credit-card" class="size-3.5" />
+                                                        {{ __('app.customer_report.notification.payment_number', [
+                                                            'count' => $notification->payment->payment_count ?? '-',
+                                                        ]) }}
+                                                    </span>
+                                                </flux:text>
+                                            @endif
 
                                         </div>
 
                                     </div>
 
 
-                                    {{-- SENT INFORMATION --}}
-                                    <div
-                                        class="flex flex-col gap-2 border-t border-zinc-200 pt-3 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-700">
-
-                                        @if ($isSent)
-                                            <div class="flex items-center gap-2">
-
-                                                <flux:icon name="check-circle" class="size-4 text-green-500" />
-
-                                                <flux:text class="text-xs">
-                                                    {{ __('app.customer_report.notification.sent') }}
-                                                    {{ $notification->sent_at->format('d M Y H:i') }}
-                                                </flux:text>
-
-                                            </div>
-                                        @else
-                                            <div class="flex items-center gap-2">
-
-                                                <flux:icon name="clock" class="size-4 text-amber-500" />
-
-                                                <flux:text class="text-xs">
-                                                    {{ __('app.customer_report.notification.not_sent') }}
-                                                </flux:text>
-
-                                            </div>
-
-                                            <flux:button size="sm" variant="primary" icon="paper-airplane"
-                                                wire:click="sendNotification({{ $notification->id }})">
-                                                {{ __('app.customer_report.notification.send_notification') }}
-                                            </flux:button>
-                                        @endif
-
+                                    {{-- DETAIL --}}
+                                    <div class="shrink-0">
+                                        <flux:button size="sm" variant="ghost" icon="eye"
+                                            wire:click="openNotification({{ $notification->id }})"
+                                            title="{{ __('app.customer_report.notification.detail') }}">
+                                            <span class="hidden sm:inline">
+                                                {{ __('app.customer_report.notification.detail') }}
+                                            </span>
+                                        </flux:button>
                                     </div>
 
                                 </div>
 
                             </div>
 
-                        </details>
+
+                            {{-- SEND FOOTER --}}
+                            <div class="border-t border-zinc-200 px-4 py-2.5 dark:border-zinc-700">
+                                <div class="flex items-center justify-between gap-3">
+
+                                    @if ($isSent)
+                                        <div class="flex min-w-0 items-center gap-2">
+                                            <flux:icon name="check-circle" class="size-4 shrink-0 text-green-500" />
+
+                                            <flux:text class="truncate text-xs text-zinc-500 dark:text-zinc-400">
+                                                {{ __('app.customer_report.notification.sent') }}
+
+                                                {{ $notification->sent_at?->format('d M Y, H:i') }}
+                                            </flux:text>
+                                        </div>
+                                    @else
+                                        <div class="flex min-w-0 items-center gap-2">
+                                            <flux:icon name="clock" class="size-4 shrink-0 text-amber-500" />
+
+                                            <flux:text class="truncate text-xs text-amber-600 dark:text-amber-400">
+                                                {{ __('app.customer_report.notification.not_sent') }}
+                                            </flux:text>
+                                        </div>
+
+                                        <flux:button size="sm" variant="primary" icon="paper-airplane"
+                                            wire:click="sendNotification({{ $notification->id }})"
+                                            wire:loading.attr="disabled"
+                                            wire:target="sendNotification({{ $notification->id }})">
+                                            <span wire:loading.remove
+                                                wire:target="sendNotification({{ $notification->id }})">
+                                                {{ __('app.customer_report.notification.send') }}
+                                            </span>
+
+                                            <span wire:loading
+                                                wire:target="sendNotification({{ $notification->id }})">
+                                                {{ __('app.customer_report.notification.sending') }}
+                                            </span>
+                                        </flux:button>
+                                    @endif
+
+                                </div>
+                            </div>
+
+                        </div>
 
                     @empty
 
+                        {{-- EMPTY STATE --}}
                         <div class="md:col-span-2">
-
                             <flux:card class="p-10">
-
                                 <div class="flex flex-col items-center text-center">
 
                                     <div
-                                        class="flex size-12 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800">
+                                        class="flex size-12 items-center justify-center rounded-full
+                                            bg-zinc-100 dark:bg-zinc-800">
                                         <flux:icon name="bell-slash" class="size-6 text-zinc-400" />
                                     </div>
 
@@ -671,9 +594,7 @@
                                     </flux:text>
 
                                 </div>
-
                             </flux:card>
-
                         </div>
                     @endforelse
 
@@ -688,10 +609,10 @@
 
             </div>
 
-        @endif
+            {{-- NOTIFICATION DETAIL MODAL --}}
+            <x-notification-detail :notification="$selectedNotification" :message="$selectedNotificationMessage" />
 
-        {{-- NOTIFICATION DETAIL MODAL --}}
-        <x-notification-detail :selected-notification="$selectedNotification" />
+        @endif
 
     @endif
 

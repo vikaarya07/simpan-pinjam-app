@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Models\CustomerNotification;
-use App\Services\CustomerNotificationService;
 use App\Traits\HasIndonesianDate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -77,38 +76,32 @@ class Payment extends Model
     protected static function booted(): void
     {
         // Status Payment
-        //  amount > 0  => Clear
-        //  amount = 0  => Skip
+        // amount > 0 => Clear
+        // amount = 0 => Skip
         static::saving(function (Payment $payment) {
             $payment->status = $payment->amount > 0
                 ? PaymentStatus::Clear
                 : PaymentStatus::Skip;
 
-            //  Skip tidak memiliki metode pembayaran.
+            // Skip tidak memiliki metode pembayaran.
             if ($payment->amount <= 0) {
                 $payment->method = null;
             }
         });
 
-        //  Setelah Payment dibuat.
+        // Setelah Payment dibuat.
         static::created(function (Payment $payment) {
             $payment->loan?->recalculate();
             $payment->loan?->createOverdueLoanIfNeeded();
-
-            $service = app(CustomerNotificationService::class);
-
-            $service->paymentReceived($payment);
-            $service->almostPaidOff($payment->loan);
-            $service->paidOff($payment->loan);
         });
 
-        //   Setelah Payment diubah.
+        // Setelah Payment diubah.
         static::updated(function (Payment $payment) {
             $payment->loan?->recalculate();
             $payment->loan?->createOverdueLoanIfNeeded();
         });
 
-        //   Setelah Payment dihapus.
+        // Setelah Payment dihapus.
         static::deleted(function (Payment $payment) {
             $payment->loan?->recalculate();
         });

@@ -490,26 +490,144 @@ return [
 
         'notification' => [
             'title' => 'Notifications',
-            'description' => 'History of customer notifications and transaction receipts.',
+            'description' => 'Notification history and customer transaction receipts.',
             'search_placeholder' => 'Search notifications...',
             'all_types' => 'All Types',
+
             'sent' => 'Sent',
             'not_sent' => 'Not Sent',
             'read' => 'Read',
             'unread' => 'Unread',
             'new' => 'new',
+
             'detail' => 'Details',
             'send' => 'Send',
             'send_notification' => 'Send Notification',
+
             'loan' => 'Loan',
             'payment' => 'Payment',
             'meeting' => 'Meeting',
             'created' => 'Created',
             'message' => 'Notification Message',
+            'payment_number' => 'Payment No. :count',
+
+            'types' => [
+                'loan_created' => [
+                    'label' => 'Loan Receipt',
+                ],
+                'payment_received' => [
+                    'label' => 'Payment Receipt',
+                ],
+                'payment_reminder' => [
+                    'label' => 'Payment Reminder',
+                ],
+                'almost_paid_off' => [
+                    'label' => 'Almost Paid Off',
+                ],
+                'paid_off' => [
+                    'label' => 'Loan Paid Off',
+                ],
+                'loan_overdue_created' => [
+                    'label' => 'Loan Overdue Receipt',
+                ],
+            ],
+
             'sent_information' => 'Notification has been sent',
             'not_sent_information' => 'Notification has not been sent.',
+
+            'related_data' => 'Related Data',
+            'sending' => 'Sending...',
+
             'empty_title' => 'No notifications yet',
             'empty_description' => 'Notifications will appear after a transaction or reminder is created.',
+
+            'organization' => [
+                'name' => '*KARANG TARUNA SATYA MUDA GETAS*',
+                'division' => '*SIMPAN PINJAM*',
+            ],
+
+            'messages' => [
+                'loan_created' => [
+                    'title'             => '*LOAN CREATED SUCCESSFULLY* ✅',
+                    'greeting'          => 'Hello, *:name* 👋',
+                    'success'           => 'Your loan has been successfully created.',
+                    'loan_number'       => '💵 *Loan Number*' . "\n" . ':value',
+                    'date'              => '📆 *Date*' . "\n" . ':value',
+                    'details'           => '*Loan Details*',
+                    'principal'         => 'Principal Amount     : *:value*',
+                    'interest'          => 'Interest (:percent%) : *:value*',
+                    'total'             => 'Total Loan           : *:value*',
+                    'installment_title' => '*Installment*',
+                    'installment'       => 'Installment payments must be made according to the scheduled payment dates.',
+                    'thanks'            => 'Thank you for using the Simpan Pinjam service of Karang Taruna Satya Muda Getas.',
+                ],
+
+                'payment_received' => [
+                    'title'       => '*INSTALLMENT PAYMENT RECEIVED* ✅',
+                    'greeting'    => 'Hello, *:name* 👋',
+                    'success'     => 'Your installment payment has been successfully received and recorded in the system.',
+                    'loan_number' => '💵 Loan Number' . "\n" . '*:value*',
+                    'date'        => '📆 Payment Date' . "\n" . '*:value*',
+                    'installment' => 'Installment No. : *:value*',
+                    'payment'     => 'Payment Amount  : *:value*',
+                    'method'      => 'Payment Method  : *:value*',
+                    'remaining'   => 'Remaining Loan  : *:value*',
+                    'thanks'      => 'Thank you for making your payment and using the Simpan Pinjam service of Karang Taruna Satya Muda Getas.',
+                ],
+
+                'payment_reminder' => [
+                    'title' => '🔔 *PAYMENT REMINDER*',
+                    'greeting' => 'Hello *:name*,',
+                    'reminder' => 'This is a reminder that you still have an installment that needs to be paid.',
+                    'loan_number' => 'Loan Number   : :value',
+                    'installment' => 'Installment   : :value of 6',
+                    'remaining' => 'Remaining Loan: :value',
+                    'action' => 'Please make your payment at the next meeting.',
+                    'thanks' => 'Thank you.',
+                ],
+
+                'almost_paid_off' => [
+                    'title' => '🎉 *ALMOST PAID OFF*',
+                    'greeting' => 'Hello *:name*,',
+                    'message' => 'Your loan is almost paid off.',
+                    'loan_number' => 'Loan Number : :value',
+                    'installment' => 'Installment  : :value of 6',
+                    'remaining' => 'Remaining Loan: :value',
+                    'next' => 'Tomorrow is your final installment. Please make your 6th installment payment.',
+                    'thanks' => 'Thank you.',
+                ],
+
+                'paid_off' => [
+                    'title'       => '🎉 *LOAN PAID OFF*',
+                    'greeting'    => 'Hello, *:name* 👋',
+                    'message'     => 'Your payment has been successfully received and the following loan has been fully *Paid Off*.',
+                    'loan_number' => '💵 Loan Number' . "\n" . '*:value*',
+                    'date'        => '📆 Paid Off Date' . "\n" . '*:value*',
+                    'installment' => 'Installment No. : *:value*',
+                    'payment'     => 'Payment Amount  : *:value*',
+                    'remaining'   => 'Remaining Loan  : *Rp 0*',
+                    'thanks'      => 'Thank you for paying off your loan and using the Simpan Pinjam service of Karang Taruna Satya Muda Getas.',
+                ],
+
+                'loan_overdue_created' => [
+                    'title'                 => '⚠️ *OVERDUE LOAN*',
+                    'greeting'              => 'Hello *:name*,',
+                    'message'               => 'Your loan has exceeded the maximum of 6 installments and still has an outstanding balance. The remaining balance has been recorded as an overdue loan.',
+                    'loan_number'           => '💵 Loan Number' . "\n" . ':value',
+                    'previous_loan_number'  => '💵 Previous Loan' . "\n" . ':value',
+                    'date'                  => '📆 Date' . "\n" . ':value',
+                    'principal'             => 'Outstanding Principal : :value',
+                    'interest'              => 'Interest (10%)        : :value',
+                    'amount'                => 'Total Loan            : :value',
+                    'installment'           => 'Installments          : Maximum 6 installments',
+                    'note'                  => 'Note                  : This loan represents the remaining balance transferred from the unpaid previous loan.',
+                    'closing'               => 'Please make your payment according to the next meeting schedule.',
+                    'thanks'                => 'Thank you for using the Simpan Pinjam service of Karang Taruna Satya Muda Getas.',
+                ],
+
+                'automatic_note' => '*Automated message — please do not reply.*',
+                'ignore_note' => 'If there are no issues, you may ignore this message.',
+            ],
         ],
     ],
 

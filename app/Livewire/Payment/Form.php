@@ -7,7 +7,7 @@ use App\Enums\PaymentStatus;
 use App\Models\Loan;
 use App\Models\Meeting;
 use App\Models\Payment;
-use App\Services\CustomerNotificationService;
+use App\Services\ReportService;
 use App\Services\SavingService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -228,21 +228,12 @@ class Form extends Component
         });
 
         /*
-    |--------------------------------------------------------------------------
-    | NOTIFICATION
-    |--------------------------------------------------------------------------
-    */
-
+          |--------------------------------------------------------------------------
+          | NOTIFICATION
+          |--------------------------------------------------------------------------
+         */
         if (! $this->isEdit && $payment->amount > 0) {
-
-            $message = app(CustomerNotificationService::class)
-                ->paymentReceived($payment);
-
-            // Sementara untuk testing
-            $this->dispatch(
-                'payment-notification-created',
-                message: $message,
-            );
+            app(ReportService::class)->createNotification($payment);
         }
 
         /*
@@ -297,7 +288,7 @@ class Form extends Component
         $this->payment_date = now()->toDateString();
 
         $this->amount = 0;
-        
+
         $this->amountFormatted = '0';
 
         $this->isEdit = false;

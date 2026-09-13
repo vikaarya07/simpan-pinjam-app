@@ -541,11 +541,13 @@ return [
             'description' => 'Riwayat pemberitahuan dan bukti transaksi nasabah.',
             'search_placeholder' => 'Cari notifikasi...',
             'all_types' => 'Semua Jenis',
+
             'sent' => 'Terkirim',
             'not_sent' => 'Belum Dikirim',
             'read' => 'Dibaca',
             'unread' => 'Belum Dibaca',
             'new' => 'baru',
+
             'detail' => 'Detail',
             'send' => 'Kirim',
             'send_notification' => 'Kirim Notifikasi',
@@ -555,12 +557,125 @@ return [
             'meeting' => 'Pertemuan',
             'created' => 'Dibuat',
             'message' => 'Isi Notifikasi',
+            'payment_number' => 'Angsuran ke-:count',
+
+            'types' => [
+                'loan_created' => [
+                    'label' => 'Bukti Pinjaman',
+                ],
+                'payment_received' => [
+                    'label' => 'Bukti Pembayaran',
+                ],
+                'payment_reminder' => [
+                    'label' => 'Pengingat Pembayaran',
+                ],
+                'almost_paid_off' => [
+                    'label' => 'Hampir Lunas',
+                ],
+                'paid_off' => [
+                    'label' => 'Pinjaman Lunas',
+                ],
+                'loan_overdue_created' => [
+                    'label' => 'Bukti Pinjaman Telat',
+                ],
+            ],
 
             'sent_information' => 'Notifikasi telah dikirim',
             'not_sent_information' => 'Notifikasi belum dikirim.',
 
+            'related_data' => 'Data Terkait',
+            'sending' => 'Mengirim...',
+
             'empty_title' => 'Belum ada notifikasi',
             'empty_description' => 'Notifikasi akan muncul setelah transaksi atau pengingat dibuat.',
+
+            'organization' => [
+                'name'      => '*KARANG TARUNA SATYA MUDA GETAS*',
+                'division'  => '*SIMPAN PINJAM*',
+            ],
+
+            'messages' => [
+                'loan_created' => [
+                    'title'             => '*PINJAMAN BERHASIL DIBUAT* ✅',
+                    'greeting'          => 'Halo, *:name* 👋',
+                    'success'           => 'Pinjaman Anda telah berhasil dibuat.',
+                    'loan_number'       => '💵 *No. Pinjaman*' . "\n" . ':value',
+                    'date'              => '📆 *Tanggal*' . "\n" . ':value',
+                    'details'           => '*Rincian Pinjaman*',
+                    'principal'         => 'Pokok Pinjaman   : *:value*',
+                    'interest'          => 'Jasa (:percent%) : *:value*',
+                    'total'             => 'Total Pinjaman   : *:value*',
+                    'installment_title' => '*Angsuran*',
+                    'installment'       => 'Pembayaran angsuran dilakukan sesuai jadwal yang telah ditentukan.',
+                    'thanks'            => 'Terima kasih telah menggunakan layanan Simpan Pinjam Karang Taruna Satya Muda Getas.',
+                ],
+
+                'payment_received' => [
+                    'title'       => '*PEMBAYARAN ANGSURAN DITERIMA* ✅',
+                    'greeting'    => 'Halo, *:name* 👋',
+                    'success'     => 'Pembayaran angsuran Anda telah berhasil diterima dan tercatat dalam sistem.',
+                    'loan_number' => '💵 No. Pinjaman' . "\n" . '*:value*',
+                    'date'        => '📆 Tanggal Pembayaran' . "\n" . '*:value*',
+                    'installment' => 'Angsuran Ke-      : :value',
+                    'payment'     => 'Jumlah Pembayaran : :value',
+                    'method'      => 'Metode Pembayaran : :value',
+                    'remaining'   => 'Sisa Pinjaman     : :value',
+                    'thanks'      => 'Terima kasih telah melakukan pembayaran dan menggunakan layanan Simpan Pinjam Karang Taruna Satya Muda Getas.',
+                ],
+
+                'payment_reminder' => [
+                    'title' => '🔔 *REMINDER PEMBAYARAN* 🔔',
+                    'greeting' => 'Halo *:name*,',
+                    'reminder' => 'Kami mengingatkan bahwa Anda masih memiliki angsuran yang perlu dibayarkan.',
+                    'loan_number' => 'No. Pinjaman  : :value',
+                    'installment' => 'Angsuran      : :value dari 6',
+                    'remaining' => 'Sisa Pinjaman : :value',
+                    'action' => 'Silakan melakukan pembayaran pada pertemuan berikutnya.',
+                    'thanks' => 'Terima kasih.',
+                ],
+
+                'almost_paid_off' => [
+                    'title' => '🎉 *HAMPIR LUNAS* 🎉',
+                    'greeting' => 'Halo *:name*,',
+                    'message' => 'Pinjaman Anda hampir lunas.',
+                    'loan_number' => 'No. Pinjaman : :value',
+                    'installment' => 'Angsuran     : :value dari 6',
+                    'remaining' => 'Sisa Pinjaman: :value',
+                    'next' => 'Besok adalah jadwal angsuran terakhir Anda. Silakan melakukan pembayaran angsuran ke-6.',
+                    'thanks' => 'Terima kasih.',
+                ],
+
+                'paid_off' => [
+                    'title'       => '🎉 *PINJAMAN LUNAS* 🎉',
+                    'greeting'    => 'Halo, *:name* 👋',
+                    'message'     => 'Pembayaran Anda telah berhasil diterima dan pinjaman berikut telah dinyatakan *LUNAS*.',
+                    'loan_number' => '💵 No. Pinjaman' . "\n" . '*:value*',
+                    'date'        => '📆 Tanggal Pelunasan' . "\n" . '*:value*',
+                    'installment' => 'Angsuran Ke-      : *:value*',
+                    'payment'     => 'Jumlah Pembayaran : *:value*',
+                    'remaining'   => 'Sisa Pinjaman     : *Rp 0*',
+                    'thanks'      => 'Terima kasih telah melunasi pinjaman dan menggunakan layanan Simpan Pinjam Karang Taruna Satya Muda Getas.',
+                ],
+
+                'loan_overdue_created' => [
+                    'title'                 => '⚠️ *PINJAMAN TELAT* ⚠️',
+                    'greeting'              => 'Halo *:name*,',
+                    'message'               => 'Pinjaman Anda telah melewati batas maksimal 6 kali angsuran dan masih memiliki sisa pinjaman. Sisa tersebut telah dicatat sebagai Pinjaman Telat.',
+                    'loan_number'           => '💵 No. Pinjaman' . "\n" . '*:value*',
+                    'previous_loan_number'  => '💵 No. Pinjaman Sebelumnya' . "\n" . '*:value*',
+                    'date'                  => '📆 Tanggal Pinjaman' . "\n" . '*:value*',
+                    'principal'             => 'Sisa Pokok     : :value',
+                    'interest'              => 'Jasa (10%)     : :value',
+                    'amount'                => 'Total Pinjaman : :value',
+                    'installment'           => 'Angsuran       : Maksimal 6 kali',
+                    'note'                  => 'Catatan        : Pinjaman ini merupakan pengalihan sisa pinjaman yang belum lunas.',
+                    'closing'               => 'Mohon melakukan pembayaran sesuai dengan jadwal pertemuan berikutnya.',
+                    'thanks'                => 'Terima kasih telah menggunakan layanan Simpan Pinjam Karang Taruna Satya Muda Getas.',
+                ],
+
+                'automatic_note' => '*Pesan otomatis — mohon tidak dibalas.*',
+                'ignore_note' => 'Jika tidak terdapat kendala, pesan ini dapat diabaikan.',
+            ],
         ],
     ],
 

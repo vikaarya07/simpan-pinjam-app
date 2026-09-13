@@ -8,7 +8,7 @@ use App\Enums\SavingType;
 use App\Models\Loan;
 use App\Models\Member;
 use App\Models\Saving;
-use App\Services\CustomerNotificationService;
+use App\Services\NotificationService;
 use App\Services\SavingService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -379,13 +379,7 @@ class Form extends Component
          * NOTIFICATION
          */
         if (! $this->isEdit) {
-            $message = app(CustomerNotificationService::class)
-                ->loanCreated($loan);
-
-            $this->dispatch(
-                'loan-notification-created',
-                message: $message,
-            );
+            app(NotificationService::class)->loanCreated($loan);
         }
 
         /*

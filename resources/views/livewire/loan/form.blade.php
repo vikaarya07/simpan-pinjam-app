@@ -40,7 +40,7 @@
                             <flux:field>
                                 <flux:select :label="__('app.loan.name')" wire:model.live="member_id"
                                     :disabled="$isEdit">
-                                    <option value="">
+                                    <option value="" selected disabled>
                                         -- {{ __('app.loan.form_select') }} --
                                     </option>
 
