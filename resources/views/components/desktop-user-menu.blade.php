@@ -51,6 +51,8 @@
 
         <flux:menu.radio.group>
 
+            <livewire:language-switcher />
+
             <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate
                 class="rounded-lg
                    text-slate-600!

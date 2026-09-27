@@ -206,17 +206,22 @@ class NotificationService
     }
 
     private function paymentReminderMessage(Loan $loan, int $nextPayment,): string
-    {
+    {  
         $member = $loan->member;
 
         return implode("\n", [
+            __('app.customer_report.notification.organization.name'),
+            __('app.customer_report.notification.organization.division'),
+            '',
+            '━━━━━━━━━━━━━━━━━━',
+            '',
             __('app.customer_report.notification.messages.payment_reminder.title'),
             '',
             __('app.customer_report.notification.messages.payment_reminder.greeting', [
                 'name' => $member->name,
             ]),
             '',
-            __('app.customer_report.notification.messages.payment_reminder.reminder'),
+            __('app.customer_report.notification.messages.payment_reminder.message'),
             '',
             __('app.customer_report.notification.messages.payment_reminder.loan_number', [
                 'value' => $loan->loan_number,
@@ -224,13 +229,23 @@ class NotificationService
             __('app.customer_report.notification.messages.payment_reminder.installment', [
                 'value' => $nextPayment,
             ]),
+            __('app.customer_report.notification.messages.payment_reminder.date', [
+                'value' => $loan->next_payment_date,
+            ]),
+            __('app.customer_report.notification.messages.payment_reminder.amount', [
+                'value' => $loan->installment_amount,
+            ]),
             __('app.customer_report.notification.messages.payment_reminder.remaining', [
                 'value' => $this->money($loan->remaining),
             ]),
             '',
-            __('app.customer_report.notification.messages.payment_reminder.action'),
+            __('app.customer_report.notification.messages.payment_reminder.reminder'),
             '',
             __('app.customer_report.notification.messages.payment_reminder.thanks'),
+            '',
+            '━━━━━━━━━━━━━━━━━━',
+            __('app.customer_report.notification.messages.automatic_note'),
+            __('app.customer_report.notification.messages.ignore_note'),
         ]);
     }
 

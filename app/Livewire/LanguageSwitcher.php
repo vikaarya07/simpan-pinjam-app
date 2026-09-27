@@ -6,11 +6,11 @@ use Livewire\Component;
 
 class LanguageSwitcher extends Component
 {
-    public string $locale = 'id';
+    public string $locale;
 
     public function mount(): void
     {
-        $this->locale = app()->getLocale();
+        $this->locale = session('locale', config('app.locale'));
     }
 
     public function changeLocale(string $locale): void
@@ -21,13 +21,11 @@ class LanguageSwitcher extends Component
 
         session()->put('locale', $locale);
 
-        app()->setLocale($locale);
-
         $this->locale = $locale;
 
         $this->redirect(
             url()->previous(),
-            navigate: true
+            navigate: false
         );
     }
 

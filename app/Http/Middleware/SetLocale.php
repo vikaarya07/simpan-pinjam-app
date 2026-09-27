@@ -13,15 +13,14 @@ class SetLocale
      *
      * @param  Closure(Request): (Response)  $next
      */
+
     public function handle(Request $request, Closure $next): Response
     {
         $locale = session('locale', config('app.locale'));
 
-        if (! in_array($locale, ['en', 'id'], true)) {
-            $locale = config('app.fallback_locale', 'en');
+        if (in_array($locale, ['id', 'en'], true)) {
+            app()->setLocale($locale);
         }
-
-        app()->setLocale($locale);
 
         return $next($request);
     }

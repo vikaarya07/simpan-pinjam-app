@@ -39,8 +39,8 @@
 
                     {{-- Email --}}
                     <div>
-                        <flux:input wire:model="email" :label="__('app.profile.email')" type="email" required
-                            autocomplete="email" :placeholder="__('app.profile.email_placeholder')" />
+                        <flux:input wire:model="email" :label="__('app.profile.email')" type="email"
+                            autocomplete="email" :placeholder="__('app.profile.email_placeholder')" disabled />
 
                         @if ($this->hasUnverifiedEmail)
                             <div

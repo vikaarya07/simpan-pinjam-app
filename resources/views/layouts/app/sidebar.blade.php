@@ -264,8 +264,6 @@
                 {{ __('app.sidebar.customer_report') }}
             </flux:sidebar.item>
 
-            <livewire:language-switcher />
-
         </flux:sidebar.nav>
 
         {{-- Spacer --}}
