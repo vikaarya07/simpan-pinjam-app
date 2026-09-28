@@ -1,154 +1,153 @@
-name: Deploy Simpan Pinjam
+name: Deploy Laravel Simpan Pinjam
 
 on:
   push:
     branches:
       - main
+
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # ----------------------------------------
-      # Checkout
-      # ----------------------------------------
-      - name: Checkout code
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
-        with:
-          persist-credentials: false
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # ----------------------------------------
-      # PHP
-      # ----------------------------------------
       - name: Setup PHP
-        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # v2
+        uses: shivammathur/setup-php@v2
         with:
           php-version: "8.4"
+          extensions: mbstring, bcmath, ctype, curl, dom, fileinfo, openssl, pdo, pdo_mysql, tokenizer, xml
           tools: composer:v2
+          coverage: none
 
-      # ----------------------------------------
-      # Node.js
-      # ----------------------------------------
-      - name: Setup Node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
-        with:
-          node-version: "22"
-          cache: npm
-
-      # ----------------------------------------
-      # Flux credentials
-      # ----------------------------------------
       - name: Configure Flux credentials
         run: |
           composer config http-basic.composer.fluxui.dev \
             "${{ secrets.FLUX_USERNAME }}" \
             "${{ secrets.FLUX_LICENSE_KEY }}"
 
-      # ----------------------------------------
-      # PHP dependencies
-      # ----------------------------------------
       - name: Install Composer dependencies
         run: |
           composer install \
-            --no-dev \
             --no-interaction \
             --prefer-dist \
             --optimize-autoloader
 
-      # ----------------------------------------
-      # Node dependencies
-      # ----------------------------------------
-      - name: Install Node dependencies
-        run: npm install
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
 
-      # ----------------------------------------
-      # Build Vite
-      # ----------------------------------------
-      - name: Build assets
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build frontend
         run: npm run build
 
-      # ----------------------------------------
-      # Verify build
-      # ----------------------------------------
-      - name: Verify Vite build
-        run: |
-          test -f public/build/manifest.json
-          echo "Vite build berhasil."
-          ls -lah public/build
+      - name: Deploy files to Hostinger
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          port: 21
+          server-dir: ./
+          local-dir: ./
+          dangerous-clean-slate: false
 
-      # ----------------------------------------
-      # Prepare SSH
-      # ----------------------------------------
-      - name: Setup SSH key
-        run: |
-          mkdir -p ~/.ssh
-          printf '%s\n' '${{ secrets.SSH_PRIVATE_KEY }}' > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/node_modules/**
+            **/vendor/**
+            **/tests/**
+            **/storage/logs/**
+            **/.env
+            **/.env.*
+            .editorconfig
+            .gitattributes
+            .gitignore
+            phpunit.xml
+            README.md
 
-          ssh-keyscan \
-            -p "${{ secrets.SSH_PORT }}" \
-            "${{ secrets.SSH_HOST }}" \
-            >> ~/.ssh/known_hosts
+      - name: Finalize Laravel deployment
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
 
-      # ----------------------------------------
-      # Update Laravel source on server
-      # ----------------------------------------
-      - name: Update application
-        run: |
-          ssh \
-            -i ~/.ssh/deploy_key \
-            -p "${{ secrets.SSH_PORT }}" \
-            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}" \
-            'cd /home/u426348873/domains/vikaarya07.my.id/public_html/simpan-pinjam && git fetch origin main && git reset --hard origin/main'
+            PROJECT_PATH="/home/u426348873/domains/vikaarya07.my.id/public_html/simpan-pinjam"
+            PHP="/opt/alt/php84/usr/bin/php"
+            COMPOSER="/usr/local/bin/composer"
 
-      # ----------------------------------------
-      # Upload Vite build
-      # ----------------------------------------
-      - name: Upload Vite build
-        run: |
-          ssh \
-            -i ~/.ssh/deploy_key \
-            -p "${{ secrets.SSH_PORT }}" \
-            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}" \
-            'mkdir -p /home/u426348873/domains/vikaarya07.my.id/public_html/simpan-pinjam/public/build'
+            cd "$PROJECT_PATH"
 
-          rsync -az --delete \
-            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=yes" \
-            public/build/ \
-            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/home/u426348873/domains/vikaarya07.my.id/public_html/simpan-pinjam/public/build/"
+            echo "========================================"
+            echo "PHP VERSION"
+            echo "========================================"
+            "$PHP" -v
 
-      # ----------------------------------------
-      # Laravel production commands
-      # ----------------------------------------
-      - name: Optimize Laravel
-        run: |
-          ssh \
-            -i ~/.ssh/deploy_key \
-            -p "${{ secrets.SSH_PORT }}" \
-            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}" \
-            'cd /home/u426348873/domains/vikaarya07.my.id/public_html/simpan-pinjam && \
-             /opt/alt/php84/usr/bin/php artisan migrate --force && \
-             /opt/alt/php84/usr/bin/php artisan storage:link || true'
+            echo "========================================"
+            echo "COMPOSER VERSION"
+            echo "========================================"
+            "$PHP" "$COMPOSER" --version
 
-      - name: Clear and cache Laravel
-        run: |
-          ssh \
-            -i ~/.ssh/deploy_key \
-            -p "${{ secrets.SSH_PORT }}" \
-            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}" \
-            'cd /home/u426348873/domains/vikaarya07.my.id/public_html/simpan-pinjam && \
-             /opt/alt/php84/usr/bin/php artisan optimize:clear && \
-             /opt/alt/php84/usr/bin/php artisan config:cache && \
-             /opt/alt/php84/usr/bin/php artisan route:cache && \
-             /opt/alt/php84/usr/bin/php artisan view:cache'
+            echo "========================================"
+            echo "INSTALLING PRODUCTION DEPENDENCIES"
+            echo "========================================"
+            "$PHP" "$COMPOSER" install \
+              --no-dev \
+              --no-interaction \
+              --prefer-dist \
+              --optimize-autoloader
 
-      # ----------------------------------------
-      # Finished
-      # ----------------------------------------
-      - name: Deployment completed
-        run: echo "Deployment Simpan Pinjam berhasil."
+            echo "========================================"
+            echo "RECREATING STORAGE LINK"
+            echo "========================================"
+
+            if [ -L public/storage ]; then
+                rm public/storage
+            elif [ -e public/storage ]; then
+                rm -rf public/storage
+            fi
+
+            "$PHP" artisan storage:link
+
+            echo "========================================"
+            echo "RUNNING DATABASE MIGRATIONS"
+            echo "========================================"
+            "$PHP" artisan migrate --force
+
+            echo "========================================"
+            echo "CLEARING LARAVEL CACHE"
+            echo "========================================"
+            "$PHP" artisan optimize:clear
+
+            echo "========================================"
+            echo "OPTIMIZING LARAVEL"
+            echo "========================================"
+            "$PHP" artisan optimize
+
+            echo "========================================"
+            echo "LARAVEL VERSION"
+            echo "========================================"
+            "$PHP" artisan --version
+
+            echo "========================================"
+            echo "STORAGE LINK"
+            echo "========================================"
+            ls -la public/storage
+
+            echo "========================================"
+            echo "DEPLOYMENT COMPLETED"
+            echo "========================================"
