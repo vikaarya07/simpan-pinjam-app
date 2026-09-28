@@ -48,106 +48,101 @@ jobs:
       - name: Build frontend
         run: npm run build
 
-      - name: Deploy files to Hostinger
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
-          port: 21
-          server-dir: ./
-          local-dir: ./
-          dangerous-clean-slate: false
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
 
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/.github/**
-            **/node_modules/**
-            **/vendor/**
-            **/tests/**
-            **/storage/logs/**
-            **/.env
-            **/.env.*
-            .editorconfig
-            .gitattributes
-            .gitignore
-            phpunit.xml
-            README.md
+          ssh-keyscan -p "${{ secrets.SSH_PORT }}" \
+            "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Deploy files via rsync
+        run: |
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }}" \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='node_modules/' \
+            --exclude='vendor/' \
+            --exclude='tests/' \
+            --exclude='storage/logs/' \
+            --exclude='.env' \
+            --exclude='.env.*' \
+            --exclude='phpunit.xml' \
+            --exclude='README.md' \
+            ./ \
+            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/home/u426348873/domains/vikaarya07.my.id/public_html/simpan-pinjam/"
 
       - name: Finalize Laravel deployment
-        uses: appleboy/ssh-action@v1.2.2
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          port: ${{ secrets.SSH_PORT }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            set -e
+        run: |
+          ssh \
+            -i ~/.ssh/deploy_key \
+            -p "${{ secrets.SSH_PORT }}" \
+            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}" \
+            'bash -s' << 'REMOTE_SCRIPT'
 
-            PROJECT_PATH="/home/u426348873/domains/vikaarya07.my.id/public_html/simpan-pinjam"
-            PHP="/opt/alt/php84/usr/bin/php"
-            COMPOSER="/usr/local/bin/composer"
+          set -e
 
-            cd "$PROJECT_PATH"
+          PROJECT_PATH="/home/u426348873/domains/vikaarya07.my.id/public_html/simpan-pinjam"
+          PHP="/opt/alt/php84/usr/bin/php"
+          COMPOSER="/usr/local/bin/composer"
 
-            echo "========================================"
-            echo "PHP VERSION"
-            echo "========================================"
-            "$PHP" -v
+          cd "$PROJECT_PATH"
 
-            echo "========================================"
-            echo "COMPOSER VERSION"
-            echo "========================================"
-            "$PHP" "$COMPOSER" --version
+          echo "========================================"
+          echo "PHP VERSION"
+          echo "========================================"
+          "$PHP" -v
 
-            echo "========================================"
-            echo "INSTALLING PRODUCTION DEPENDENCIES"
-            echo "========================================"
-            "$PHP" "$COMPOSER" install \
-              --no-dev \
-              --no-interaction \
-              --prefer-dist \
-              --optimize-autoloader
+          echo "========================================"
+          echo "INSTALLING PRODUCTION DEPENDENCIES"
+          echo "========================================"
 
-            echo "========================================"
-            echo "RECREATING STORAGE LINK"
-            echo "========================================"
+          "$PHP" "$COMPOSER" install \
+            --no-dev \
+            --no-interaction \
+            --prefer-dist \
+            --optimize-autoloader
 
-            if [ -L public/storage ]; then
-                rm public/storage
-            elif [ -e public/storage ]; then
-                rm -rf public/storage
-            fi
+          echo "========================================"
+          echo "RECREATING STORAGE LINK"
+          echo "========================================"
 
-            "$PHP" artisan storage:link
+          if [ -L public/storage ]; then
+              rm public/storage
+          elif [ -e public/storage ]; then
+              rm -rf public/storage
+          fi
 
-            echo "========================================"
-            echo "RUNNING DATABASE MIGRATIONS"
-            echo "========================================"
-            "$PHP" artisan migrate --force
+          "$PHP" artisan storage:link
 
-            echo "========================================"
-            echo "CLEARING LARAVEL CACHE"
-            echo "========================================"
-            "$PHP" artisan optimize:clear
+          echo "========================================"
+          echo "RUNNING DATABASE MIGRATIONS"
+          echo "========================================"
 
-            echo "========================================"
-            echo "OPTIMIZING LARAVEL"
-            echo "========================================"
-            "$PHP" artisan optimize
+          "$PHP" artisan migrate --force
 
-            echo "========================================"
-            echo "LARAVEL VERSION"
-            echo "========================================"
-            "$PHP" artisan --version
+          echo "========================================"
+          echo "CLEARING CACHE"
+          echo "========================================"
 
-            echo "========================================"
-            echo "STORAGE LINK"
-            echo "========================================"
-            ls -la public/storage
+          "$PHP" artisan optimize:clear
 
-            echo "========================================"
-            echo "DEPLOYMENT COMPLETED"
-            echo "========================================"
+          echo "========================================"
+          echo "OPTIMIZING LARAVEL"
+          echo "========================================"
+
+          "$PHP" artisan optimize
+
+          echo "========================================"
+          echo "LARAVEL VERSION"
+          echo "========================================"
+
+          "$PHP" artisan --version
+
+          echo "========================================"
+          echo "DEPLOYMENT COMPLETED"
+          echo "========================================"
+
+          REMOTE_SCRIPT
