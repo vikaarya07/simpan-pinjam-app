@@ -1,156 +1,93 @@
-name: Deploy Laravel Simpan Pinjam
+name: Deploy Simpan Pinjam
 
 on:
-    push:
-        branches:
-            - main
-
-    workflow_dispatch:
-
-permissions:
-    contents: read
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-    deploy:
-        runs-on: ubuntu-latest
+  deploy:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v6
-              with:
-                  persist-credentials: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: "8.4"
-                  extensions: mbstring, bcmath, ctype, curl, dom, fileinfo, openssl, pdo, pdo_mysql, tokenizer, xml
-                  tools: composer:v2
-                  coverage: none
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: mbstring, bcmath, ctype, curl, dom, fileinfo, openssl, pdo, pdo_mysql, tokenizer, xml
+          tools: composer:v2
 
-            - name: Configure Flux credentials
-              run: |
-                  composer config http-basic.composer.fluxui.dev \
-                    "${{ secrets.FLUX_USERNAME }}" \
-                    "${{ secrets.FLUX_LICENSE_KEY }}"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
 
-            - name: Install Composer dependencies
-              run: |
-                  composer install \
-                    --no-interaction \
-                    --prefer-dist \
-                    --optimize-autoloader
+      - name: Install PHP dependencies
+        run: composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v6
-              with:
-                  node-version: "22"
-                  cache: npm
+      - name: Install Node dependencies
+        run: npm ci
 
-            - name: Install Node dependencies
-              run: npm ci
+      - name: Build frontend
+        run: npm run build
 
-            - name: Build frontend
-              run: npm run build
+      - name: Prepare deployment package
+        run: |
+          mkdir deploy
 
-            - name: Setup SSH
-              run: |
-                  mkdir -p ~/.ssh
+          rsync -a \
+            --exclude=".git" \
+            --exclude=".github" \
+            --exclude=".env" \
+            --exclude=".env.*" \
+            --exclude="node_modules" \
+            --exclude="storage/logs/*" \
+            --exclude="storage/framework/cache/*" \
+            --exclude="storage/framework/sessions/*" \
+            --exclude="storage/framework/views/*" \
+            ./ deploy/
 
-                  echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
-                  chmod 600 ~/.ssh/deploy_key
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.HOSTINGER_SSH_KEY }}
 
-                  ssh-keyscan \
-                    -p "${{ secrets.SSH_PORT }}" \
-                    "${{ secrets.SSH_HOST }}" \
-                    >> ~/.ssh/known_hosts
+      - name: Add Hostinger to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "${{ secrets.HOSTINGER_PORT }}" "${{ secrets.HOSTINGER_HOST }}" >> ~/.ssh/known_hosts
 
-            - name: Deploy files via rsync
-              run: |
-                  rsync -az --delete \
-                    -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }}" \
-                    --exclude='.git/' \
-                    --exclude='.github/' \
-                    --exclude='node_modules/' \
-                    --exclude='vendor/' \
-                    --exclude='tests/' \
-                    --exclude='storage/logs/' \
-                    --exclude='.env' \
-                    --exclude='.env.*' \
-                    --exclude='phpunit.xml' \
-                    --exclude='README.md' \
-                    ./ \
-                    "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/home/u426348873/domains/vikaarya07.my.id/public_html/simpan-pinjam/"
+      - name: Deploy files
+        run: |
+          rsync -az --delete \
+            --exclude=".env" \
+            --exclude="storage/" \
+            -e "ssh -p ${{ secrets.HOSTINGER_PORT }}" \
+            deploy/ \
+            "${{ secrets.HOSTINGER_USERNAME }}@${{ secrets.HOSTINGER_HOST }}:/home/u426348873/domains/vikaarya07.my.id/public_html/simpan-pinjam/"
 
-            - name: Finalize Laravel deployment
-              run: |
-                  ssh \
-                    -i ~/.ssh/deploy_key \
-                    -p "${{ secrets.SSH_PORT }}" \
-                    "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}" \
-                    'bash -s' << 'REMOTE_SCRIPT'
+      - name: Run Laravel deployment commands
+        run: |
+          ssh -p "${{ secrets.HOSTINGER_PORT }}" \
+            "${{ secrets.HOSTINGER_USERNAME }}@${{ secrets.HOSTINGER_HOST }}" << 'EOF'
 
-                  set -e
+          cd /home/u426348873/domains/vikaarya07.my.id/public_html/simpan-pinjam
 
-                  PROJECT_PATH="/home/u426348873/domains/vikaarya07.my.id/public_html/simpan-pinjam"
-                  PHP="/opt/alt/php84/usr/bin/php"
-                  COMPOSER="/usr/local/bin/composer"
+          /opt/alt/php84/usr/bin/php artisan storage:link || true
 
-                  cd "$PROJECT_PATH"
+          /opt/alt/php84/usr/bin/php artisan migrate --force
 
-                  echo "========================================"
-                  echo "PHP VERSION"
-                  echo "========================================"
-                  "$PHP" -v
+          /opt/alt/php84/usr/bin/php artisan optimize:clear
 
-                  echo "========================================"
-                  echo "INSTALL PRODUCTION DEPENDENCIES"
-                  echo "========================================"
+          /opt/alt/php84/usr/bin/php artisan config:cache
 
-                  "$PHP" "$COMPOSER" install \
-                    --no-dev \
-                    --no-interaction \
-                    --prefer-dist \
-                    --optimize-autoloader
+          /opt/alt/php84/usr/bin/php artisan route:cache
 
-                  echo "========================================"
-                  echo "STORAGE LINK"
-                  echo "========================================"
+          /opt/alt/php84/usr/bin/php artisan view:cache
 
-                  if [ -L public/storage ]; then
-                      rm public/storage
-                  elif [ -e public/storage ]; then
-                      rm -rf public/storage
-                  fi
-
-                  "$PHP" artisan storage:link
-
-                  echo "========================================"
-                  echo "DATABASE MIGRATION"
-                  echo "========================================"
-
-                  "$PHP" artisan migrate --force
-
-                  echo "========================================"
-                  echo "CLEAR CACHE"
-                  echo "========================================"
-
-                  "$PHP" artisan optimize:clear
-
-                  echo "========================================"
-                  echo "OPTIMIZE APPLICATION"
-                  echo "========================================"
-
-                  "$PHP" artisan optimize
-
-                  echo "========================================"
-                  echo "LARAVEL VERSION"
-                  echo "========================================"
-
-                  "$PHP" artisan --version
-
-                  echo "========================================"
-                  echo "DEPLOYMENT COMPLETED"
-                  echo "========================================"
-
-                  REMOTE_SCRIPT
+          EOF
