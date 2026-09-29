@@ -13,7 +13,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Loan extends Model
 {
@@ -60,17 +62,17 @@ class Loan extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function member()
+    public function member(): BelongsTo
     {
         return $this->belongsTo(Member::class);
     }
 
-    public function payments()
+    public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
     }
 
-    public function previousLoan()
+    public function previousLoan(): BelongsTo
     {
         return $this->belongsTo(
             self::class,
@@ -78,7 +80,7 @@ class Loan extends Model
         );
     }
 
-    public function nextLoans()
+    public function nextLoans(): HasMany
     {
         return $this->hasMany(
             self::class,
@@ -86,7 +88,7 @@ class Loan extends Model
         );
     }
 
-    public function overdueLoan()
+    public function overdueLoan(): HasOne
     {
         return $this->hasOne(
             self::class,

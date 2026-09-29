@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 
 class Member extends Model
@@ -43,17 +44,17 @@ class Member extends Model
     }
 
     // Relationships
-    public function loans()
+    public function loans(): HasMany
     {
         return $this->hasMany(Loan::class);
     }
 
-    public function payments()
+    public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
     }
 
-    public function customerNotifications()
+    public function customerNotifications(): HasMany
     {
         return $this->hasMany(CustomerNotification::class);
     }
@@ -97,18 +98,16 @@ class Member extends Model
     public function statusLabel(): Attribute
     {
         return Attribute::get(fn(): string => match ($this->status) {
-            'Active' => 'Aktif',
-            'Inactive' => 'Tidak Aktif',
-            default => $this->status,
+            MemberStatus::Active => 'Aktif',
+            MemberStatus::Inactive => 'Tidak Aktif',
         });
     }
 
     public function statusColor(): Attribute
     {
         return Attribute::get(fn(): string => match ($this->status) {
-            'Active' => 'green',
-            'Inactive' => 'slate',
-            default => 'zinc',
+            MemberStatus::Active => 'green',
+            MemberStatus::Inactive => 'slate',
         });
     }
 

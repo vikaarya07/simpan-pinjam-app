@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Loan;
 use App\Models\Meeting;
-use App\Services\CustomerNotificationService;
+use App\Services\NotificationService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
@@ -18,7 +18,7 @@ class SendPaymentReminder implements ShouldQueue
     ) {}
 
     public function handle(
-        CustomerNotificationService $service
+        NotificationService $service
     ): void {
         $loan = Loan::find($this->loanId);
 
@@ -30,7 +30,7 @@ class SendPaymentReminder implements ShouldQueue
 
         $service->paymentReminder(
             loan: $loan,
-            meeting: $meeting,
+            meetingId: $meeting->id,
         );
     }
 }
