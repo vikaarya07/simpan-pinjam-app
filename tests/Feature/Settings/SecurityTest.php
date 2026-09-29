@@ -13,6 +13,7 @@ beforeEach(function () {
         'confirm' => true,
         'confirmPassword' => true,
     ]);
+
     Features::passkeys([
         'confirmPassword' => true,
     ]);
@@ -27,10 +28,10 @@ test('security settings page can be rendered', function () {
 
     $response->assertOk();
 
-    $response->assertSee('Passkeys');
-    $response->assertSee('No passkeys yet');
-    $response->assertSee('Two-factor authentication');
-    $response->assertSee('Enable 2FA');
+    $response->assertSee(__('app.security.passkeys'));
+    $response->assertSee(__('app.security.no_passkeys'));
+    $response->assertSee(__('app.security.two_factor'));
+    $response->assertSee(__('app.security.enable_2fa'));
 });
 
 test('security settings page requires password confirmation when enabled', function () {
@@ -51,10 +52,10 @@ test('security settings page renders without two factor when feature is disabled
         ->withSession(['auth.password_confirmed_at' => time()])
         ->get(route('security.edit'))
         ->assertOk()
-        ->assertSee('Update password')
-        ->assertDontSee('Manage your passkeys for passwordless sign-in')
-        ->assertDontSee('Add a passkey to sign in without a password')
-        ->assertDontSee('Two-factor authentication');
+        ->assertSee(__('app.security.password'))
+        ->assertDontSee(__('app.security.passkeys_description'))
+        ->assertDontSee(__('app.security.no_passkeys_description'))
+        ->assertDontSee(__('app.security.two_factor'));
 });
 
 test('two factor authentication disabled when confirmation abandoned between requests', function () {
@@ -94,7 +95,9 @@ test('password can be updated', function () {
 
     $response->assertHasNoErrors();
 
-    expect(Hash::check('new-password', $user->refresh()->password))->toBeTrue();
+    expect(
+        Hash::check('new-password', $user->refresh()->password)
+    )->toBeTrue();
 });
 
 test('correct password must be provided to update password', function () {
